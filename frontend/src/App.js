@@ -1,14 +1,16 @@
-import './styles/App.css';
-import Form from "./components/forms/Form";
-import Appbar from "./components/Appbar";
+import 'bootstrap/dist/css/bootstrap.css';
+import Home from "./components/Home";
+
+const background = {
+    background: "linear-gradient(90deg, rgba(68,68,68,1) 10%, rgba(13,110,253,1) 90%)"
+}
 
 function App() {
-  return (
-    <div className="App">
-        <Appbar/>
-        <Form/>
-    </div>
-  );
+    return (
+        <div style={background}>
+            <Home />
+        </div>
+    );
 }
 
 export default App;
