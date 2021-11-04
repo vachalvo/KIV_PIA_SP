@@ -8,18 +8,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @CrossOrigin
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @PostMapping("/add")
-    public String add(@RequestBody User user){
-        userService.updateUser(user);
+    @PostMapping("/create")
+    public User createUser(@RequestBody User user){
+        if(user.getEmail().isBlank() || user.getPassword().isBlank()){
+            return null;
+        }
 
-        return "Added successfully!";
+        return userService.createUser(user);
     }
 
     @GetMapping("getAll")

@@ -3,8 +3,10 @@ package com.kiv.pia.backend.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 @Entity
 @Table(name = "USERS")
@@ -14,11 +16,12 @@ import javax.persistence.*;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "username")
-    private String username;
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    private UUID id;
 
     @Column(name = "password")
     private String password;
@@ -26,8 +29,7 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    public User(String username, String password, String email) {
-        this.username = username;
+    public User(String password, String email) {
         this.password = password;
         this.email = email;
     }
