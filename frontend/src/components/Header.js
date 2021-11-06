@@ -2,12 +2,12 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {Navbar, Container, Nav, Form, FormControl, Button} from "react-bootstrap";
 import Logo from "../favicon.png";
 
-function AppHeader() {
+function Header() {
     return (
         <div>
-            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+            <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
                 <Container>
-                    <Navbar.Brand href="home">
+                    <Navbar.Brand href="/">
                         <img
                             alt=""
                             src={Logo}
@@ -32,8 +32,8 @@ function AppHeader() {
                             <Nav.Link href="#features">Features</Nav.Link>
                         </Nav>
                         <Nav>
-                            <Nav.Link href="#deets">Sign-up</Nav.Link>
-                            <Nav.Link href="#deets">Sign-in</Nav.Link>
+                            <Nav.Link href="/signup">Sign-up</Nav.Link>
+                            <Nav.Link href="/login">Login</Nav.Link>
                         </Nav>
                     </Navbar.Collapse>
                 </Container>
@@ -42,4 +42,4 @@ function AppHeader() {
     );
 }
 
-export default AppHeader;
+export default Header;
