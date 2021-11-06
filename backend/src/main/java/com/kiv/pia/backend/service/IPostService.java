@@ -5,7 +5,7 @@ import com.kiv.pia.backend.model.Post;
 import java.util.List;
 import java.util.UUID;
 
-public interface PostService {
+public interface IPostService {
     Post create(Post post);
     Post findById(UUID postId);
     List<Post> findAll();

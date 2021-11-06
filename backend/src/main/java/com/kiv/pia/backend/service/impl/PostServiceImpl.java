@@ -2,7 +2,7 @@ package com.kiv.pia.backend.service.impl;
 
 import com.kiv.pia.backend.model.Post;
 import com.kiv.pia.backend.repository.PostRepository;
-import com.kiv.pia.backend.service.PostService;
+import com.kiv.pia.backend.service.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class PostServiceImpl implements PostService {
+public class PostServiceImpl implements IPostService {
 
     @Autowired
     private PostRepository postRepository;

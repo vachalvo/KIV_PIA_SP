@@ -1,7 +1,7 @@
 package com.kiv.pia.backend.controller;
 
 import com.kiv.pia.backend.model.Post;
-import com.kiv.pia.backend.service.PostService;
+import com.kiv.pia.backend.service.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import java.util.UUID;
 public class PostController {
 
     @Autowired
-    private PostService postService;
+    private IPostService postService;
 
     @PostMapping("/create")
     public ResponseEntity<?> createPost(@RequestBody Post p){

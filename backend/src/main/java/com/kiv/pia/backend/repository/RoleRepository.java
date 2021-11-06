@@ -1,6 +1,7 @@
 package com.kiv.pia.backend.repository;
 
-import com.kiv.pia.backend.model.User;
+import com.kiv.pia.backend.model.Post;
+import com.kiv.pia.backend.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -10,7 +11,8 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, UUID> {
-    @Query("FROM User WHERE email=:email")
-    User findByEmail(@Param("email") String email);
+public interface RoleRepository  extends JpaRepository<Role, UUID> {
+
+    @Query("SELECT r FROM Role r WHERE r.name = :name")
+    Role findByName(@Param("name") String name);
 }
