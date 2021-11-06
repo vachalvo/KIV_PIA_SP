@@ -1,28 +1,38 @@
 package com.kiv.pia.backend.service.impl;
 
 import com.kiv.pia.backend.model.Role;
-import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.repository.RoleRepository;
-import com.kiv.pia.backend.repository.UserRepository;
-import com.kiv.pia.backend.service.IRoleService;
+import com.kiv.pia.backend.service.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class RoleServiceImpl implements IRoleService {
+public class RoleServiceImpl implements IService<Role, UUID> {
 
     @Autowired
     private RoleRepository roleRepository;
 
     @Override
-    public Role create(Role role) {
+    public Collection<Role> findAll() {
+        return (Collection<Role>) roleRepository.findAll();
+    }
+
+    @Override
+    public Optional<Role> findById(UUID id) {
+        return roleRepository.findById(id);
+    }
+
+    @Override
+    public Role saveOrUpdate(Role role) {
         return roleRepository.save(role);
     }
 
     @Override
-    public Role find(UUID id){
-        return roleRepository.findById(id).orElse(null);
+    public void deleteById(UUID id) {
+        roleRepository.deleteById(id);
     }
 }

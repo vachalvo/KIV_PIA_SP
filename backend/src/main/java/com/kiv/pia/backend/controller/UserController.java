@@ -6,6 +6,7 @@ import com.kiv.pia.backend.model.RoleType;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.repository.RoleRepository;
 import com.kiv.pia.backend.repository.UserRepository;
+import com.kiv.pia.backend.service.IService;
 import com.kiv.pia.backend.service.IUserService;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
@@ -41,7 +42,7 @@ public class UserController {
     private RoleRepository roleRepository;
 
     @Autowired
-    private IUserService userService;
+    private IService<User, UUID> userService;
 
     @Autowired
     private UserRepository userRepository;
@@ -52,9 +53,8 @@ public class UserController {
         JSONObject jsonObject = new JSONObject();
         try {
             user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-            String s = RoleType.ROLE_USER.getName();
-            Role r = roleRepository.findByName(s);
-            user.setRole(r);
+            user.setRole(roleRepository.findByName(RoleType.ROLE_USER.getName()));
+
             User savedUser = userRepository.save(user);
             jsonObject.put("message", savedUser.getEmail() + " saved succesfully");
             return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
@@ -93,22 +93,13 @@ public class UserController {
         return null;
     }
 
-    @PostMapping("/create")
-    public User createUser(@RequestBody User user){
-        if(user.getEmail().isBlank() || user.getPassword().isBlank() || user.getFirstName().isBlank() || user.getLastName().isBlank()){
-            return null;
-        }
-
-        return userService.createUser(user);
-    }
-
     @GetMapping("/{id}")
     public User getUser(@PathVariable("id")UUID id){
-        return userService.getUser(id);
+        return userService.findById(id).orElse(null);
     }
 
-    @GetMapping("/getAll")
-    public List<User> getAllUsers(){
-        return userService.getAllUsers();
+    @GetMapping("/findAll")
+    public List<User> findAll(){
+        return (List<User>) userService.findAll();
     }
 }

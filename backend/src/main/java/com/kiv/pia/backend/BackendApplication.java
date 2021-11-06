@@ -3,23 +3,22 @@ package com.kiv.pia.backend;
 import com.kiv.pia.backend.model.Role;
 import com.kiv.pia.backend.model.RoleType;
 import com.kiv.pia.backend.model.User;
-import com.kiv.pia.backend.service.IRoleService;
-import com.kiv.pia.backend.service.IUserService;
-import com.kiv.pia.backend.service.impl.UserServiceImpl;
+import com.kiv.pia.backend.service.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.util.UUID;
 
 @SpringBootApplication
 public class BackendApplication implements CommandLineRunner{
 
 	@Autowired
-	private IUserService userService;
+	private IService<User, UUID> userService;
 
 	@Autowired
-	private IRoleService roleService;
+	private IService<Role, UUID> roleService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);
@@ -27,8 +26,12 @@ public class BackendApplication implements CommandLineRunner{
 
 	@Override
 	public void run(String... args) throws Exception {
-		roleService.create(new Role(RoleType.ROLE_ADMIN.getName()));
-		roleService.create(new Role(RoleType.ROLE_USER.getName()));
+		if(roleService.findAll().isEmpty()){
+			roleService.saveOrUpdate(new Role(RoleType.ROLE_ADMIN.getName()));
+			roleService.saveOrUpdate(new Role(RoleType.ROLE_USER.getName()));
+		}
+
+		// TODO - add new admin if non admin is saved in postgres
 	}
 
 }
