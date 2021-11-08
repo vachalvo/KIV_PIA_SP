@@ -1,13 +1,12 @@
 package com.kiv.pia.backend.controller;
 
 import com.kiv.pia.backend.config.JwtTokenProvider;
-import com.kiv.pia.backend.model.Role;
-import com.kiv.pia.backend.model.RoleType;
-import com.kiv.pia.backend.model.User;
+import com.kiv.pia.backend.model.*;
+import com.kiv.pia.backend.model.request.AuthenticateBody;
+import com.kiv.pia.backend.model.request.RegistrationBody;
 import com.kiv.pia.backend.repository.RoleRepository;
 import com.kiv.pia.backend.repository.UserRepository;
 import com.kiv.pia.backend.service.IService;
-import com.kiv.pia.backend.service.IUserService;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
@@ -48,7 +47,8 @@ public class UserController {
     private UserRepository userRepository;
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> register(@RequestBody User user) {
+    public ResponseEntity<String> register(@RequestBody RegistrationBody body) {
+        User user = new User(body.getEmail(), body.getPassword(), body.getFirstName(), body.getLastName());
         log.info("UserResourceImpl : register");
         JSONObject jsonObject = new JSONObject();
         try {
@@ -64,23 +64,23 @@ public class UserController {
             } catch (JSONException e1) {
                 e1.printStackTrace();
             }
-            return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
         }
     }
 
     @PostMapping(value = "/authenticate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> authenticate(@RequestBody User user) {
+    public ResponseEntity<String> authenticate(@RequestBody AuthenticateBody body) {
         log.info("UserResourceImpl : authenticate");
         JSONObject jsonObject = new JSONObject();
         try {
             Authentication authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
+                    .authenticate(new UsernamePasswordAuthenticationToken(body.getEmail(), body.getPassword()));
             if (authentication.isAuthenticated()) {
-                String email = user.getEmail();
+                String email = body.getEmail();
                 jsonObject.put("name", authentication.getName());
                 jsonObject.put("authorities", authentication.getAuthorities());
                 jsonObject.put("token", tokenProvider.createToken(email, new Role(RoleType.ROLE_USER.getName())));
-                return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.OK);
+                return new ResponseEntity<>(jsonObject.toString(), HttpStatus.OK);
             }
         } catch (JSONException e) {
             try {
@@ -88,7 +88,7 @@ public class UserController {
             } catch (JSONException e1) {
                 e1.printStackTrace();
             }
-            return new ResponseEntity<String>(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(jsonObject.toString(), HttpStatus.UNAUTHORIZED);
         }
         return null;
     }

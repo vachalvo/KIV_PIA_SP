@@ -9,18 +9,28 @@ function NewPost() {
     const cardStyle = {
         margin: "50px"
     }
-    const [header, setHeader] = useState('');
-    const [content, setContent] = useState('');
+    const [data, setData] = useState({
+        header: '',
+        content: ''
+    });
 
-    const _onClick = async (e) => {
+    const _inputOnChange = (event) => {
+        const { name, value } = event.target;
+        setData({ ...data, [name]: value });
+    };
+
+    const _onClick = async (event) => {
+        event.preventDefault();
         const post = {
-            header,
-            content,
+            header: data.header,
+            content: data.content,
             dateTimeOfPublished: new Date().toISOString()
         };
         axios.post(baseURL + '/posts/create', post).then((response) => {
-            setHeader('');
-            setContent('');
+            setData({
+                header: '',
+                content: ''
+            })
             console.log("success", response);
         });
     }
@@ -33,11 +43,11 @@ function NewPost() {
                     <Form>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
                             <Form.Label>Title</Form.Label>
-                            <Form.Control type="text" placeholder="Header..." onChange={(event) => setHeader(event.target.value)} value={header}/>
+                            <Form.Control type="text" placeholder="Header..." onChange={_inputOnChange} value={data.header}/>
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>Content of post</Form.Label>
-                            <Form.Control as="textarea" rows={3} onChange={(event) => setContent(event.target.value)} value={content}/>
+                            <Form.Control as="textarea" rows={3} onChange={_inputOnChange} value={data.content}/>
                         </Form.Group>
                         <Button onClick={_onClick} variant="primary">Submit</Button>{' '}
                     </Form>
