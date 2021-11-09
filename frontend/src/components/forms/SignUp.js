@@ -3,6 +3,13 @@ import {useState} from "react";
 import {Form, Button, Card, Row, Col, InputGroup} from "react-bootstrap";
 import {useHistory} from "react-router-dom";
 import {post} from "../../global/api";
+import {
+    comparePasswordsValidation,
+    emailValidation,
+    loginPasswordValidation,
+    nameValidation,
+    registerPasswordValidation
+} from "../../global/formValidation";
 
 const initData = {
     email: '',
@@ -12,24 +19,66 @@ const initData = {
     reEnterPassword: ''
 };
 
+const initFeedback = {
+    email: '',
+    firstName: '',
+    lastName: '',
+    password: '',
+    reEnterPassword: ''
+};
+
 function SignUp() {
     const [data, setData] = useState(initData);
+    const [feedback, setFeedback] = useState(initFeedback);
     const history = useHistory();
 
     const _inputOnChange = (event) => {
         const { name, value } = event.target;
         setData({ ...data, [name]: value });
+
+        // Check and see if errors exist, and remove them from the error object:
+        if (!!feedback[name]){
+            setFeedback({
+                ...feedback,
+                [name]: ''
+            });
+        }
     };
 
     const _submit = (event) => {
         event.preventDefault();
-        event.stopPropagation();
+
+        const newFeedback = findFormErrors()
+
+        if (!Object.values(newFeedback).every(x => x === '')) {
+            setFeedback(newFeedback);
+            return;
+        }
 
         post('/users/register', data).then((response) => {
             setData(initData);
-            console.log("success", response);
+            setFeedback(initFeedback);
+
             history.push('login');
         });
+    };
+
+    const findFormErrors = () => {
+        const { email, firstName, lastName, password, reEnterPassword } = data;
+        const newFeedback = {
+            ...initFeedback
+        };
+
+        newFeedback.email = emailValidation(email);
+        newFeedback.firstName = nameValidation(firstName);
+        newFeedback.lastName = nameValidation(lastName);
+        newFeedback.password = registerPasswordValidation(password);
+
+        if(newFeedback.password === ''){
+            newFeedback.reEnterPassword = comparePasswordsValidation(password, reEnterPassword);
+        }
+
+        return newFeedback;
     };
 
     return (
@@ -47,7 +96,9 @@ function SignUp() {
                                 placeholder="Email"
                                 required
                                 onChange={_inputOnChange}
+                                isInvalid={ !!feedback.email }
                             />
+                            <Form.Control.Feedback type="invalid">{feedback.email}</Form.Control.Feedback>
                         </InputGroup>
                     </Form.Group>
                 </Row>
@@ -60,7 +111,9 @@ function SignUp() {
                             name="firstName"
                             placeholder="First name"
                             onChange={_inputOnChange}
+                            isInvalid={ !!feedback.firstName }
                         />
+                        <Form.Control.Feedback type="invalid">{feedback.firstName}</Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md="6" controlId="lastName">
                         <Form.Label>Last name</Form.Label>
@@ -70,7 +123,9 @@ function SignUp() {
                             name="lastName"
                             placeholder="Last name"
                             onChange={_inputOnChange}
+                            isInvalid={ !!feedback.lastName }
                         />
+                        <Form.Control.Feedback type="invalid">{feedback.lastName}</Form.Control.Feedback>
                     </Form.Group>
                 </Row>
                 <Row className="mb-3">
@@ -82,7 +137,9 @@ function SignUp() {
                             placeholder="Password"
                             name="password"
                             onChange={_inputOnChange}
+                            isInvalid={ !!feedback.password }
                         />
+                        <Form.Control.Feedback type="invalid">{feedback.password}</Form.Control.Feedback>
                     </Form.Group>
                     <Form.Group as={Col} md="6" controlId="reEnterPassword">
                         <Form.Label>Re-enter password</Form.Label>
@@ -92,10 +149,14 @@ function SignUp() {
                             type="password"
                             placeholder="Re-enter password"
                             onChange={_inputOnChange}
+                            isInvalid={ !!feedback.reEnterPassword }
                         />
+                        <Form.Control.Feedback type="invalid">{feedback.reEnterPassword}</Form.Control.Feedback>
                     </Form.Group>
                 </Row>
-                <Button type="submit" onClick={_submit}>Sign up</Button>
+                <div style={{"textAlign": "center"}}>
+                    <Button type="submit" onClick={_submit} size="lg" variant="outline-success" >Sign up</Button>
+                </div>
             </Form>
 
         </Card>
