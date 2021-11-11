@@ -21,6 +21,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,7 +49,8 @@ public class UserController {
     private UserRepository userRepository;
 
     @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> register(@RequestBody RegistrationBody body) {
+    @Transactional
+    public ResponseEntity<String> register(@Valid @RequestBody RegistrationBody body) {
         User user = new User(body.getEmail(), body.getPassword(), body.getFirstName(), body.getLastName());
         log.info("UserResourceImpl : register");
         JSONObject jsonObject = new JSONObject();
@@ -69,6 +72,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/authenticate", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
     public ResponseEntity<String> authenticate(@RequestBody AuthenticateBody body) {
         log.info("UserResourceImpl : authenticate");
         JSONObject jsonObject = new JSONObject();
