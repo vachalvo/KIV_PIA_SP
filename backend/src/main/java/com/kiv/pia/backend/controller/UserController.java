@@ -73,7 +73,7 @@ public class UserController {
 
     @PostMapping(value = "/authenticate", produces = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ResponseEntity<String> authenticate(@RequestBody AuthenticateBody body) {
+    public ResponseEntity<String> authenticate(@Valid @RequestBody AuthenticateBody body) {
         log.info("UserResourceImpl : authenticate");
         JSONObject jsonObject = new JSONObject();
         try {
