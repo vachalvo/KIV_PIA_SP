@@ -1,8 +1,18 @@
-const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-const nameRegex = /^[ěščřžýáíéóúůďťňĎŇŤŠČŘŽÝÁÍÉÚŮĚÓa-zA-z]{2,}$/;
+// Email validation regex by RFC-822
+const emailRegex = /^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$/;
+const nameRegex = /^[a-zA-z]{2,}$/;
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{5,}$/;
 
-export const emailValidation = (email) => {
+const validateLoginPassword = (password) => {
+    const trimPassword = password.trim();
+    if(!trimPassword){
+        return 'Password not filled!';
+    }
+
+    return '';
+}
+
+const validateEmail = (email) => {
     if(!email.trim()){
         return 'Email not filled!';
     }
@@ -14,11 +24,14 @@ export const emailValidation = (email) => {
     return '';
 };
 
-export const comparePasswordsValidation = (password, reEnterPassword) => {
+const validatePasswordsParity = (password, reEnterPassword) => {
     return password.localeCompare(reEnterPassword) === 0 ? '' : 'Passwords are not same!';
 };
 
-export const registerPasswordValidation = (password) => {
+const validateRegistrationPassword = (password) => {
+    // TODO - create correct password validation
+    return '';
+
     const trimPassword = password.trim();
     if(!trimPassword){
         return 'Password not filled!';
@@ -35,7 +48,7 @@ export const registerPasswordValidation = (password) => {
     return '';
 };
 
-export const nameValidation = (name) => {
+const validateName = (name) => {
     const trimName = name.trim();
     if(!trimName){
         return 'Name not filled!';
@@ -44,16 +57,15 @@ export const nameValidation = (name) => {
         return 'Name must be at least 2 characters long!';
     }
     if(!nameRegex.test(String(trimName).toLowerCase())){
-        return 'Name has not correct format!';
+        return 'Name has not correct format! (only a-Z, eg. John, Lucia, ...)';
     }
     return '';
 }
 
-export const loginPasswordValidation = (password) => {
-    const trimPassword = password.trim();
-    if(!trimPassword){
-        return 'Password not filled!';
-    }
-
-    return '';
-}
+export default {
+    validateName,
+    validateEmail,
+    validateLoginPassword,
+    validateRegistrationPassword,
+    validatePasswordsParity
+};

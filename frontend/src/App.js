@@ -1,27 +1,45 @@
 import 'bootstrap/dist/css/bootstrap.css';
+import { useState, useEffect } from "react";
+
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 
-import Home from "./components/Home";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import Login from "./components/forms/Login";
-import SignUp from "./components/forms/SignUp";
+import AuthService from "./services/auth-service";
+
+import Home from "./components/base/Home";
+import Header from "./components/base/Header";
+import Footer from "./components/base/Footer";
+import Login from "./components/forms/users/Login";
+import SignUp from "./components/forms/users/SignUp";
 import Feed from "./components/Feed";
+import PrivateRoute from "./components/PrivateRoute";
+
 
 const App = () => {
+    const [currentUser, setCurrentUser] = useState(undefined);
+
+    useEffect(() => {
+        const user = AuthService.getCurrentUser();
+
+        if (user) {
+            setCurrentUser(user);
+        }
+    }, []);
+
+
     return (
         <Router>
-            <Header />
+            <Header currentUser={currentUser}/>
             <Container>
                 <Row>
                     <Col lg={12} className={"margin-top"}>
                         <Switch>
                             <Route path="/" exact component={Home} />
-                            <Route path="/feed" exact component={Feed} />
                             <Route path="/signup" exact component={SignUp} />
                             <Route path="/login" exact component={Login} />
                             <Route path="/logout" exact component={Login} />
+
+                            <PrivateRoute path="/feed" exact component={Feed} />
                         </Switch>
                     </Col>
                 </Row>

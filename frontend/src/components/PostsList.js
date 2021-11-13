@@ -11,8 +11,9 @@ function PostList() {
 
     useEffect(() => {
        const getPostList = async () => {
-           const response = await axios.get(baseURL + '/posts/findAll');
-           setPosts(response.data);
+          // const response = await axios.get(baseURL + '/posts/findAll');
+
+           setPosts([{header: "header", content: "content"}]);
        };
 
        getPostList();
