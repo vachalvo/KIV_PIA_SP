@@ -22,7 +22,7 @@ public class Role {
     )
     private UUID id;
 
-    @Column(length = 20)
+    @Column(length = 20, nullable = false, name = "name")
     private String name;
 
     public Role(String name) {
