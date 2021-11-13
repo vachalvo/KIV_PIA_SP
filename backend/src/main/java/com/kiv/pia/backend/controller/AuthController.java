@@ -4,7 +4,9 @@ import com.kiv.pia.backend.model.Role;
 import com.kiv.pia.backend.model.RoleType;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.model.request.AuthenticateBody;
+import com.kiv.pia.backend.model.request.OrderedChecks;
 import com.kiv.pia.backend.model.request.RegistrationBody;
+import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.model.response.JwtResponse;
 import com.kiv.pia.backend.model.response.MessageResponse;
 import com.kiv.pia.backend.repository.RoleRepository;
@@ -19,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -66,11 +69,11 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody RegistrationBody signUpRequest) {
+    public ResponseEntity<?> signup(@Validated(OrderedChecks.class) @RequestBody RegistrationBody signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+                    .body(new ErrorResponse("Email is already in use!"));
         }
 
         // Create new user's account
