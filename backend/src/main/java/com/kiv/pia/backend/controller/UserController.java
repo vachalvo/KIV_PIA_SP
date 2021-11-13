@@ -41,18 +41,6 @@ public class UserController {
     @Autowired
     private RoleRepository roleRepository;
 
-    @PostMapping(value = "/register", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Transactional
-    public ResponseEntity<String> register(@Valid @RequestBody RegistrationBody body) {
-
-    }
-
-    @PostMapping(value = "/authenticate", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Transactional
-    public ResponseEntity<String> authenticate(@Valid @RequestBody AuthenticateBody body) {
-
-    }
-
     @GetMapping("/{id}")
     public User getUser(@PathVariable("id")UUID id){
         return userService.findById(id).orElse(null);

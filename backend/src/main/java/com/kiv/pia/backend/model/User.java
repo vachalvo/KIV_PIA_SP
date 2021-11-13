@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -26,28 +25,30 @@ public class User {
     )
     private UUID id;
 
-    @Column(name = "password")
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "email")
+    @Column(name = "email", length = 70, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "firstName")
+    @Column(name = "first_Name", length = 50, nullable = false)
     private String firstName;
 
-    @Column(name = "lastName")
+    @Column(name = "last_Name", length = 50, nullable = false)
     private String lastName;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
     public User(String email, String password, String firstName, String lastName) {
         this.password = password;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.role = new Role(RoleType.ROLE_USER.getName());
     }
 
 }

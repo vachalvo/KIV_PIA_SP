@@ -10,6 +10,8 @@ import java.util.UUID;
 
 @Repository
 public interface UserRepository extends CrudRepository<User, UUID> {
-    @Query("FROM User WHERE email=:email")
+    @Query("SELECT u FROM User u WHERE u.email=:email")
     User findByEmail(@Param("email") String email);
+
+    Boolean existsByEmail(String email);
 }
