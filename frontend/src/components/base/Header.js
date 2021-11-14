@@ -2,6 +2,8 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {Navbar, Container, Nav, Form, FormControl, Button} from "react-bootstrap";
 import Logo from "../../img/favicon.png";
 import AuthService from "../../services/auth-service";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUsers, faSignInAlt, faUserPlus, faSignOutAlt, faIdCard, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 function Header(props) {
     const {currentUser} = props;
@@ -24,27 +26,33 @@ function Header(props) {
                         />{' '}
                         Squirrel
                     </Navbar.Brand>
+                    <Nav>
+                        {currentUser && (
+                            <Nav.Link href="/friends"><FontAwesomeIcon icon={faUsers} /> Friends Management</Nav.Link>
+                        )}
+                    </Nav>
+                    {currentUser && (
+                        <Form className="d-flex">
+                            <FormControl
+                                type="search"
+                                placeholder="Search"
+                                className="me-2"
+                                aria-label="Search"
+                            />
+                            <Button variant="outline-success"><FontAwesomeIcon icon={faSearch} /></Button>
+                        </Form>
+                    )}
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse className="justify-content-end">
-                        {currentUser && (
-                            <Form className="d-flex">
-                                <FormControl
-                                    type="search"
-                                    placeholder="Search"
-                                    className="me-2"
-                                    aria-label="Search"
-                                />
-                                <Button variant="outline-success">Search</Button>
-                            </Form>
-                        )}
                         {!currentUser ? (
                             <Nav>
-                                <Nav.Link href="/signup">Sign-up</Nav.Link>
-                                <Nav.Link href="/login">Login</Nav.Link>
+                                <Nav.Link href="/login"><FontAwesomeIcon icon={faSignInAlt} /> Login</Nav.Link>
+                                <Nav.Link href="/signup"><FontAwesomeIcon icon={faUserPlus} /> Sign-up</Nav.Link>
                             </Nav>
                         ) : (
                             <Nav>
-                                <Nav.Link href="/logout" onClick={logout}>Logout</Nav.Link>
+                                <Nav.Link href="/profile"><FontAwesomeIcon icon={faIdCard} /> Profile</Nav.Link>
+                                <Nav.Link href="/logout" onClick={logout}><FontAwesomeIcon icon={faSignOutAlt} /> Logout</Nav.Link>
                             </Nav>
                         )}
                     </Navbar.Collapse>

@@ -9,10 +9,11 @@ import AuthService from "./services/auth-service";
 import Home from "./components/base/Home";
 import Header from "./components/base/Header";
 import Footer from "./components/base/Footer";
-import Login from "./components/forms/users/Login";
-import SignUp from "./components/forms/users/SignUp";
+import Login from "./components/forms/auth/Login";
+import SignUp from "./components/forms/auth/SignUp";
 import Feed from "./components/Feed";
 import PrivateRoute from "./components/PrivateRoute";
+import Profile from "./components/Profile";
 
 
 const App = () => {
@@ -40,6 +41,8 @@ const App = () => {
                             <Route path="/logout" exact component={Login} />
 
                             <PrivateRoute path="/feed" exact component={Feed} />
+                            <PrivateRoute path="/profile" exact component={Profile} />
+                            <PrivateRoute path="/friends" exact component={Home} />
                         </Switch>
                     </Col>
                 </Row>

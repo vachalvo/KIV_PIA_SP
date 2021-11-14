@@ -1,32 +1,52 @@
 import React from "react";
 import AuthService from "../services/auth-service";
+import {Button, Card, Form, InputGroup, Row, Col, Container, Image, ListGroup} from "react-bootstrap";
+import ManProfile from "../img/man.png";
+import WomanProfile from "../img/woman.png";
+import CardHeader from "react-bootstrap/CardHeader";
 
-const Profile = () => {
+const imgStyle = {
+    margin: "20px 0 20px 20px",
+};
+
+const Profile = (props) => {
+    const {name, email, gender} = props;
     const currentUser = AuthService.getCurrentUser();
+    if(!currentUser){
+        return <></>;
+    }
 
     return (
-        <div className="container">
-            <header className="jumbotron">
-                <h3>
-                    <strong>{currentUser.username}</strong> Profile
-                </h3>
-            </header>
-            <p>
-                <strong>Token:</strong> {currentUser.accessToken.substring(0, 20)} ...{" "}
-                {currentUser.accessToken.substr(currentUser.accessToken.length - 20)}
-            </p>
-            <p>
-                <strong>Id:</strong> {currentUser.id}
-            </p>
-            <p>
-                <strong>Email:</strong> {currentUser.email}
-            </p>
-            <strong>Authorities:</strong>
-            <ul>
-                {currentUser.roles &&
-                currentUser.roles.map((role, index) => <li key={index}>{role}</li>)}
-            </ul>
-        </div>
+        <Container  style={{margin: "0px", padding: "20px"}}>
+            <Row className={"justify-content-center"}>
+                <Col md={10}>
+                    <Card>
+                        <Row>
+                            <Col md={4}>
+                                <div style={imgStyle}>
+                                    <Card.Img src={WomanProfile }  className={"mx-auto"}/>
+                                </div>
+
+                            </Col>
+                            <Col md={8}>
+                                <CardHeader>
+                                    <h1> Nellinka Azurová</h1>
+                                </CardHeader>
+                                <Card.Body>
+                                    <Card.Title style={{margin: "0 0 10px 0"}}>
+                                        Basic Info
+                                    </Card.Title>
+                                    <ListGroup variant="flush">
+                                        <ListGroup.Item><b>Email:</b> email@email.cz</ListGroup.Item>
+                                        <ListGroup.Item><b>Gender:</b> Male</ListGroup.Item>
+                                    </ListGroup>
+                                </Card.Body>
+                            </Col>
+                        </Row>
+                    </Card>
+                </Col>
+            </Row>
+        </Container>
     );
 };
 

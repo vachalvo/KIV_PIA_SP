@@ -12,7 +12,8 @@ const initData = {
     firstName: '',
     lastName: '',
     password: '',
-    reEnterPassword: ''
+    reEnterPassword: '',
+    gender: ''
 };
 
 const initFeedback = {
@@ -20,11 +21,13 @@ const initFeedback = {
     firstName: '',
     lastName: '',
     password: '',
-    reEnterPassword: ''
+    reEnterPassword: '',
+    gender: 'asdfasdf'
 };
 
 function SignUp() {
     const [data, setData] = useState(initData);
+    const [gender, setGender] = useState('male');
     const [feedback, setFeedback] = useState(initFeedback);
     const [loading, setLoading] = useState(false);
     const history = useHistory();
@@ -44,7 +47,16 @@ function SignUp() {
         return newFeedback;
     };
 
+    const _genderOnChange = (event) => {
+        const {value, id} = event.target;
+
+        if(value === 'on'){
+            setGender(id);
+        }
+    }
+
     const _onChange = (event) => {
+        console.log(event);
         const { name, value } = event.target;
         setData(prevState => ({
             ...prevState,
@@ -72,7 +84,7 @@ function SignUp() {
             return;
         }
 
-        AuthService.signup(data).then(
+        AuthService.signup({...data, gender}).then(
             (response) => {
                 console.log(response);
                 history.push("/login");
@@ -82,6 +94,7 @@ function SignUp() {
             const response = error.response;
 
             if(response && response.data.fieldErrors){
+                setLoading(false);
                 const newFeedback = {
                     ...initFeedback
                 };
@@ -95,8 +108,8 @@ function SignUp() {
 
     return (
         <Card style={{margin: "50px", padding: "20px"}}>
-            <h2>SignUp</h2>
-            <Form>
+            <h2 className={"text-center"}>Sign Up</h2>
+            <Form className={"justify-content-md-center"}>
                 <Row className="mb-3">
                     <Form.Group as={Col} md="12" controlId="email">
                         <Form.Label>Email</Form.Label>
@@ -166,8 +179,31 @@ function SignUp() {
                         <Form.Control.Feedback type="invalid">{feedback.reEnterPassword}</Form.Control.Feedback>
                     </Form.Group>
                 </Row>
+                <Row className="mb-3">
+                    <Form.Group as={Col} md="6" controlId="gender">
+                        <Form.Check.Label>Gender</Form.Check.Label>
+                        <Form.Check
+                            onChange={_genderOnChange}
+                            label="Male"
+                            name="gender"
+                            type="radio"
+                            id="male"
+                            checked={gender === 'male'}
+                        />
+                        <Form.Check
+                            onChange={_genderOnChange}
+                            label="Female"
+                            checked={gender === 'female'}
+                            name="gender"
+                            type="radio"
+                            id="female"
+                        />
+                    </Form.Group>
+                </Row>
                 <div style={{"textAlign": "center"}}>
-                    <Button type="submit" onClick={_signup} size="lg" variant="outline-success" >Sign up</Button>
+                    <Button type="submit" onClick={_signup} size="lg" disabled={loading} variant="outline-success">
+                        {loading ? 'Loading…' : 'Sign up'}
+                    </Button>
                 </div>
             </Form>
 

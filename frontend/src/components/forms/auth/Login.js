@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {useState} from "react";
 import {useHistory} from "react-router-dom";
 
-import {Form, Button, Card, InputGroup, Row, Col, Alert} from "react-bootstrap";
+import {Form, Button, Card, InputGroup, Row, Col, Alert, Container} from "react-bootstrap";
 
 import Validation from "../../../global/validations";
 import AuthService from "../../../services/auth-service";
@@ -65,8 +65,8 @@ function Login(props) {
 
         AuthService.login(data).then(
             () => {
-                //props.history.push("/profile");
-                //window.location.reload();
+                props.history.push("/feed");
+                window.location.reload();
             },
             (error) => {
                 alert(error);
@@ -115,7 +115,7 @@ function Login(props) {
         <>
             <SuccessToast />
             <Card style={{margin: "50px", padding: "20px"}}>
-                <h2>Login</h2>
+                <h2 className={"text-center"}>Login</h2>
                 <Form>
                     <Row className="mb-3">
                         <Form.Group md="12">
