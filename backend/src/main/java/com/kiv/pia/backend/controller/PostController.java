@@ -1,7 +1,11 @@
 package com.kiv.pia.backend.controller;
 
 import com.kiv.pia.backend.model.Post;
+import com.kiv.pia.backend.model.User;
+import com.kiv.pia.backend.model.request.PostCreateBody;
+import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.service.IPostService;
+import com.kiv.pia.backend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @RestController
@@ -20,9 +26,20 @@ public class PostController {
     @Autowired
     private IPostService postService;
 
+    @Autowired
+    private IUserService userService;
+
     @PostMapping("/create")
-    public ResponseEntity<?> createPost(@RequestBody Post p){
-        Post post = postService.saveOrUpdate(p);
+    public ResponseEntity<?> createPost(@Valid @RequestBody PostCreateBody p){
+        UUID uuid = UUID.fromString(p.getUser());
+        Optional<User> user = userService.findById(uuid);
+        if(user.isEmpty()){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("User dont exist!"));
+        }
+
+        Post post = postService.saveOrUpdate(new Post(p.getHeader(), p.getContent(), p.getDateTimeOfPublished(), user.get()));
         if(post != null){
             return ResponseEntity.ok().body(post);
         }

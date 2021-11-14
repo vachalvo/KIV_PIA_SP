@@ -34,9 +34,13 @@ public class Post {
     @Column(name = "date_time_of_published")
     private LocalDateTime dateTimeOfPublished;
 
-    public Post(String header, String content, LocalDateTime dateTimeOfPublished) {
+    @ManyToOne
+    private User user;
+
+    public Post(String header, String content, LocalDateTime dateTimeOfPublished, User user) {
         this.content = content;
         this.header = header;
         this.dateTimeOfPublished = dateTimeOfPublished;
+        this.user = user;
     }
 }
