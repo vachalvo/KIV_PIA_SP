@@ -13,7 +13,8 @@ const login = (data) => {
         .then((response) => {
             console.log(response);
             if (response.data.token) {
-                sessionStorage.setItem(Constants.USER_SESSION_STORAGE, JSON.stringify(response.data));
+                sessionStorage.setItem(Constants.SESSION_STORAGE_TOKEN, JSON.stringify(response.data.token));
+                sessionStorage.setItem(Constants.SESSION_STORAGE_USER_ID, JSON.stringify(response.data.id));
             }
 
             return response.data;
@@ -21,14 +22,18 @@ const login = (data) => {
 };
 
 const logout = () => {
-    sessionStorage.removeItem(Constants.USER_SESSION_STORAGE);
+    sessionStorage.removeItem(Constants.SESSION_STORAGE_TOKEN);
+    sessionStorage.removeItem(Constants.SESSION_STORAGE_USER_ID);
 };
 
-const getCurrentUser = () => {
-    return JSON.parse(sessionStorage.getItem(Constants.USER_SESSION_STORAGE));
+const getToken = () => {
+    return JSON.parse(sessionStorage.getItem(Constants.SESSION_STORAGE_TOKEN));
 };
 
+const getCurrentUserId = () => {
+    return JSON.parse(sessionStorage.getItem(Constants.SESSION_STORAGE_USER_ID));
+}
 
 export default {
-    signup, login, logout, getCurrentUser
+    signup, login, logout, getToken, getCurrentUserId
 };

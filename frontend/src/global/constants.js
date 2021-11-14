@@ -1,6 +1,7 @@
 const Constants = {
     BASE_URL: 'http://localhost:8080',
-    USER_SESSION_STORAGE: 'user',
+    SESSION_STORAGE_TOKEN: 'token',
+    SESSION_STORAGE_USER_ID: 'id',
     AUTH_TYPE: 'Bearer'
 }
 
