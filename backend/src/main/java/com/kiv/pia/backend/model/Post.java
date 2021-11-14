@@ -31,7 +31,7 @@ public class Post {
     @Column(name = "header")
     private String header;
 
-    @Column(name = "dateTimeOfPublished")
+    @Column(name = "date_time_of_published")
     private LocalDateTime dateTimeOfPublished;
 
     public Post(String header, String content, LocalDateTime dateTimeOfPublished) {

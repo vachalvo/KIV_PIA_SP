@@ -2,14 +2,16 @@ package com.kiv.pia.backend.service.impl;
 
 import com.kiv.pia.backend.model.Post;
 import com.kiv.pia.backend.repository.PostRepository;
-import com.kiv.pia.backend.service.IService;
+import com.kiv.pia.backend.service.IPostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
-public class PostServiceImpl implements IService<Post, UUID> {
+public class PostServiceImpl implements IPostService {
 
     @Autowired
     private PostRepository postRepository;
@@ -32,5 +34,10 @@ public class PostServiceImpl implements IService<Post, UUID> {
     @Override
     public void deleteById(UUID postId) {
         postRepository.deleteById(postId);
+    }
+
+    @Override
+    public Page<Post> findAllByPage(Pageable paging) {
+        return postRepository.findAll(paging);
     }
 }

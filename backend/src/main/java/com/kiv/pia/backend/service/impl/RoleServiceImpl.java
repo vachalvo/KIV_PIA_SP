@@ -2,7 +2,7 @@ package com.kiv.pia.backend.service.impl;
 
 import com.kiv.pia.backend.model.Role;
 import com.kiv.pia.backend.repository.RoleRepository;
-import com.kiv.pia.backend.service.IService;
+import com.kiv.pia.backend.service.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class RoleServiceImpl implements IService<Role, UUID> {
+public class RoleServiceImpl implements IRoleService {
 
     @Autowired
     private RoleRepository roleRepository;

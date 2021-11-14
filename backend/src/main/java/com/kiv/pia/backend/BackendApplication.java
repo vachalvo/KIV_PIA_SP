@@ -2,23 +2,22 @@ package com.kiv.pia.backend;
 
 import com.kiv.pia.backend.model.Role;
 import com.kiv.pia.backend.model.enums.RoleType;
-import com.kiv.pia.backend.model.User;
-import com.kiv.pia.backend.service.IService;
+import com.kiv.pia.backend.service.IRoleService;
+import com.kiv.pia.backend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.UUID;
 
 @SpringBootApplication
 public class BackendApplication implements CommandLineRunner{
 
 	@Autowired
-	private IService<User, UUID> userService;
+	private IUserService userService;
 
 	@Autowired
-	private IService<Role, UUID> roleService;
+	private IRoleService roleService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);

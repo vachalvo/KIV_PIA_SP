@@ -2,15 +2,15 @@ package com.kiv.pia.backend.controller;
 
 import com.kiv.pia.backend.model.Post;
 import com.kiv.pia.backend.service.IPostService;
-import com.kiv.pia.backend.service.IService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/posts")
@@ -18,7 +18,7 @@ import java.util.UUID;
 public class PostController {
 
     @Autowired
-    private IService<Post, UUID> postService;
+    private IPostService postService;
 
     @PostMapping("/create")
     public ResponseEntity<?> createPost(@RequestBody Post p){
@@ -41,9 +41,17 @@ public class PostController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<List<Post>> findAll(){
-        List<Post> posts = (List<Post>) postService.findAll();
-        return ResponseEntity.ok().body(posts);
+    public ResponseEntity<Map<String, Object>> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size,
+                                                       @RequestParam(defaultValue = "dateTimeOfPublished") String sortBy){
+        Page<Post> postsInPage = postService.findAllByPage(PageRequest.of(page, size, Sort.by(sortBy).ascending()));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("posts", postsInPage.getContent());
+        response.put("currentPage", postsInPage.getNumber());
+        response.put("totalItems", postsInPage.getTotalElements());
+        response.put("totalPages", postsInPage.getTotalPages());
+
+        return ResponseEntity.ok().body(response);
     }
 
     @DeleteMapping("/{id}")
