@@ -1,4 +1,4 @@
-package com.kiv.pia.backend.model;
+package com.kiv.pia.backend.model.enums;
 
 public enum RoleType {
     ROLE_USER("role_user"),

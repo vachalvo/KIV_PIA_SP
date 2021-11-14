@@ -1,7 +1,7 @@
 package com.kiv.pia.backend;
 
 import com.kiv.pia.backend.model.Role;
-import com.kiv.pia.backend.model.RoleType;
+import com.kiv.pia.backend.model.enums.RoleType;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.service.IService;
 import org.springframework.beans.factory.annotation.Autowired;

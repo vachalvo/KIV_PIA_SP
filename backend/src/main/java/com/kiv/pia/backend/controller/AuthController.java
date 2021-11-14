@@ -1,7 +1,8 @@
 package com.kiv.pia.backend.controller;
 
 import com.kiv.pia.backend.model.Role;
-import com.kiv.pia.backend.model.RoleType;
+import com.kiv.pia.backend.model.enums.GenderType;
+import com.kiv.pia.backend.model.enums.RoleType;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.model.request.AuthenticateBody;
 import com.kiv.pia.backend.model.request.OrderedChecks;
@@ -80,7 +81,8 @@ public class AuthController {
         User user = new User(signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()),
                 signUpRequest.getFirstName(),
-                signUpRequest.getLastName());
+                signUpRequest.getLastName(),
+                signUpRequest.getGender().equals("male") ? GenderType.MALE.getName() : GenderType.FEMALE.getName());
 
         Set<Role> roles = new HashSet<>();
         Role role = roleRepository.findByName(RoleType.ROLE_USER.getName());

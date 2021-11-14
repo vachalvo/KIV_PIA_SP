@@ -4,7 +4,6 @@ import com.kiv.pia.backend.helpers.constants.UserConst;
 import com.kiv.pia.backend.helpers.validation.annotations.NotSame;
 import lombok.Data;
 
-import javax.validation.GroupSequence;
 import javax.validation.constraints.*;
 interface FirstCheckGroup {}
 interface SecondCheckGroup {}
@@ -12,6 +11,7 @@ interface ThirdCheckGroup {}
 
 @NotSame.List({
         @NotSame(
+                groups = ThirdCheckGroup.class,
                 field = "reEnterPassword",
                 fieldMatch = "password",
                 message = UserConst.RE_ENTER_PASSWORD_NOT_SAME
@@ -43,4 +43,7 @@ public class RegistrationBody {
     @Size(min = 5, max = 30, message = UserConst.RE_ENTER_PASSWORD_SIZE, groups = SecondCheckGroup.class)
     @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{5,30}$", message = UserConst.RE_ENTER_PASSWORD_PATTERN, groups = ThirdCheckGroup.class)
     private String reEnterPassword;
+
+    @NotBlank(groups = FirstCheckGroup.class)
+    private String gender;
 }

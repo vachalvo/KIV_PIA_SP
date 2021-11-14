@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -42,13 +43,17 @@ public class User {
             name = "users_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    private Set<Role> roles = Collections.emptySet();
 
-    public User(String email, String password, String firstName, String lastName) {
+    @Column(name = "gender", length = 50, nullable = false)
+    private String gender;
+
+    public User(String email, String password, String firstName, String lastName, String gender) {
         this.password = password;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.gender = gender;
     }
 
 }
