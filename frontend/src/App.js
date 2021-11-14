@@ -20,7 +20,7 @@ const App = () => {
     const [currentUser, setCurrentUser] = useState(undefined);
 
     useEffect(() => {
-        const user = AuthService.getCurrentUser();
+        const user = AuthService.getToken();
 
         if (user) {
             setCurrentUser(user);
