@@ -22,11 +22,6 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-
     @GetMapping("/{id}")
     public User getUser(@PathVariable("id")UUID id){
         return userService.findById(id).orElse(null);
