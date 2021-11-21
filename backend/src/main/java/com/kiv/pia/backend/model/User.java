@@ -1,5 +1,7 @@
 package com.kiv.pia.backend.model;
 
+import com.kiv.pia.backend.model.enums.FriendshipType;
+import com.kiv.pia.backend.model.enums.GenderType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,7 +9,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Collections;
-import java.util.HashSet;
+
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,6 +40,9 @@ public class User {
     @Column(name = "last_Name", length = 50, nullable = false)
     private String lastName;
 
+    @Enumerated(EnumType.STRING)
+    private GenderType gender;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "users_roles",
@@ -45,15 +50,11 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = Collections.emptySet();
 
-    @Column(name = "gender", length = 50, nullable = false)
-    private String gender;
-
-    public User(String email, String password, String firstName, String lastName, String gender) {
+    public User(String email, String password, String firstName, String lastName, GenderType gender) {
         this.password = password;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.gender = gender;
     }
-
 }

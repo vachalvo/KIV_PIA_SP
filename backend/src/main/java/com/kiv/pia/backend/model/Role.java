@@ -1,5 +1,7 @@
 package com.kiv.pia.backend.model;
 
+import com.kiv.pia.backend.model.enums.GenderType;
+import com.kiv.pia.backend.model.enums.RoleType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,10 +24,10 @@ public class Role {
     )
     private UUID id;
 
-    @Column(length = 20, nullable = false, name = "name")
-    private String name;
+    @Enumerated(EnumType.STRING)
+    private RoleType name;
 
-    public Role(String name) {
+    public Role(RoleType name) {
         this.name = name;
     }
 }

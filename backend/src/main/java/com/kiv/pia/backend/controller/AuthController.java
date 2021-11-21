@@ -80,10 +80,10 @@ public class AuthController {
                 encoder.encode(signUpRequest.getPassword()),
                 signUpRequest.getFirstName(),
                 signUpRequest.getLastName(),
-                signUpRequest.getGender().equals("male") ? GenderType.MALE.getName() : GenderType.FEMALE.getName());
+                signUpRequest.getGender().equals("male") ? GenderType.MALE : GenderType.FEMALE);
 
         Set<Role> roles = new HashSet<>();
-        Role role = roleRepository.findByName(RoleType.ROLE_USER.getName());
+        Role role = roleRepository.findByName(RoleType.ROLE_USER);
 
         if(role == null){
             throw new RuntimeException("Role was not found!");
