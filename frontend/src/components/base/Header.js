@@ -26,22 +26,6 @@ function Header(props) {
                         />{' '}
                         Squirrel
                     </Navbar.Brand>
-                    <Nav>
-                        {currentUser && (
-                            <Nav.Link href="/friends"><FontAwesomeIcon icon={faUsers} /> Friends Management</Nav.Link>
-                        )}
-                    </Nav>
-                    {currentUser && (
-                        <Form className="d-flex">
-                            <FormControl
-                                type="search"
-                                placeholder="Search"
-                                className="me-2"
-                                aria-label="Search"
-                            />
-                            <Button variant="outline-success"><FontAwesomeIcon icon={faSearch} /></Button>
-                        </Form>
-                    )}
                     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                     <Navbar.Collapse className="justify-content-end">
                         {!currentUser ? (
@@ -51,6 +35,17 @@ function Header(props) {
                             </Nav>
                         ) : (
                             <Nav>
+
+                                <Form className="d-flex">
+                                    <FormControl
+                                        type="search"
+                                        placeholder="Search"
+                                        className="me-2"
+                                        aria-label="Search"
+                                    />
+                                    <Button variant="outline-success"><FontAwesomeIcon icon={faSearch} /></Button>
+                                </Form>
+                                <Nav.Link href="/friends"><FontAwesomeIcon icon={faUsers} /> Friends Management</Nav.Link>
                                 <Nav.Link href="/profile"><FontAwesomeIcon icon={faIdCard} /> Profile</Nav.Link>
                                 <Nav.Link href="/logout" onClick={logout}><FontAwesomeIcon icon={faSignOutAlt} /> Logout</Nav.Link>
                             </Nav>

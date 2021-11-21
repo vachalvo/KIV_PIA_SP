@@ -39,10 +39,10 @@ const App = () => {
                             <Route path="/signup" exact component={SignUp} />
                             <Route path="/login" exact component={Login} />
                             <Route path="/logout" exact component={Login} />
-
-                            <PrivateRoute path="/feed" exact component={Feed} />
-                            <PrivateRoute path="/profile" exact component={Profile} />
-                            <PrivateRoute path="/friends" exact component={Home} />
+                            // TODO - add private routes !!!
+                            <Route path="/feed" exact component={Feed} />
+                            <Route path="/profile" exact component={Profile} />
+                            <Route path="/friends" exact component={Home} />
                         </Switch>
                     </Col>
                 </Row>
