@@ -4,6 +4,7 @@ import com.kiv.pia.backend.model.Post;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.model.request.PostCreateBody;
 import com.kiv.pia.backend.model.response.ErrorResponse;
+import com.kiv.pia.backend.security.services.UserDetailsImpl;
 import com.kiv.pia.backend.service.IPostService;
 import com.kiv.pia.backend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +13,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -31,15 +34,36 @@ public class PostController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createPost(@Valid @RequestBody PostCreateBody p){
-        UUID uuid = UUID.fromString(p.getUser());
-        Optional<User> user = userService.findById(uuid);
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        Optional<User> user = userService.findById(userDetails.getId());
         if(user.isEmpty()){
             return ResponseEntity
                     .badRequest()
-                    .body(new ErrorResponse("User dont exist!"));
+                    .body(new ErrorResponse("User does not exist!"));
         }
 
-        Post post = postService.saveOrUpdate(new Post(p.getHeader(), p.getContent(), p.getDateTimeOfPublished(), user.get()));
+        Post post = postService.saveOrUpdate(new Post(p.getHeader(), p.getContent(), LocalDateTime.now(), user.get()));
+        if(post != null){
+            return ResponseEntity.ok().body(post);
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updatePost(@PathVariable UUID id, @Valid @RequestBody PostCreateBody p){
+        Optional<Post> originalPost = postService.findById(id);
+        if(originalPost.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        originalPost.get().setContent(p.getContent());
+        originalPost.get().setHeader(p.getHeader());
+        originalPost.get().setDateTimeOfPublished(LocalDateTime.now());
+        Post post = postService.saveOrUpdate(originalPost.get());
+
         if(post != null){
             return ResponseEntity.ok().body(post);
         }
@@ -50,7 +74,8 @@ public class PostController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getPost(@PathVariable UUID id){
         Optional<Post> post = postService.findById(id);
-        if(post.isEmpty()){
+
+        if(post.isPresent()){
             return ResponseEntity.ok().body(post);
         }
 
