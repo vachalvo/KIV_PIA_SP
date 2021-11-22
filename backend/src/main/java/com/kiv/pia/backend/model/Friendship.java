@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -29,9 +30,15 @@ public class Friendship {
 
     @ManyToOne
     @JoinColumn(name = "source_user_id", referencedColumnName = "id")
-    private User source_user_id;
+    private User sourceUser;
 
     @ManyToOne
     @JoinColumn(name = "end_user_id", referencedColumnName = "id")
-    private User end_user_id;
+    private User endUser;
+
+    public Friendship(User sourceUser, User endUser, FriendshipType friendshipType){
+        this.sourceUser = sourceUser;
+        this.endUser = endUser;
+        this.friendshipType = friendshipType;
+    }
 }
