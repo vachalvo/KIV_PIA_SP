@@ -1,5 +1,6 @@
 package com.kiv.pia.backend;
 
+import com.kiv.pia.backend.controller.UserController;
 import com.kiv.pia.backend.helpers.PasswordGenerator;
 import com.kiv.pia.backend.model.Role;
 import com.kiv.pia.backend.model.User;
@@ -7,6 +8,8 @@ import com.kiv.pia.backend.model.enums.GenderType;
 import com.kiv.pia.backend.model.enums.RoleType;
 import com.kiv.pia.backend.service.IRoleService;
 import com.kiv.pia.backend.service.IUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -28,6 +31,9 @@ public class BackendApplication implements CommandLineRunner{
 	@Autowired
 	private IRoleService roleService;
 
+	private static Logger log = LoggerFactory.getLogger(BackendApplication.class);
+
+
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);
 	}
@@ -43,7 +49,10 @@ public class BackendApplication implements CommandLineRunner{
 		if(userService.findAll().isEmpty()){
 			Collection<Role> collection = roleService.findAll();
 			// TODO log this user to log for getting credentials
-			User default_admin_account = new User("admin@admin.com", encoder.encode(passwordGenerator.generateRandomPassword(8)), "Admin", "Admin", GenderType.MALE);
+			String password = passwordGenerator.generateRandomPassword(8);
+			log.debug("Email: " + "admin@admin.com");
+			log.debug("Password: " + password);
+			User default_admin_account = new User("admin@admin.com", encoder.encode(password), "Admin", "Admin", GenderType.MALE);
 
 			Set<Role> roles = new HashSet<>(collection);
 			default_admin_account.setRoles(roles);

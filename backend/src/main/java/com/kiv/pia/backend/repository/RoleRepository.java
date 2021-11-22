@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface RoleRepository  extends CrudRepository<Role, UUID> {
+public interface RoleRepository extends CrudRepository<Role, UUID> {
     @Query("SELECT r FROM Role r WHERE r.name = :name")
     Role findByName(@Param("name") RoleType name);
 }
