@@ -1,17 +1,19 @@
 package com.kiv.pia.backend.service;
 
 import com.kiv.pia.backend.model.Friendship;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import com.kiv.pia.backend.model.enums.FriendshipType;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface IFriendshipService {
     Collection<Friendship> findAll();
 
-    Optional<Friendship> findById(UUID id);
+    Collection<Friendship> findAll(UUID sourceId, UUID endId);
+
+    Friendship findById(UUID id);
+
+    Collection<Friendship> findByIdAndType(UUID id, FriendshipType friendshipType);
 
     Friendship saveOrUpdate(Friendship t);
 

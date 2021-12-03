@@ -1,6 +1,7 @@
 package com.kiv.pia.backend.service.impl;
 
 import com.kiv.pia.backend.model.Friendship;
+import com.kiv.pia.backend.model.enums.FriendshipType;
 import com.kiv.pia.backend.repository.FriendshipRepository;
 import com.kiv.pia.backend.service.IFriendshipService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,19 @@ public class FriendshipServiceImpl implements IFriendshipService {
     }
 
     @Override
-    public Optional<Friendship> findById(UUID id) {
-        return friendshipRepository.findById(id);
+    public Collection<Friendship> findAll(UUID sourceId, UUID endId) {
+        return (Collection<Friendship>) friendshipRepository.findByBoth(sourceId, endId);
+    }
+
+    @Override
+    public Friendship findById(UUID id) {
+        Optional<Friendship> friendship = friendshipRepository.findById(id);
+        return friendship.orElse(null);
+    }
+
+    @Override
+    public Collection<Friendship> findByIdAndType(UUID id, FriendshipType friendshipType) {
+        return (Collection<Friendship>) friendshipRepository.findBySourceAndType(id, friendshipType);
     }
 
     @Override

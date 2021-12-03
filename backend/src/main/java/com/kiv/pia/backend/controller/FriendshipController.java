@@ -1,14 +1,13 @@
 package com.kiv.pia.backend.controller;
 
 import com.kiv.pia.backend.model.Friendship;
-import com.kiv.pia.backend.model.Post;
 import com.kiv.pia.backend.model.User;
-import com.kiv.pia.backend.model.request.NewFriendshipBody;
-import com.kiv.pia.backend.model.request.PostCreateBody;
+import com.kiv.pia.backend.model.enums.FriendshipState;
+import com.kiv.pia.backend.model.enums.FriendshipType;
+import com.kiv.pia.backend.model.request.FriendshipCollaborationBody;
 import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
 import com.kiv.pia.backend.service.IFriendshipService;
-import com.kiv.pia.backend.service.IPostService;
 import com.kiv.pia.backend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +16,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/friendship")
@@ -31,24 +31,139 @@ public class FriendshipController {
     @Autowired
     private IUserService userService;
 
-    @PostMapping("/newFriendship")
-    public ResponseEntity<?> createNewFriendship(@Valid @RequestBody NewFriendshipBody body){
+    @GetMapping("/findAll/{type}")
+    public ResponseEntity<?> findAll(@PathVariable("type") FriendshipType type){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
-        Optional<User> user = userService.findById(userDetails.getId());
-        Optional<User> endUser = userService.findById(body.getEndId());
-        if(user.isEmpty() || endUser.isEmpty()){
+        User user = userService.findById(userDetails.getId());
+        if(user == null){
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
-        Friendship newFriendship = friendshipService.saveOrUpdate(new Friendship(user.get(), endUser.get(), body.getFriendshipType()));
+        return ResponseEntity
+                .ok()
+                .body(friendshipService.findByIdAndType(user.getId(), type).toArray());
+    }
+
+    @PostMapping("/new/{endId}")
+    public ResponseEntity<?> newFriendship(@PathVariable("endId") UUID endId){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        User user = userService.findById(userDetails.getId());
+        User endUser = userService.findById(endId);
+        if(user == null || endUser == null){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("User does not exist!"));
+        }
+        Collection<Friendship> friendships = friendshipService.findAll(user.getId(), endUser.getId());
+        if(!friendships.isEmpty()) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("Request already send!"));
+        }
+
+        Friendship newFriendship = friendshipService.saveOrUpdate(new Friendship(user, endUser, FriendshipType.REQUEST_WAITING));
         if(newFriendship != null){
             return ResponseEntity.ok().body(newFriendship);
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.badRequest().body(new ErrorResponse("Unknow error! Try it again."));
+    }
+
+    @PostMapping("/interact")
+    public ResponseEntity<?> interact(@Valid @RequestBody FriendshipCollaborationBody body){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        // TODO - add validation on userDetails
+        switch (body.getFriendshipState()){
+            case ACCEPTED:
+                return accept(body);
+            case BLOCKED:
+                return block(body);
+        }
+
+        return ResponseEntity.badRequest().body(new ErrorResponse("Unknown friendship state!"));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") UUID id){
+        Friendship friendship = friendshipService.findById(id);
+        if(friendship == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("Friendship not found!"));
+        }
+
+        friendshipService.deleteById(friendship.getId());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private ResponseEntity<?> accept(FriendshipCollaborationBody body){
+        Friendship friendship = friendshipService.findById(body.getFriendshipId());
+
+        if(friendship == null){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("Friendship not found!"));
+        }
+        if(body.getFriendshipState() != FriendshipState.ACCEPTED){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("Wrong friendship type!"));
+        }
+        if(friendship.getFriendshipType() != FriendshipType.REQUEST_WAITING){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("Cannot unblock user in actual state!"));
+        }
+
+        friendship.setFriendshipType(FriendshipType.FRIENDS);
+        friendship = friendshipService.saveOrUpdate(friendship);
+
+        if(friendship == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("Unknown error!"));
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private ResponseEntity<?> block(FriendshipCollaborationBody body){
+        Friendship friendship = friendshipService.findById(body.getFriendshipId());
+
+        if(friendship == null){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("Friendship not found!"));
+        }
+        if(body.getFriendshipState() != FriendshipState.BLOCKED){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("Wrong friendship type!"));
+        }
+        if(friendship.getFriendshipType() != FriendshipType.REQUEST_WAITING){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("Cannot block user in actual state!"));
+        }
+
+        friendship.setFriendshipType(FriendshipType.BLOCKED);
+        friendship = friendshipService.saveOrUpdate(friendship);
+
+        if(friendship == null) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("Unknown error!"));
+        }
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
