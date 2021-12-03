@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface IUserService {
     Collection<User> findAll();
 
-    Optional<User> findById(UUID id);
+    User findById(UUID id);
 
     User saveOrUpdate(User role);
 

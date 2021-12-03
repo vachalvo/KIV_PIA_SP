@@ -36,14 +36,14 @@ public class PostController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
-        Optional<User> user = userService.findById(userDetails.getId());
-        if(user.isEmpty()){
+        User user = userService.findById(userDetails.getId());
+        if(user == null){
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
-        Post post = postService.saveOrUpdate(new Post(p.getHeader(), p.getContent(), LocalDateTime.now(), user.get()));
+        Post post = postService.saveOrUpdate(new Post(p.getHeader(), p.getContent(), LocalDateTime.now(), user));
         if(post != null){
             return ResponseEntity.ok().body(post);
         }

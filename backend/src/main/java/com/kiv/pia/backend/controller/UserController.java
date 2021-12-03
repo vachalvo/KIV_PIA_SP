@@ -24,7 +24,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable("id")UUID id){
-        return userService.findById(id).orElse(null);
+        return userService.findById(id);
     }
 
     @GetMapping("/findAll")
