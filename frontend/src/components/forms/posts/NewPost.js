@@ -38,7 +38,7 @@ function NewPost() {
     return (
         <div>
             <Card style={cardStyle} border={'dark'}>
-                <Card.Header as="h5">What is going on in your head...?</Card.Header>
+                <Card.Header as="h5">What is going on inside your head...?</Card.Header>
                 <Card.Body>
                     <Form>
                         <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">

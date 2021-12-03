@@ -1,14 +1,11 @@
 import React, {useEffect, useState} from "react";
 import AuthService from "../services/auth-service";
 import UserService from "../services/user-service";
-import {Card, Row, Col, Container, ListGroup, Placeholder} from "react-bootstrap";
+import {Card, Row, Col, Container, ListGroup} from "react-bootstrap";
 import ManProfile from "../img/man.png";
 import WomanProfile from "../img/woman.png";
-import CardHeader from "react-bootstrap/CardHeader";
-
-const imgStyle = {
-    margin: "20px 0 20px 20px",
-};
+import "../styles/components/profile.css";
+import {Skeleton, Typography} from "@mui/material";
 
 const Profile = () => {
     const [user, setUser] = useState(undefined);
@@ -26,76 +23,59 @@ const Profile = () => {
 
     const renderLoggedUserProfile = () => {
         return (
-            <Container  style={{margin: "0px", padding: "20px"}}>
-                <Row className={"justify-content-center"}>
-                    <Col md={10}>
-                        <Card>
-                            <Row>
-                                <Col md={4}>
-                                    <div style={imgStyle}>
-                                        <Card.Img src={user.gender === "male" ? ManProfile : WomanProfile}  className={"mx-auto"}/>
-                                    </div>
-
-                                </Col>
-                                <Col md={8}>
-                                    <CardHeader>
-                                        <h1>{ user.firstName + " " + user.lastName }</h1>
-                                    </CardHeader>
-                                    <Card.Body>
-                                        <Card.Title style={{margin: "0 0 10px 0"}}>
-                                            Basic Info
-                                        </Card.Title>
-                                        <ListGroup variant="flush">
-                                            <ListGroup.Item><b>Email:</b> {user.email}</ListGroup.Item>
-                                            <ListGroup.Item><b>Gender:</b> {user.gender === "male" ? "Male" : "Female"}</ListGroup.Item>
-                                        </ListGroup>
-                                    </Card.Body>
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
-                </Row>
-            </Container>
+            <div class="profile-area">
+                <Container>
+                    <Row className="justify-content-md-center">
+                        <Col md={8} lg={6}>
+                            <Card>
+                                <div class="img1">
+                                    <img src={user.gender === "male" ? ManProfile : WomanProfile} alt="" />
+                                </div>
+                                <Card.Header>
+                                    <h1>{ user.firstName + " " + user.lastName }</h1>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Title style={{margin: "0 0 10px 0"}}>
+                                        Basic Info
+                                    </Card.Title>
+                                    <ListGroup variant="flush">
+                                        <ListGroup.Item><b>Email:</b> {user.email}</ListGroup.Item>
+                                        <ListGroup.Item><b>Gender:</b> {user.gender === "male" ? "Male" : "Female"}</ListGroup.Item>
+                                    </ListGroup>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </Container>
+            </div>
         );
     }
 
     const renderPrivateError = () => {
         return (
-            <Container  style={{margin: "0px", padding: "20px"}}>
-                <Row className={"justify-content-center"}>
-                    <Col md={10}>
-                        <Card>
-                            <Row>
-                                <Col md={4}>
-                                    <div style={imgStyle}>
-                                        <Card.Img src={WomanProfile}  className={"mx-auto"}/>
-                                    </div>
-                                </Col>
-                                <Col md={8}>
-                                    <Placeholder as={Card.Header} animation="glow" size="lg">
-                                        <Placeholder as={Card.Text} animation="glow"  size="lg">
-                                            <Placeholder xs={7}  size="lg"/>
-                                        </Placeholder>
-                                    </Placeholder>
-                                    <Placeholder as={Card.Body} animation="glow">
-                                        <Placeholder as={Card.Title} animation="glow" style={{margin: "0 0 10px 0"}}>
-                                            <Placeholder as={Card.Text} animation="glow">
-                                                <Placeholder xs={5} size="lg" />
-                                            </Placeholder>
-                                            <Placeholder as={Card.Text} animation="glow">
-                                                <Placeholder xs={4} />
-                                            </Placeholder>
-                                            <Placeholder as={Card.Text} animation="glow">
-                                                <Placeholder xs={4} />
-                                            </Placeholder>
-                                        </Placeholder>
-                                    </Placeholder>
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
-                </Row>
-            </Container>
+            <div className="profile-area">
+                <Container>
+                    <Row className="justify-content-md-center">
+                        <Col md={8} lg={6}>
+                            <Card>
+                                <Skeleton variant="rectangular" height={140} />
+                                <Card.Header>
+                                    <Typography variant="h3">{<Skeleton />}</Typography>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Title style={{margin: "0 0 10px 0"}}>
+                                        <Typography variant="h6">{<Skeleton />}</Typography>
+                                    </Card.Title>
+                                    <ListGroup variant="flush">
+                                        <Skeleton width="60%"/>
+                                        <Skeleton width="60%"/>
+                                    </ListGroup>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    </Row>
+                </Container>
+            </div>
         );
     }
 

@@ -14,7 +14,7 @@ function Header(props) {
 
     return (
         <div>
-            <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
+            <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
                 <Container>
                     <Navbar.Brand href="/">
                         <img
@@ -35,16 +35,6 @@ function Header(props) {
                             </Nav>
                         ) : (
                             <Nav>
-
-                                <Form className="d-flex">
-                                    <FormControl
-                                        type="search"
-                                        placeholder="Search"
-                                        className="me-2"
-                                        aria-label="Search"
-                                    />
-                                    <Button variant="outline-success"><FontAwesomeIcon icon={faSearch} /></Button>
-                                </Form>
                                 <Nav.Link href="/friends"><FontAwesomeIcon icon={faUsers} /> Friends Management</Nav.Link>
                                 <Nav.Link href="/profile"><FontAwesomeIcon icon={faIdCard} /> Profile</Nav.Link>
                                 <Nav.Link href="/logout" onClick={logout}><FontAwesomeIcon icon={faSignOutAlt} /> Logout</Nav.Link>

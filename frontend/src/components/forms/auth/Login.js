@@ -18,13 +18,9 @@ const initFeedback = {
 }
 
 function Login(props) {
-    const success = props.location.state;
-
-    const [show, setShow] = useState(success !== undefined);
     const [data, setData] = useState(initData);
     const [loading, setLoading] = useState(false);
     const [feedback, setFeedback] = useState(initFeedback);
-    const history = useHistory();
 
     const _validateForm = () => {
         const { email, password } = data;
@@ -65,7 +61,7 @@ function Login(props) {
 
         AuthService.login(data).then(
             () => {
-                props.history.push("/feed");
+                props.history.push("/");
                 window.location.reload();
             },
             (error) => {
@@ -97,23 +93,8 @@ function Login(props) {
             .catch((err) => console.log(err));*/
     };
 
-
-
-    function SuccessToast() {
-        return (
-            <Row className="justify-content-md-center">
-                <Col xs={8}>
-                    <Alert style={{margin: "10px 0 0 0"}} className={"md-3"} variant="success" show={show} onClose={() => setShow(false)} dismissible >
-                        Registration was successfully.
-                    </Alert>
-                </Col>
-            </Row>
-        );
-    }
-
     return (
         <>
-            <SuccessToast />
             <Card style={{margin: "50px", padding: "20px"}}>
                 <h2 className={"text-center"}>Login</h2>
                 <Form>
