@@ -34,11 +34,8 @@ public class User {
     @Column(name = "email", length = 70, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "first_Name", length = 50, nullable = false)
-    private String firstName;
-
-    @Column(name = "last_Name", length = 50, nullable = false)
-    private String lastName;
+    @Column(name = "name", length = 100, nullable = false)
+    private String name;
 
     @Enumerated(EnumType.STRING)
     private GenderType gender;
@@ -50,11 +47,10 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = Collections.emptySet();
 
-    public User(String email, String password, String firstName, String lastName, GenderType gender) {
+    public User(String email, String password, String name, GenderType gender) {
         this.password = password;
         this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
         this.gender = gender;
     }
 }

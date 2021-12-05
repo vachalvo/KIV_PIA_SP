@@ -51,7 +51,7 @@ public class BackendApplication implements CommandLineRunner{
 			String password = passwordGenerator.generateRandomPassword(8);
 			log.debug("Email: " + "admin@admin.com");
 			log.debug("Password: " + password);
-			User default_admin_account = new User("admin@admin.com", encoder.encode(password), "Admin", "Admin", GenderType.MALE);
+			User default_admin_account = new User("admin@admin.com", encoder.encode(password), "Admin Admin", GenderType.MALE);
 
 			Set<Role> roles = new HashSet<>(collection);
 			default_admin_account.setRoles(roles);
