@@ -1,34 +1,68 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import {IconButton, ListItem, ListItemAvatar, ListItemText} from "@mui/material";
-import {CheckOutlined, DeleteOutline, ThumbUpAltOutlined} from "@mui/icons-material";
+import {
+    CheckOutlined,
+    DeleteOutline,
+    FileUploadOutlined,
+    FileDownloadOutlined,
+    BlockOutlined
+} from "@mui/icons-material";
 import GenderAvatar from "./avatars/GenderAvatar";
+import AuthService from "../services/auth-service";
+import {useEffect, useState} from "react";
+
+const DEFAULT_USER = {
+    id: '',
+    name: '',
+    email: '',
+    gender: 'MALE',
+    roles: [{
+        name: 'ROLE_USER'
+    }]
+};
 
 function FriendItem(props) {
-    let {item, type} = props;
-    const {id, email, gender, name} = item;
+    const {item, type, onDelete, onDecision} = props;
+    const { sourceUser, endUser } = item;
+    const userId = AuthService.getCurrentUserId();
 
-    const deleteOnClick = () => {
+    const [user, setUser] = useState(DEFAULT_USER)
 
-    };
+    useEffect(() => {
+        setUser(sourceUser.id === userId ? {...endUser} : {...sourceUser});
+    },[]);
 
-    const requestConfirmClick = () => {
-
-    };
-
-    const getButton = (color, Icon) => {
+    const empty = () => {};
+    const getButton = (color, Icon, _onClick = empty) => {
         return (
-            <IconButton edge="end" color={color}>
+            <IconButton
+                edge="end"
+                color={color}
+                onClick={_onClick}
+            >
                 <Icon />
             </IconButton>
         );
     }
 
+    const getReceivedRequestButtons = () => {
+        return (
+            <>
+                {getButton("success", CheckOutlined, () => onDecision(item.id, 'ACCEPTED'))}
+                {getButton("error", BlockOutlined, () => onDecision(item.id, 'BLOCKED'))}
+            </>
+        )
+    };
+
     const getButtonByType = (type) => {
         let controlButton;
-
         switch (type) {
             case "Received requests":
-                controlButton = getButton("success", CheckOutlined);
+                controlButton = getReceivedRequestButtons();
+                break;
+            case "Friends":
+                controlButton = getButton("primary", FileUploadOutlined);
+                // controlButton = getButton("primary", FileDownloadOutlined);
                 break;
             default:
                 controlButton = <div/>;
@@ -37,7 +71,7 @@ function FriendItem(props) {
 
         return <div>
             {controlButton}
-            {getButton("error", DeleteOutline, "Delete")}
+            {getButton("error", DeleteOutline, () => { onDelete(item.id, type) })}
         </div>;
     }
 
@@ -48,11 +82,11 @@ function FriendItem(props) {
                 divider={true}
             >
                 <ListItemAvatar>
-                    <GenderAvatar gender={gender}/>
+                    <GenderAvatar gender={user.gender}/>
                 </ListItemAvatar>
                 <ListItemText
-                    primary={name}
-                    secondary={email}
+                    primary={user.name}
+                    secondary={user.email}
                 />
                 {getButtonByType(type)}
             </ListItem>

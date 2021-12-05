@@ -7,8 +7,8 @@ function GenderAvatar(props) {
     const {gender} = props;
 
     return (
-        <Avatar sx={{ bgcolor: gender === 'male' ? blue[500] : pink[500] }}>
-            {gender === 'male' ?
+        <Avatar sx={{ bgcolor: gender === 'MALE' ? blue[500] : pink[500] }}>
+            {gender === 'MALE' ?
                 <MaleOutlined /> : <FemaleOutlined />
             }
         </Avatar>

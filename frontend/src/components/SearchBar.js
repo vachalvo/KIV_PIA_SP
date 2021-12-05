@@ -1,64 +1,84 @@
 import * as React from 'react';
 import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-import CircularProgress from '@mui/material/CircularProgress';
+import {Autocomplete, CircularProgress} from "@mui/material";
+import {useRef, useState} from "react";
+import UserService from "../services/user-service";
+import UserListItem from "./UserListItem";
 
-function sleep(delay = 0) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, delay);
-    });
-}
+export default function SearchBar(parentProps) {
+    const [items, setItems] = useState([]);
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [value, setValue] = useState('');
 
-export default function SearchBar() {
-    const [open, setOpen] = React.useState(false);
-    const [options, setOptions] = React.useState([]);
-    const loading = open && options.length === 0;
+    const fetchUsers = async (name) => {
+        setLoading(true);
+        const res = await UserService.findUsersByName(name);
+        console.log(res.data);
+        setLoading(false);
+        editStructureOfItems(res.data);
+    };
 
-    React.useEffect(() => {
-        let active = true;
+    const editStructureOfItems = (data) => {
+        data.map((item) => {
+            return {
+                ...item,
+                label: item.name
+            };
+        });
+        setItems(data);
+    }
 
-        if (!loading) {
-            return undefined;
+    const fetchUser = async (id) => {
+        setOpen(false);
+
+        const res = await UserService.getUser(id);
+        console.log("Clicked user: ", res.data);
+    }
+
+    const _onChange = (event) => {
+        const val = event.target.value;
+        setValue(val);_checkValue(val);
+    };
+
+    const _checkValue = (val) => {
+        if(val && val.length >= 3){
+            setOpen(true);
+            fetchUsers(val);
         }
+    }
 
-        (async () => {
-            await sleep(1e3); // For demo purposes.
-
-            if (active) {
-                setOptions([...topFilms]);
-            }
-        })();
-
-        return () => {
-            active = false;
-        };
-    }, [loading]);
-
-    React.useEffect(() => {
-        if (!open) {
-            setOptions([]);
-        }
-    }, [open]);
+    const _onClear = () => {
+        setItems([]);
+        setOpen(false);
+    }
 
     return (
-        <Autocomplete
-            id="asynchronous-demo"
-            sx={{ width: 300 }}
-            open={open}
-            onOpen={() => {
-                setOpen(true);
-            }}
-            onClose={() => {
-                setOpen(false);
-            }}
-            isOptionEqualToValue={(option, value) => option.title === value.title}
-            getOptionLabel={(option) => option.title}
-            options={options}
-            loading={loading}
-            renderInput={(params) => (
-                <TextField
+        <>
+            <Autocomplete
+                disablePortal
+                style={{padding: '0 0 20px 0'}}
+                id="filled-search"
+                fullWidth sx={{ m: 1 }}
+                options={items}
+                getOptionLabel={(item) => item.user.name + item.user.id}
+                groupBy={(item) => item.user.name.charAt(0)}
+                variant="filled"
+                loading={loading}
+                open={open}
+                onOpen={() => {
+                    _checkValue(value);
+                    setOpen(true);
+                }}
+                onClose={() => {
+                    setOpen(false);
+                }}
+                clearOnBlur
+                renderInput={(params) => <TextField
                     {...params}
-                    label="Asynchronous"
+                    value={value}
+                    onChange={_onChange}
+                    label="Search"
                     InputProps={{
                         ...params.InputProps,
                         endAdornment: (
@@ -68,59 +88,15 @@ export default function SearchBar() {
                             </React.Fragment>
                         ),
                     }}
-                />
-            )}
-        />
+                />}
+                renderOption={(props, option, { inputValue }) => {
+                    return (
+                        <div key={option} { ...props } onClick={() => { fetchUser(option.user.id) }}>
+                            <UserListItem key={option.user.id} option={option} {...parentProps} onClear={_onClear}/>
+                        </div>
+                    );
+                }}
+            />
+        </>
     );
 }
-
-// Top films as rated by IMDb users. http://www.imdb.com/chart/top
-const topFilms = [
-    { title: 'The Shawshank Redemption', year: 1994 },
-    { title: 'The Godfather', year: 1972 },
-    { title: 'The Godfather: Part II', year: 1974 },
-    { title: 'The Dark Knight', year: 2008 },
-    { title: '12 Angry Men', year: 1957 },
-    { title: "Schindler's List", year: 1993 },
-    { title: 'Pulp Fiction', year: 1994 },
-    {
-        title: 'The Lord of the Rings: The Return of the King',
-        year: 2003,
-    },
-    { title: 'The Good, the Bad and the Ugly', year: 1966 },
-    { title: 'Fight Club', year: 1999 },
-    {
-        title: 'The Lord of the Rings: The Fellowship of the Ring',
-        year: 2001,
-    },
-    {
-        title: 'Star Wars: Episode V - The Empire Strikes Back',
-        year: 1980,
-    },
-    { title: 'Forrest Gump', year: 1994 },
-    { title: 'Inception', year: 2010 },
-    {
-        title: 'The Lord of the Rings: The Two Towers',
-        year: 2002,
-    },
-    { title: "One Flew Over the Cuckoo's Nest", year: 1975 },
-    { title: 'Goodfellas', year: 1990 },
-    { title: 'The Matrix', year: 1999 },
-    { title: 'Seven Samurai', year: 1954 },
-    {
-        title: 'Star Wars: Episode IV - A New Hope',
-        year: 1977,
-    },
-    { title: 'City of God', year: 2002 },
-    { title: 'Se7en', year: 1995 },
-    { title: 'The Silence of the Lambs', year: 1991 },
-    { title: "It's a Wonderful Life", year: 1946 },
-    { title: 'Life Is Beautiful', year: 1997 },
-    { title: 'The Usual Suspects', year: 1995 },
-    { title: 'Léon: The Professional', year: 1994 },
-    { title: 'Spirited Away', year: 2001 },
-    { title: 'Saving Private Ryan', year: 1998 },
-    { title: 'Once Upon a Time in the West', year: 1968 },
-    { title: 'American History X', year: 1998 },
-    { title: 'Interstellar', year: 2014 },
-];

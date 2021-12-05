@@ -4,27 +4,41 @@ import Constants from "../global/constants";
 
 const API_URL = Constants.BASE_URL + '/friendship';
 const TYPES = {
+    request_waiting: "REQUEST_WAITING",
+    friends: "FRIENDS",
+    blocked: "BLOCKED"
+};
+const STATES = {
+    accept: "ACCEPTED",
+    reject: "REJECTED"
+};
 
-}
 const newFriendship = (id) => {
-    return axios.get(API_URL + '/' + id, { headers: authHeader() });
+    console.log("newFriendshipSend");
+    return axios.post(API_URL + '/new/' + id, null, { headers: authHeader() });
 };
 
-const interact = (id) => {
-    return axios.get(API_URL + '/' + id, { headers: authHeader() });
+const interact = (id, state) => {
+    const body = {
+        friendshipId: id,
+        friendshipState: state
+    }
+    return axios.post(API_URL + '/interact', body, { headers: authHeader() });
 };
 
-const findFriendsByType = (type) => {
-    return axios.get(API_URL + '/findAll/' + type, { headers: authHeader() });
+const findFriendsByType = (type, bySource = true) => {
+    const params = {
+        bySource: bySource
+    }
+    return axios.get(API_URL + '/findAll/' + type, { headers: authHeader(), params });
 }
 
-const deleteFriendship = (id) => {
+const cancel = (id) => {
     return axios
-        .delete(API_URL + "/", id)
+        .delete(API_URL + "/" + id, { headers: authHeader() })
         .then((response) => {
-            console.log(response);
             return response.data;
         });
 };
 
-export default {newFriendship, deleteFriendship, interact};
+export default { STATES, TYPES, newFriendship, cancel, interact, findFriendsByType};

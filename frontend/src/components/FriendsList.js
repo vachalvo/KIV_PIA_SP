@@ -1,11 +1,33 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import {Card, Col, Container, Row} from "react-bootstrap";
-import {Divider, List} from "@mui/material";
+import {Card, Col} from "react-bootstrap";
+import {List} from "@mui/material";
 import FriendItem from "./FriendItem";
+import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
+import UserService from "../services/user-service";
+import AuthService from "../services/auth-service";
 
+const FriendsList = forwardRef((props, ref) => {
+    const {type, onFetch, onDelete, onDecision} = props;
+    const [items, setItems] = useState([]);
 
-function FriendsList(props) {
-    const {type, items} = props;
+    useImperativeHandle(
+        ref,
+        () => ({
+            update() {
+                updateItems();
+            }
+        }),
+    );
+
+    const updateItems = () => {
+        onFetch().then((res) => {
+            setItems(res);
+        });
+    }
+
+    useEffect(() => {
+        updateItems();
+    }, []);
 
     return (
         <Col>
@@ -16,13 +38,19 @@ function FriendsList(props) {
                         style={{maxHeight: 400, overflow: 'auto'}}
                     >
                         {items.map((item) => {
-                            return <FriendItem key={item.id} item={item} type={type} />
+                            return <FriendItem
+                                key={item.id}
+                                item={item}
+                                type={type}
+                                onDelete={onDelete}
+                                onDecision={onDecision}
+                            />
                         })}
                     </List>
                 </Card.Body>
             </Card>
         </Col>
     );
-}
+});
 
 export default FriendsList;

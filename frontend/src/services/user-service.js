@@ -8,4 +8,8 @@ const getUser = (id) => {
     return axios.get(API_URL + '/' + id, { headers: authHeader() });
 };
 
-export default {getUser};
+const findUsersByName = (name) => {
+    return axios.get(API_URL + "/findAll/" + name, { headers: authHeader() });
+};
+
+export default { getUser, findUsersByName };
