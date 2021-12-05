@@ -1,11 +1,13 @@
 package com.kiv.pia.backend.controller;
 
+import com.kiv.pia.backend.mapper.UserMapper;
 import com.kiv.pia.backend.model.Friendship;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.model.enums.FriendshipState;
 import com.kiv.pia.backend.model.enums.FriendshipType;
 import com.kiv.pia.backend.model.request.FriendshipCollaborationBody;
 import com.kiv.pia.backend.model.response.ErrorResponse;
+import com.kiv.pia.backend.model.response.FriendshipListResponseEntity;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
 import com.kiv.pia.backend.service.IFriendshipService;
 import com.kiv.pia.backend.service.IUserService;
@@ -16,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.ws.rs.QueryParam;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +29,8 @@ import java.util.UUID;
 @CrossOrigin
 public class FriendshipController {
 
+    private UserMapper userMapper = new UserMapper();
+
     @Autowired
     private IFriendshipService friendshipService;
 
@@ -32,7 +38,7 @@ public class FriendshipController {
     private IUserService userService;
 
     @GetMapping("/findAll/{type}")
-    public ResponseEntity<?> findAll(@PathVariable("type") FriendshipType type){
+    public ResponseEntity<?> findAll(@PathVariable("type") FriendshipType type, @RequestParam(defaultValue = "true") boolean bySource){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
@@ -43,18 +49,27 @@ public class FriendshipController {
                     .body(new ErrorResponse("User does not exist!"));
         }
 
+        List<Friendship> friendships;
+
+        if(type == FriendshipType.FRIENDS){
+            friendships = new ArrayList<>(friendshipService.findAllFriends(user.getId()));
+        }
+        else{
+            friendships = new ArrayList<>(friendshipService.findByIdAndType(user.getId(), type, bySource));
+        }
+
         return ResponseEntity
                 .ok()
-                .body(friendshipService.findByIdAndType(user.getId(), type).toArray());
+                .body(friendships);
     }
 
-    @PostMapping("/new/{endId}")
-    public ResponseEntity<?> newFriendship(@PathVariable("endId") UUID endId){
+    @PostMapping("/new/{id}")
+    public ResponseEntity<?> newFriendship(@PathVariable UUID id){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
         User user = userService.findById(userDetails.getId());
-        User endUser = userService.findById(endId);
+        User endUser = userService.findById(id);
         if(user == null || endUser == null){
             return ResponseEntity
                     .badRequest()
@@ -80,7 +95,6 @@ public class FriendshipController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
-        // TODO - add validation on userDetails
         switch (body.getFriendshipState()){
             case ACCEPTED:
                 return accept(body);

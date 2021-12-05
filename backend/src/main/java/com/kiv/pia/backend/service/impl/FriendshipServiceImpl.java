@@ -34,8 +34,17 @@ public class FriendshipServiceImpl implements IFriendshipService {
     }
 
     @Override
-    public Collection<Friendship> findByIdAndType(UUID id, FriendshipType friendshipType) {
-        return (Collection<Friendship>) friendshipRepository.findBySourceAndType(id, friendshipType);
+    public Collection<Friendship> findByIdAndType(UUID id, FriendshipType friendshipType, boolean bySource) {
+        if(bySource){
+            return (Collection<Friendship>) friendshipRepository.findBySourceAndType(id, friendshipType);
+        }
+
+        return (Collection<Friendship>) friendshipRepository.findByEndAndType(id, friendshipType);
+    }
+
+    @Override
+    public Collection<Friendship> findAllFriends(UUID id) {
+        return (Collection<Friendship>) friendshipRepository.findAllFriends(id);
     }
 
     @Override
@@ -46,10 +55,6 @@ public class FriendshipServiceImpl implements IFriendshipService {
     @Override
     public void deleteById(UUID id) {
         friendshipRepository.deleteById(id);
-    }
-
-    public Collection<Friendship> findBySource(UUID sourceId){
-        return (Collection<Friendship>) friendshipRepository.findBySource(sourceId);
     }
 }
 

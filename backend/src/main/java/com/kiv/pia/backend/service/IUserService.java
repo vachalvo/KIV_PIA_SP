@@ -1,5 +1,6 @@
 package com.kiv.pia.backend.service;
 
+import com.kiv.pia.backend.model.Friendship;
 import com.kiv.pia.backend.model.Role;
 import com.kiv.pia.backend.model.User;
 
@@ -12,6 +13,8 @@ public interface IUserService {
     Collection<User> findAll();
 
     User findById(UUID id);
+
+    Collection<User> findByName(UUID sourceId, String name);
 
     User saveOrUpdate(User role);
 

@@ -28,6 +28,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public Collection<User> findByName(UUID sourceId, String name) {
+        return (Collection<User>) userRepository.findByPartName(name, sourceId);
+    }
+
+    @Override
     public User saveOrUpdate(User user) {
         return userRepository.save(user);
     }

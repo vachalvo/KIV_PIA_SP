@@ -13,7 +13,9 @@ public interface IFriendshipService {
 
     Friendship findById(UUID id);
 
-    Collection<Friendship> findByIdAndType(UUID id, FriendshipType friendshipType);
+    Collection<Friendship> findByIdAndType(UUID id, FriendshipType friendshipType, boolean bySource);
+
+    Collection<Friendship> findAllFriends(UUID id);
 
     Friendship saveOrUpdate(Friendship t);
 
