@@ -13,6 +13,7 @@ const Profile = () => {
     useEffect(() => {
          const fetchUser = async () => {
             const res = await UserService.getUser(AuthService.getCurrentUserId());
+
             return res.data;
         }
 
@@ -23,16 +24,16 @@ const Profile = () => {
 
     const renderLoggedUserProfile = () => {
         return (
-            <div class="profile-area">
+            <div className="profile-area">
                 <Container>
                     <Row className="justify-content-md-center">
                         <Col md={8} lg={6}>
                             <Card>
-                                <div class="img1">
-                                    <img src={user.gender === "male" ? ManProfile : WomanProfile} alt="" />
+                                <div className="img1">
+                                    <img src={user.gender === "MALE" ? ManProfile : WomanProfile} alt="" />
                                 </div>
                                 <Card.Header>
-                                    <h1>{ user.firstName + " " + user.lastName }</h1>
+                                    <h1>{ user.name }</h1>
                                 </Card.Header>
                                 <Card.Body>
                                     <Card.Title style={{margin: "0 0 10px 0"}}>
@@ -40,7 +41,7 @@ const Profile = () => {
                                     </Card.Title>
                                     <ListGroup variant="flush">
                                         <ListGroup.Item><b>Email:</b> {user.email}</ListGroup.Item>
-                                        <ListGroup.Item><b>Gender:</b> {user.gender === "male" ? "Male" : "Female"}</ListGroup.Item>
+                                        <ListGroup.Item><b>Gender:</b> {user.gender === "MALE" ? "Male" : "Female"}</ListGroup.Item>
                                     </ListGroup>
                                 </Card.Body>
                             </Card>
