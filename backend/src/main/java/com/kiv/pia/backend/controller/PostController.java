@@ -1,15 +1,18 @@
 package com.kiv.pia.backend.controller;
 
+import com.kiv.pia.backend.model.Friendship;
 import com.kiv.pia.backend.model.Post;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.model.request.PostCreateBody;
 import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
+import com.kiv.pia.backend.service.IFriendshipService;
 import com.kiv.pia.backend.service.IPostService;
 import com.kiv.pia.backend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +34,31 @@ public class PostController {
     @Autowired
     private IUserService userService;
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createPost(@Valid @RequestBody PostCreateBody p){
+    @Autowired
+    private IFriendshipService friendshipService;
+
+    private User getCurrentUser() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
-        User user = userService.findById(userDetails.getId());
+        return userService.findById(userDetails.getId());
+    }
+
+
+    private Map<String, Object> createPagePostsResponseBody(Page<Post> page){
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("posts", page.getContent());
+        response.put("currentPage", page.getNumber());
+        response.put("totalItems", page.getTotalElements());
+        response.put("totalPages", page.getTotalPages());
+
+        return response;
+    }
+
+    @PostMapping("/create")
+    public ResponseEntity<?> createPost(@Valid @RequestBody PostCreateBody p){
+        User user = getCurrentUser();
         if(user == null){
             return ResponseEntity
                     .badRequest()
@@ -60,7 +82,6 @@ public class PostController {
 
         originalPost.get().setContent(p.getContent());
         originalPost.get().setHeader(p.getHeader());
-        originalPost.get().setDateTimeOfPublished(LocalDateTime.now());
         Post post = postService.saveOrUpdate(originalPost.get());
 
         if(post != null){
@@ -82,17 +103,31 @@ public class PostController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<Map<String, Object>> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size,
+    public ResponseEntity<?> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size,
                                                        @RequestParam(defaultValue = "dateTimeOfPublished") String sortBy){
-        Page<Post> postsInPage = postService.findAllByPage(PageRequest.of(page, size, Sort.by(sortBy).ascending()));
+        User user = getCurrentUser();
+        if(user == null){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("User does not exist!"));
+        }
+        Page<Post> postsInPage = postService.findAllByFriends(user.getId(), PageRequest.of(page, size, Sort.by(sortBy).descending()));
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("posts", postsInPage.getContent());
-        response.put("currentPage", postsInPage.getNumber());
-        response.put("totalItems", postsInPage.getTotalElements());
-        response.put("totalPages", postsInPage.getTotalPages());
+        return ResponseEntity.ok().body(createPagePostsResponseBody(postsInPage));
+    }
 
-        return ResponseEntity.ok().body(response);
+    @GetMapping("/findAllByUser")
+    public ResponseEntity<?> findAllByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size,
+                                                       @RequestParam(defaultValue = "dateTimeOfPublished") String sortBy){
+        User user = getCurrentUser();
+        if(user == null){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("User does not exist!"));
+        }
+        Page<Post> usersPosts = postService.findAllByUser(user.getId(), PageRequest.of(page, size, Sort.by(sortBy).descending()));
+
+        return ResponseEntity.ok().body(createPagePostsResponseBody(usersPosts));
     }
 
     @DeleteMapping("/{id}")

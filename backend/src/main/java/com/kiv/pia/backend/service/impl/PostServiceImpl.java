@@ -37,7 +37,12 @@ public class PostServiceImpl implements IPostService {
     }
 
     @Override
-    public Page<Post> findAllByPage(Pageable paging) {
-        return postRepository.findAll(paging);
+    public Page<Post> findAllByFriends(UUID id, Pageable paging) {
+        return postRepository.findAllByFriends(id, paging);
+    }
+
+    @Override
+    public Page<Post> findAllByUser(UUID id, Pageable paging) {
+        return postRepository.findAllByUser(id, paging);
     }
 }

@@ -17,5 +17,7 @@ public interface IPostService {
 
     void deleteById(UUID id);
 
-    Page<Post> findAllByPage(Pageable paging);
+    Page<Post> findAllByFriends(UUID id, Pageable paging);
+
+    Page<Post> findAllByUser(UUID id, Pageable paging);
 }
