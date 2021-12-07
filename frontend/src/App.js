@@ -29,7 +29,6 @@ const App = () => {
         }
     }, []);
 
-
     return (
         <Router>
             <Header currentUser={currentUser}/>

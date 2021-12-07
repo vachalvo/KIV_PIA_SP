@@ -14,7 +14,6 @@ const STATES = {
 };
 
 const newFriendship = (id) => {
-    console.log("newFriendshipSend");
     return axios.post(API_URL + '/new/' + id, null, { headers: authHeader() });
 };
 
@@ -35,7 +34,7 @@ const findFriendsByType = (type, bySource = true) => {
 
 const cancel = (id) => {
     return axios
-        .delete(API_URL + "/" + id, { headers: authHeader() })
+        .delete(API_URL + '/' + id, { headers: authHeader() })
         .then((response) => {
             return response.data;
         });
