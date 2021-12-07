@@ -152,7 +152,7 @@ const PostList = forwardRef((props, ref) => {
                     <Button autoFocus onClick={onCloseEditDialog} startIcon={<CloseOutlined />}>
                         Cancel
                     </Button>
-                    <Button onClick={editPost} autoFocus startIcon={<EditOutlined />}>
+                    <Button variant="contained" onClick={editPost} color="success" autoFocus startIcon={<EditOutlined />}>
                         Edit
                     </Button>
                 </DialogActions>
@@ -182,7 +182,7 @@ const PostList = forwardRef((props, ref) => {
                     <Button autoFocus onClick={onCloseDeleteDialog} startIcon={<CloseOutlined />}>
                         Cancel
                     </Button>
-                    <Button variant="outlined" onClick={deletePost} color="error" autoFocus startIcon={<DeleteOutline />}>
+                    <Button variant="contained" onClick={deletePost} color="error" autoFocus startIcon={<DeleteOutline />}>
                         Delete
                     </Button>
                 </DialogActions>
