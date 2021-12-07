@@ -1,13 +1,24 @@
 import React, {useEffect, useState} from "react";
 import AuthService from "../services/auth-service";
 import UserService from "../services/user-service";
-import {Card, Row, Col, Container, ListGroup} from "react-bootstrap";
+import {Card, Row, Col, Container} from "react-bootstrap";
 import ManProfile from "../img/man.png";
 import WomanProfile from "../img/woman.png";
-import "../styles/components/profile.css";
-import {Skeleton, Typography} from "@mui/material";
+import {
+    CardContent,
+    CardMedia,
+    List, ListItem, ListItemIcon,
+    ListItemText,
+    Skeleton,
+    Typography
+} from "@mui/material";
 import PostService from "../services/post-service";
-import PostCard from "./PostCard";
+import {
+    AlternateEmailOutlined,
+    FemaleOutlined,
+    MaleOutlined,
+} from "@mui/icons-material";
+import PostList from "./PostsList";
 
 const Profile = () => {
     const [user, setUser] = useState(undefined);
@@ -29,26 +40,48 @@ const Profile = () => {
 
     const renderLoggedUserProfile = () => {
         return (
-            <div className="profile-area">
+            <div style={{margin: '20px 0 20px 0'}}>
                 <Container>
                     <Row className="justify-content-md-center">
                         <Col md={8} lg={6}>
                             <Card>
-                                <div className="img1">
-                                    <img src={user.gender === "MALE" ? ManProfile : WomanProfile} alt="" />
-                                </div>
-                                <Card.Header>
-                                    <h1>{ user.name }</h1>
-                                </Card.Header>
-                                <Card.Body>
-                                    <Card.Title style={{margin: "0 0 10px 0"}}>
-                                        Basic Info
-                                    </Card.Title>
-                                    <ListGroup variant="flush">
-                                        <ListGroup.Item><b>Email:</b> {user.email}</ListGroup.Item>
-                                        <ListGroup.Item><b>Gender:</b> {user.gender === "MALE" ? "Male" : "Female"}</ListGroup.Item>
-                                    </ListGroup>
-                                </Card.Body>
+                                <CardMedia
+                                    component="img"
+                                    alt=""
+                                    sx={{ marginTop: '10px',
+                                        maxWidth: 150,
+                                        marginRight: 'auto',
+                                        marginLeft: 'auto'
+                                    }}
+                                    image={user.gender === "MALE" ? ManProfile : WomanProfile}
+                                />
+                                <CardContent >
+                                    <Typography variant="h4" component="div">
+                                        {user.name}
+                                    </Typography>
+                                    <List sx={{marginLeft: '10px', color: 'gray'}}>
+                                        <ListItem>
+                                            <ListItemIcon size="small">
+                                                <AlternateEmailOutlined />
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={
+                                                    user.email
+                                                }
+                                            />
+                                        </ListItem>
+                                        <ListItem>
+                                            <ListItemIcon size="small">
+                                                {user.gender === "MALE" ? <MaleOutlined /> : <FemaleOutlined />}
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={
+                                                    user.gender === "MALE" ? "Male" : "Female"
+                                                }
+                                            />
+                                        </ListItem>
+                                    </List>
+                                </CardContent>
                             </Card>
                         </Col>
                     </Row>
@@ -65,18 +98,27 @@ const Profile = () => {
                         <Col md={8} lg={6}>
                             <Card>
                                 <Skeleton variant="rectangular" height={140} />
-                                <Card.Header>
-                                    <Typography variant="h3">{<Skeleton />}</Typography>
-                                </Card.Header>
-                                <Card.Body>
-                                    <Card.Title style={{margin: "0 0 10px 0"}}>
-                                        <Typography variant="h6">{<Skeleton />}</Typography>
-                                    </Card.Title>
-                                    <ListGroup variant="flush">
-                                        <Skeleton width="60%"/>
-                                        <Skeleton width="60%"/>
-                                    </ListGroup>
-                                </Card.Body>
+                                <CardContent >
+                                    <Typography variant="h4" component="div">
+                                        <Skeleton />
+                                    </Typography>
+                                    <List sx={{marginLeft: '10px'}}>
+                                        <Skeleton>
+                                            <ListItem>
+                                                <ListItemIcon size="small">
+                                                </ListItemIcon>
+                                                <ListItemText/>
+                                            </ListItem>
+                                        </Skeleton>
+                                        <Skeleton>
+                                            <ListItem>
+                                                <ListItemIcon size="small">
+                                                </ListItemIcon>
+                                                <ListItemText/>
+                                            </ListItem>
+                                        </Skeleton>
+                                    </List>
+                                </CardContent>
                             </Card>
                         </Col>
                     </Row>
@@ -85,15 +127,11 @@ const Profile = () => {
         );
     };
 
-    const renderPosts = posts.map((post) => {
-        return <PostCard post={post} fetchData={fetchData}/>;
-    });
-
     return (
-        <>
-            {user ? renderLoggedUserProfile() : renderPrivateError()}
-            {posts && renderPosts}
-        </>
+        <div className={"justify-content-center"}>
+            { user ? renderLoggedUserProfile() : renderPrivateError()}
+            <PostList findAll={PostService.findAllByUser} disableRefresh={true}/>
+        </div>
     );
 };
 

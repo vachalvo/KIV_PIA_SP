@@ -19,6 +19,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import AuthService from "../services/auth-service";
 
 const PostList = forwardRef((props, ref) => {
+    const { findAll, disableRefresh } = props;
     useImperativeHandle(ref, () => ({
         getData() {
             alert("bottom", posts);
@@ -45,6 +46,9 @@ const PostList = forwardRef((props, ref) => {
     },[]);
 
     useEffect(() => {
+        if(disableRefresh){
+            return;
+        }
         const interval = setInterval(() => {
             getPosts();
         }, 5000);
@@ -52,7 +56,7 @@ const PostList = forwardRef((props, ref) => {
     }, []);
 
     const getPosts = () => {
-        PostService.findAll(page).then((response) => {
+        findAll(page).then((response) => {
             setPosts(response.data.posts);
         });
     }

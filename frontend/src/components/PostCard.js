@@ -20,9 +20,10 @@ import {
 } from "@mui/icons-material";
 import {blue, pink} from "@mui/material/colors";
 import {useRef, useState, useEffect} from "react";
+import {Col, Row} from "react-bootstrap";
 
 const cardStyle = {
-    margin: "20px 50px"
+    margin: "10px 0"
 };
 
 function PostCard(props) {
@@ -56,85 +57,89 @@ function PostCard(props) {
 
     return (
         <div>
-            <Card style={cardStyle} >
-                <CardHeader
-                    avatar={
-                        <Avatar sx={{ bgcolor: user.gender === 'MALE' ? blue[500] : pink[500] }} aria-label="avatar-post-card">
-                            {user.name.charAt(0)}
-                        </Avatar>
-                    }
-                    action={
-                        <div>
-                            {
-                                currentUserId === user.id &&
-                                <IconButton
-                                    aria-label="settings"
-                                    ref={anchorRef}
-                                    id="composition-button"
-                                    aria-controls={openMenu ? 'composition-menu' : undefined}
-                                    aria-expanded={openMenu ? 'true' : undefined}
-                                    aria-haspopup="true"
-                                    onClick={handleToggle}
-                                >
-                                    <MoreVertOutlined />
-                                </IconButton>
+            <Row className={"justify-content-center"}>
+                <Col md={8}>
+                    <Card style={cardStyle} >
+                        <CardHeader
+                            avatar={
+                                <Avatar sx={{ bgcolor: user.gender === 'MALE' ? blue[500] : pink[500] }} aria-label="avatar-post-card">
+                                    {user.name.charAt(0)}
+                                </Avatar>
                             }
-                            <Popper
-                                open={openMenu}
-                                anchorEl={anchorRef.current}
-                                role={undefined}
-                                placement="bottom-start"
-                                transition
-                                disablePortal
-                            >
-                                {({ TransitionProps, placement }) => (
-                                    <Grow
-                                        {...TransitionProps}
-                                        style={{
-                                            transformOrigin:
-                                                placement === 'bottom-start' ? 'left top' : 'left bottom',
-                                        }}
+                            action={
+                                <div>
+                                    {
+                                        currentUserId === user.id &&
+                                        <IconButton
+                                            aria-label="settings"
+                                            ref={anchorRef}
+                                            id="composition-button"
+                                            aria-controls={openMenu ? 'composition-menu' : undefined}
+                                            aria-expanded={openMenu ? 'true' : undefined}
+                                            aria-haspopup="true"
+                                            onClick={handleToggle}
+                                        >
+                                            <MoreVertOutlined />
+                                        </IconButton>
+                                    }
+                                    <Popper
+                                        open={openMenu}
+                                        anchorEl={anchorRef.current}
+                                        role={undefined}
+                                        placement="bottom-start"
+                                        transition
+                                        disablePortal
                                     >
-                                        <Paper>
-                                            <ClickAwayListener onClickAway={handleClose}>
-                                                <MenuList
-                                                    autoFocusItem={openMenu}
-                                                    id="composition-menu"
-                                                    aria-labelledby="composition-button"
-                                                >
-                                                    <MenuItem onClick={() => onEdit(props.post)}>
-                                                        <ListItemIcon>
-                                                            <ModeEditOutline color="primary" />
-                                                        </ListItemIcon>
-                                                        Edit
-                                                    </MenuItem>
-                                                    <MenuItem onClick={() => onDelete(props.post)}>
-                                                        <ListItemIcon>
-                                                            <DeleteOutline color="error"/>
-                                                        </ListItemIcon>
-                                                        Delete
-                                                    </MenuItem>
-                                                </MenuList>
-                                            </ClickAwayListener>
-                                        </Paper>
-                                    </Grow>
-                                )}
-                            </Popper>
-                        </div>
+                                        {({ TransitionProps, placement }) => (
+                                            <Grow
+                                                {...TransitionProps}
+                                                style={{
+                                                    transformOrigin:
+                                                        placement === 'bottom-start' ? 'left top' : 'left bottom',
+                                                }}
+                                            >
+                                                <Paper>
+                                                    <ClickAwayListener onClickAway={handleClose}>
+                                                        <MenuList
+                                                            autoFocusItem={openMenu}
+                                                            id="composition-menu"
+                                                            aria-labelledby="composition-button"
+                                                        >
+                                                            <MenuItem onClick={() => onEdit(props.post)}>
+                                                                <ListItemIcon>
+                                                                    <ModeEditOutline color="primary" />
+                                                                </ListItemIcon>
+                                                                Edit
+                                                            </MenuItem>
+                                                            <MenuItem onClick={() => onDelete(props.post)}>
+                                                                <ListItemIcon>
+                                                                    <DeleteOutline color="error"/>
+                                                                </ListItemIcon>
+                                                                Delete
+                                                            </MenuItem>
+                                                        </MenuList>
+                                                    </ClickAwayListener>
+                                                </Paper>
+                                            </Grow>
+                                        )}
+                                    </Popper>
+                                </div>
 
-                    }
-                    title={<b>{user.name}</b>}
-                    subheader={date.toLocaleString()}
-                />
-                <CardContent>
-                    <h5>
-                        {props.post.header}
-                    </h5>
-                    <p>
-                        {' '}{props.post.content}{' '}
-                    </p>
-                </CardContent>
-            </Card>
+                            }
+                            title={<b>{user.name}</b>}
+                            subheader={date.toLocaleString()}
+                        />
+                        <CardContent>
+                            <h5>
+                                {props.post.header}
+                            </h5>
+                            <p>
+                                {' '}{props.post.content}{' '}
+                            </p>
+                        </CardContent>
+                    </Card>
+                </Col>
+            </Row>
         </div>
     );
 }

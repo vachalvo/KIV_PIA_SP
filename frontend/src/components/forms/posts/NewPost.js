@@ -10,17 +10,13 @@ import {
     FormControl,
     InputLabel,
     OutlinedInput,
-    Stack,
-    Typography,
-    Divider
+    Stack
 } from "@mui/material";
 import {CampaignOutlined, SendOutlined} from "@mui/icons-material";
 import { makeStyles } from "@material-ui/core/styles";
+import {Col, Row} from "react-bootstrap";
 
 const useStyles = makeStyles(theme => ({
-    card: {
-        margin: '20px'
-    },
     button: {
         [theme.breakpoints.down("xs")]: {
             minWidth: 32,
@@ -70,60 +66,62 @@ function NewPost() {
     }
 
     return (
-        <div>
-            <Card className={classes.card} sx={{ m: 1 }}>
-                <CardHeader title="What is going on inside your head...?"/>
-                <CardContent>
-                    <Stack spacing={2} >
-                        <FormControl fullWidth>
-                            <InputLabel htmlFor="outlined-adornment-amount">Header</InputLabel>
-                            <OutlinedInput
-                                id="outlined-adornment-amount"
-                                value={header}
-                                disabled={loading}
-                                onChange={_headerOnchange}
-                                label="Header"
-                            />
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel htmlFor="outlined-adornment-amount">Content</InputLabel>
-                            <OutlinedInput
-                                id="outlined-adornment-amount"
-                                value={content}
-                                disabled={loading}
-                                onChange={_contentOnChange}
-                                label="Content"
-                                multiline
-                                rows={3}
-                            />
-                        </FormControl>
-                    </Stack>
-                </CardContent>
-                <CardActions className={"justify-content-center"}>
-                    <LoadingButton
-                        className={classes.button}
-                        color="success"
-                        variant="contained"
-                        onClick={(e) => _onClick(e)}
-                        loading={loading}
-                        loadingPosition="start"
-                        startIcon={<SendOutlined />}
-                    >
-                        <span className={classes.buttonText}>SEND POST</span>
-                    </LoadingButton>
-                    <LoadingButton
-                        className={classes.button}
-                        variant="contained"
-                        onClick={() => alert("TODO")}
-                        loading={loading}
-                        loadingPosition="start"
-                        startIcon={<CampaignOutlined />}
-                    >
-                        <span className={classes.buttonText}>SEND ANNOUNCEMENT</span>
-                    </LoadingButton>
-                </CardActions>
-            </Card>
-        </div>
+        <Row className={"justify-content-center"}>
+            <Col md={10}>
+                <Card style={{margin: '20px 0'}} sx={{ m: 1 }}>
+                    <CardHeader title="What is going on inside your head...?"/>
+                    <CardContent>
+                        <Stack spacing={2} >
+                            <FormControl fullWidth>
+                                <InputLabel htmlFor="outlined-adornment-amount">Header</InputLabel>
+                                <OutlinedInput
+                                    id="outlined-adornment-amount"
+                                    value={header}
+                                    disabled={loading}
+                                    onChange={_headerOnchange}
+                                    label="Header"
+                                />
+                            </FormControl>
+                            <FormControl fullWidth>
+                                <InputLabel htmlFor="outlined-adornment-amount">Content</InputLabel>
+                                <OutlinedInput
+                                    id="outlined-adornment-amount"
+                                    value={content}
+                                    disabled={loading}
+                                    onChange={_contentOnChange}
+                                    label="Content"
+                                    multiline
+                                    rows={3}
+                                />
+                            </FormControl>
+                        </Stack>
+                    </CardContent>
+                    <CardActions className={"justify-content-center"}>
+                        <LoadingButton
+                            className={classes.button}
+                            color="success"
+                            variant="contained"
+                            onClick={(e) => _onClick(e)}
+                            loading={loading}
+                            loadingPosition="start"
+                            startIcon={<SendOutlined />}
+                        >
+                            <span className={classes.buttonText}>SEND POST</span>
+                        </LoadingButton>
+                        <LoadingButton
+                            className={classes.button}
+                            variant="contained"
+                            onClick={() => alert("TODO")}
+                            loading={loading}
+                            loadingPosition="start"
+                            startIcon={<CampaignOutlined />}
+                        >
+                            <span className={classes.buttonText}>SEND ANNOUNCEMENT</span>
+                        </LoadingButton>
+                    </CardActions>
+                </Card>
+            </Col>
+        </Row>
     );
 }
 

@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import NewPost from "./forms/posts/NewPost";
 import PostList from "./PostsList";
 import {useEffect, useRef} from "react";
+import PostService from "../services/post-service";
 
 function Feed() {
     const postsList = useRef();
@@ -26,7 +27,7 @@ function Feed() {
     return (
         <>
             <NewPost />
-            <PostList ref={postsList}/>
+            <PostList ref={postsList} findAll={PostService.findAll} disableRefresh={false}/>
         </>
     );
 }
