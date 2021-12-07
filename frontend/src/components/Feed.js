@@ -1,12 +1,32 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import NewPost from "./forms/posts/NewPost";
 import PostList from "./PostsList";
+import {useEffect, useRef} from "react";
 
 function Feed() {
+    const postsList = useRef();
+
+    useEffect(() => {
+        function handleScroll() {
+            const bottom = Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight
+
+            if (bottom) {
+                postsList.current.getData()
+                console.log('at the bottom');
+            }
+        }
+
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
     return (
         <>
-            <NewPost/>
-            <PostList/>
+            <NewPost />
+            <PostList ref={postsList}/>
         </>
     );
 }

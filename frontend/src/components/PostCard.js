@@ -1,47 +1,139 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import {Button, Card, Row, Col} from "react-bootstrap";
+import {
+    Card,
+    CardHeader,
+    CardContent,
+    IconButton,
+    Avatar,
+    Grow,
+    Paper,
+    Popper,
+    MenuList,
+    ClickAwayListener,
+    MenuItem,
+    ListItemIcon,
+} from "@mui/material";
+import {
+    DeleteOutline,
+    ModeEditOutline,
+    MoreVertOutlined,
+} from "@mui/icons-material";
+import {blue, pink} from "@mui/material/colors";
+import {useRef, useState, useEffect} from "react";
+
+const cardStyle = {
+    margin: "20px 50px"
+};
 
 function PostCard(props) {
-    const {post} = props;
+    const { post, currentUserId, onEdit, onDelete } = props;
+    const { user } = post;
 
-    const cardStyle = {
-        margin: "20px 50px"
-    }
+    const date = new Date(post.dateTimeOfPublished);
+    const [openMenu, setOpenMenu] = useState(false);
 
-    const header = post.header;
-    const timestamp = post.dateTimeOfPublished;
-    const content = post.content;
-    const author = "TODO";
+    const anchorRef = useRef(null);
+    const prevOpen = useRef(openMenu);
+
+    useEffect(() => {
+        if (prevOpen.current === true && openMenu === false) {
+            anchorRef.current.focus();
+        }
+
+        prevOpen.current = openMenu;
+    }, [openMenu]);
+
+    const handleToggle = () => {
+        setOpenMenu((prevOpen) => !prevOpen);
+    };
+
+    const handleClose = (event) => {
+        if (anchorRef.current && anchorRef.current.contains(event.target)) {
+            return;
+        }
+        setOpenMenu(false);
+    };
 
     return (
         <div>
-            <Card style={cardStyle} border={'dark'}>
-                <Card.Header as="h5">
-                    <Row>
-                        <Col>
-                            {header}
-                        </Col>
-                        <Col md="auto" style={{textAlign: "right"}}>
-                            <Button onClick={() => console.log("delete")} variant="primary">Edit</Button>{' '}
-                            <Button onClick={() => console.log("update")} variant="danger">Delete</Button>{' '}
-                        </Col>
-                    </Row>
-                    </Card.Header>
-                <Card.Body>
-                    <blockquote className="blockquote mb-0">
-                        <p>
-                            {' '}{content}{' '}
-                        </p>
-                        <footer className="blockquote-footer">
-                            {author}
-                        </footer>
-                    </blockquote>
-                </Card.Body>
-                <Card.Footer>
-                    <Row>
-                        <Card.Text style={{"text-align": "right"}}>{timestamp}</Card.Text>
-                    </Row>
-                </Card.Footer>
+            <Card style={cardStyle} >
+                <CardHeader
+                    avatar={
+                        <Avatar sx={{ bgcolor: user.gender === 'MALE' ? blue[500] : pink[500] }} aria-label="avatar-post-card">
+                            {user.name.charAt(0)}
+                        </Avatar>
+                    }
+                    action={
+                        <div>
+                            {
+                                currentUserId === user.id &&
+                                <IconButton
+                                    aria-label="settings"
+                                    ref={anchorRef}
+                                    id="composition-button"
+                                    aria-controls={openMenu ? 'composition-menu' : undefined}
+                                    aria-expanded={openMenu ? 'true' : undefined}
+                                    aria-haspopup="true"
+                                    onClick={handleToggle}
+                                >
+                                    <MoreVertOutlined />
+                                </IconButton>
+                            }
+                            <Popper
+                                open={openMenu}
+                                anchorEl={anchorRef.current}
+                                role={undefined}
+                                placement="bottom-start"
+                                transition
+                                disablePortal
+                            >
+                                {({ TransitionProps, placement }) => (
+                                    <Grow
+                                        {...TransitionProps}
+                                        style={{
+                                            transformOrigin:
+                                                placement === 'bottom-start' ? 'left top' : 'left bottom',
+                                        }}
+                                    >
+                                        <Paper>
+                                            <ClickAwayListener onClickAway={handleClose}>
+                                                <MenuList
+                                                    autoFocusItem={openMenu}
+                                                    id="composition-menu"
+                                                    aria-labelledby="composition-button"
+                                                >
+                                                    <MenuItem onClick={() => onEdit(props.post)}>
+                                                        <ListItemIcon>
+                                                            <ModeEditOutline color="primary" />
+                                                        </ListItemIcon>
+                                                        Edit
+                                                    </MenuItem>
+                                                    <MenuItem onClick={() => onDelete(props.post)}>
+                                                        <ListItemIcon>
+                                                            <DeleteOutline color="error"/>
+                                                        </ListItemIcon>
+                                                        Delete
+                                                    </MenuItem>
+                                                </MenuList>
+                                            </ClickAwayListener>
+                                        </Paper>
+                                    </Grow>
+                                )}
+                            </Popper>
+                        </div>
+
+                    }
+                    title={<b>{user.name}</b>}
+                    subheader={date.toLocaleString()}
+                />
+                <CardContent>
+                    <h5>
+                        {props.post.header}
+                    </h5>
+                    <p>
+                        {' '}{props.post.content}{' '}
+                    </p>
+                </CardContent>
             </Card>
         </div>
     );

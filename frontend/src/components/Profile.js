@@ -6,21 +6,26 @@ import ManProfile from "../img/man.png";
 import WomanProfile from "../img/woman.png";
 import "../styles/components/profile.css";
 import {Skeleton, Typography} from "@mui/material";
+import PostService from "../services/post-service";
+import PostCard from "./PostCard";
 
 const Profile = () => {
     const [user, setUser] = useState(undefined);
+    const [posts, setPosts] = useState([]);
+    const [page, setPage] = useState(0);
 
     useEffect(() => {
-         const fetchUser = async () => {
-            const res = await UserService.getUser(AuthService.getCurrentUserId());
-
-            return res.data;
-        }
-
-        fetchUser().then((res) => {
-            setUser(res);
+        UserService.getUser(AuthService.getCurrentUserId()).then((res) => {
+            setUser(res.data);
         });
+        fetchData();
     }, []);
+
+    const fetchData = () => {
+        PostService.findAllByUser(page).then((res) => {
+            setPosts(res.data.posts);
+        });
+    }
 
     const renderLoggedUserProfile = () => {
         return (
@@ -78,11 +83,16 @@ const Profile = () => {
                 </Container>
             </div>
         );
-    }
+    };
+
+    const renderPosts = posts.map((post) => {
+        return <PostCard post={post} fetchData={fetchData}/>;
+    });
 
     return (
         <>
             {user ? renderLoggedUserProfile() : renderPrivateError()}
+            {posts && renderPosts}
         </>
     );
 };
