@@ -5,7 +5,6 @@ import com.kiv.pia.backend.model.enums.GenderType;
 import com.kiv.pia.backend.model.enums.RoleType;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.model.request.AuthenticateBody;
-import com.kiv.pia.backend.model.request.OrderedChecks;
 import com.kiv.pia.backend.model.request.RegistrationBody;
 import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.model.response.JwtResponse;
@@ -68,7 +67,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Validated(OrderedChecks.class) @RequestBody RegistrationBody signUpRequest) {
+    public ResponseEntity<?> signup(@Valid @RequestBody RegistrationBody signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
@@ -79,7 +78,7 @@ public class AuthController {
         User user = new User(signUpRequest.getEmail(),
                 encoder.encode(signUpRequest.getPassword()),
                 signUpRequest.getFirstName() + " " + signUpRequest.getLastName(),
-                signUpRequest.getGender().equals("male") ? GenderType.MALE : GenderType.FEMALE);
+                signUpRequest.getGender().equals("MALE") ? GenderType.MALE : GenderType.FEMALE);
 
         Set<Role> roles = new HashSet<>();
         Role role = roleRepository.findByName(RoleType.ROLE_USER);
