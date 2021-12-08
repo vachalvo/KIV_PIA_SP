@@ -16,6 +16,8 @@ public interface IUserService {
 
     Collection<User> findByName(UUID sourceId, String name);
 
+    User findByEmail(String email);
+
     User saveOrUpdate(User role);
 
     void deleteById(UUID id);
