@@ -1,9 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import FriendsList from "./FriendsList";
-import {Card, Container, Row, Stack} from "react-bootstrap";
+import {Container, Row, Stack} from "react-bootstrap";
 import SearchBar from "./SearchBar";
 import FriendshipService from "../services/friendship-service";
 import {useRef} from "react";
+import {Card, CardContent, CardHeader, Typography} from "@mui/material";
 
 function FriendsManagement() {
     const friendsRef = useRef();
@@ -77,18 +78,18 @@ function FriendsManagement() {
         <Container style={{padding: '20px 0 0 0'}}>
             <Stack gap={4}>
                 <Card>
-                    <Card.Header as={"h2"} className="text-center" >
-                        Search friend
-                    </Card.Header>
-                    <Card.Body style={{padding: '20px'}}>
+                    <CardContent>
+                        <Typography sx={{ pb: 2 }} className="text-center" variant="h4" component="div">
+                            Search friend
+                        </Typography>
                         <SearchBar onSend={sendRequest} onDecision={interact} onDelete={cancel} />
-                    </Card.Body>
+                    </CardContent>
                 </Card>
                 <Card>
-                    <Card.Header as={"h2"} className="text-center" >
-                        Friendship management
-                    </Card.Header>
-                    <Card.Body style={{padding: '20px'}}>
+                    <CardContent>
+                        <Typography sx={{ pb: 2 }} className="text-center" variant="h4" component="div">
+                            Friendship management
+                        </Typography>
                         <Row xs={1} md={2} className='g-4'>
                             <Stack gap={3}>
                                 <FriendsList
@@ -120,7 +121,7 @@ function FriendsManagement() {
                                 />
                             </Stack>
                         </Row>
-                    </Card.Body>
+                    </CardContent>
                 </Card>
             </Stack>
         </Container>

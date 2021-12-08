@@ -27,11 +27,16 @@ const App = () => {
         if (user) {
             setCurrentUser(user);
         }
-    }, []);
+    }, [])
+
+    const onLogout = () => {
+        AuthService.logout();
+        setCurrentUser(undefined);
+    };
 
     return (
         <Router>
-            <Header currentUser={currentUser}/>
+            <Header currentUser={currentUser} onLogout={onLogout}/>
             <Container>
                 <Row>
                     <Col lg={12} className={"margin-top"}>

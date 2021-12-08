@@ -4,23 +4,26 @@ import Logo from "../../img/favicon.png";
 import AuthService from "../../services/auth-service";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers, faSignInAlt, faUserPlus, faSignOutAlt, faIdCard, faSearch } from '@fortawesome/free-solid-svg-icons';
-import {AppBar, Button, Box, IconButton, Menu, Toolbar, MenuItem, Typography} from "@mui/material";
+import {AppBar, Button, Box, IconButton, Menu, Link, Toolbar, MenuItem, Typography} from "@mui/material";
 import {
-    AccountCircle,
+    AccountCircle, ExitToApp,
     Feed,
-    FeedOutlined,
+    FeedOutlined, Login, LoginOutlined, MeetingRoom, MeetingRoomOutlined, MeetingRoomTwoTone,
     MenuOutlined, People,
-    PeopleOutline, VpnKeyOutlined
+    PeopleOutline, PersonAdd, VpnKeyOutlined
 } from "@mui/icons-material";
 import "../../styles/components/header.css";
 
 import {useState} from "react";
+import {useHistory} from "react-router-dom";
 
 function Header(props) {
-    const {currentUser} = props;
+    const { currentUser, onLogout } = props;
+    const history = useHistory();
 
     const logout = () => {
-        AuthService.logout();
+        onLogout();
+        history.push('/logout');
     };
 
     const [anchorElNav, setAnchorElNav] = useState(null);
@@ -32,13 +35,18 @@ function Header(props) {
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
     };
-
-    const handleCloseNavMenu = () => {
+    const handleCloseNavMenu = (link) => {
+        redirect(link);
         setAnchorElNav(null);
     };
-
-    const handleCloseUserMenu = () => {
+    const handleCloseUserMenu = (link) => {
+        redirect(link);
         setAnchorElUser(null);
+    };
+    const redirect = (link) => {
+        if(link) {
+            history.push(link);
+        }
     };
 
     const renderLoggedMenu = () => {
@@ -71,12 +79,17 @@ function Header(props) {
             >
                 <MenuItem
                     key={"profile"}
-                    onClick={handleCloseNavMenu}
-                    href={'/profile'}
+                    onClick={() => handleCloseUserMenu('/profile')}
                 >
                     <Typography textAlign="center">Profile</Typography>
                 </MenuItem>
-                <MenuItem key={"logout"} onClick={handleCloseNavMenu}>
+                <MenuItem
+                    key={"logout"}
+                    onClick={() => {
+                        logout();
+                        handleCloseUserMenu('/logout')
+                    }}
+                >
                     <Typography textAlign="center">Logout</Typography>
                 </MenuItem>
             </Menu>
@@ -84,41 +97,51 @@ function Header(props) {
     };
 
     const renderNotLoggedMenu = () => {
-        return (<Box sx={{ flexGrow: 0 }}>
-            <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleOpenUserMenu}
-                color="inherit"
-            >
-                <VpnKeyOutlined />
-            </IconButton>
-            <Menu
-                sx={{ mt: '45px' }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-            >
-                <MenuItem key={"login"} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">Login</Typography>
-                </MenuItem>
-                <MenuItem key={"signup"} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">Sign-up</Typography>
-                </MenuItem>
-            </Menu>
-        </Box>);
+        return (
+            <Box sx={{ flexGrow: 1, display: { xs: 'flex' },  'justifyContent': 'flex-end'}}>
+                <IconButton
+                    size="large"
+                    aria-label="account of current user"
+                    aria-controls="menu-appbar"
+                    aria-haspopup="true"
+                    onClick={handleOpenUserMenu}
+                    color="inherit"
+                >
+                    <ExitToApp />
+                </IconButton>
+                <Menu
+                    sx={{ mt: '45px' }}
+                    id="menu-appbar"
+                    anchorEl={anchorElUser}
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 'right',
+                    }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}
+                >
+                    <MenuItem
+                        key={"login"}
+                        onClick={() => handleCloseUserMenu('/login')}
+                    >
+                        <Login style={{marginRight: '5px'}}/>
+                        <Typography textAlign="center">Login</Typography>
+                    </MenuItem>
+                    <MenuItem
+                        key={"signup"}
+                        onClick={() => handleCloseUserMenu('/signup')}
+                    >
+                        <PersonAdd style={{marginRight: '5px'}}/>
+                        <Typography textAlign="center">Sign-up</Typography>
+                    </MenuItem>
+                </Menu>
+            </Box>
+        );
     };
     return (
         <AppBar position="static">
@@ -141,7 +164,7 @@ function Header(props) {
                         Squirrel
                     </Typography>
 
-                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                    {currentUser && <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
                             aria-label="menu"
@@ -170,16 +193,23 @@ function Header(props) {
                                 display: { xs: 'block', md: 'none' },
                             }}
                         >
-                            <MenuItem key={"feed"} onClick={handleCloseNavMenu} disableRipple>
+                            <MenuItem
+                                key={"feed"}
+                                onClick={() => handleCloseNavMenu('/')}
+                            >
                                 <FeedOutlined style={{marginRight: '5px'}}/>
                                 <Typography textAlign="center">Feed</Typography>
                             </MenuItem>
-                            <MenuItem key={"friendship-management"} onClick={handleCloseNavMenu} disableRipple>
+                            <MenuItem
+                                key={"friendship-management"}
+                                onClick={() => handleCloseNavMenu('/friends')}
+                            >
                                 <PeopleOutline style={{marginRight: '5px'}}/>
                                 <Typography textAlign="center">Friendship Management</Typography>
                             </MenuItem>
                         </Menu>
                     </Box>
+                    }
                     <Typography
                         variant="h6"
                         noWrap
@@ -196,66 +226,31 @@ function Header(props) {
                         />{' '}
                         Squirrel
                     </Typography>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, 'gap': '20px' }}>
-                        <Button
-                            key={"feed_"}
-                            onClick={handleCloseNavMenu}
-                            sx={{ my: 2, color: 'white' }}
-                            startIcon={<Feed />}
-                            href="/"
-                        >
-                            Feed
-                        </Button>
-                        <Button
-                            key={"friendship_"}
-                            onClick={handleCloseNavMenu}
-                            sx={{ my: 2, color: 'white' }}
-                            startIcon={<People />}
-                            href="/friends"
-                        >
-                            Friendship Management
-                        </Button>
-                    </Box>
-
+                    {currentUser &&
+                        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, 'gap': '20px' }}>
+                            <Button
+                                key={"feed_"}
+                                onClick={() => handleCloseNavMenu('/')}
+                                sx={{ my: 2, color: 'white' }}
+                                startIcon={<Feed />}
+                            >
+                                Feed
+                            </Button>
+                            <Button
+                                key={"friendship_"}
+                                onClick={() => handleCloseNavMenu('/friends')}
+                                sx={{ my: 2, color: 'white' }}
+                                startIcon={<People />}
+                            >
+                                Friendship Management
+                            </Button>
+                        </Box>
+                    }
                     {currentUser ? renderLoggedMenu() : renderNotLoggedMenu()}
                 </Toolbar>
             </Container>
         </AppBar>
     );
-}
-
-const tmp = () => {
-    let currentUser = undefined;
-    let logout = undefined;
-    return (<Navbar collapseOnSelect expand="lg" bg="light" variant="light">
-        <Container>
-            <Navbar.Brand href="/">
-                <img
-                    alt=""
-                    src={Logo}
-                    width="35"
-                    height="35"
-                    className="d-inline-block align-content-center"
-                />{' '}
-                Squirrel
-            </Navbar.Brand>
-            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-            <Navbar.Collapse className="justify-content-end">
-                {!currentUser ? (
-                    <Nav>
-                        <Nav.Link href="/login"><FontAwesomeIcon icon={faSignInAlt} /> Login</Nav.Link>
-                        <Nav.Link href="/signup"><FontAwesomeIcon icon={faUserPlus} /> Sign-up</Nav.Link>
-                    </Nav>
-                ) : (
-                    <Nav>
-                        <Nav.Link href="/friends"><FontAwesomeIcon icon={faUsers} /> Friends Management</Nav.Link>
-                        <Nav.Link href="/profile"><FontAwesomeIcon icon={faIdCard} /> Profile</Nav.Link>
-                        <Nav.Link href="/logout" onClick={logout}><FontAwesomeIcon icon={faSignOutAlt} /> Logout</Nav.Link>
-                    </Nav>
-                )}
-            </Navbar.Collapse>
-        </Container>
-    </Navbar>);
 }
 
 export default Header;
