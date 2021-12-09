@@ -1,6 +1,7 @@
 package com.kiv.pia.backend.service.impl;
 
 import com.kiv.pia.backend.model.Role;
+import com.kiv.pia.backend.model.enums.RoleType;
 import com.kiv.pia.backend.repository.RoleRepository;
 import com.kiv.pia.backend.service.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,10 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public void deleteById(UUID id) {
         roleRepository.deleteById(id);
+    }
+
+    @Override
+    public Role findByType(RoleType role) {
+        return roleRepository.findByType(role);
     }
 }

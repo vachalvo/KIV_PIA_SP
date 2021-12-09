@@ -2,12 +2,14 @@ package com.kiv.pia.backend.controller;
 
 import com.kiv.pia.backend.mapper.UserMapper;
 import com.kiv.pia.backend.model.*;
+import com.kiv.pia.backend.model.enums.RoleType;
 import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.model.response.SearchResultResponse;
 import com.kiv.pia.backend.repository.RoleRepository;
 import com.kiv.pia.backend.repository.UserRepository;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
 import com.kiv.pia.backend.service.IFriendshipService;
+import com.kiv.pia.backend.service.IRoleService;
 import com.kiv.pia.backend.service.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +39,11 @@ public class UserController {
     @Autowired
     private IFriendshipService friendshipService;
 
+    @Autowired
+    private IRoleService roleService;
+
     @GetMapping("/{id}")
-    public User getUser(@PathVariable("id")UUID id){
+    public User getUser(@PathVariable("id") UUID id){
         return userService.findById(id);
     }
 
@@ -71,5 +76,65 @@ public class UserController {
         }
 
         return ResponseEntity.ok().body(searchResult);
+    }
+
+    @PutMapping("/promote/{id}")
+    public ResponseEntity<?> promote(@PathVariable UUID id){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        User user = userService.findById(userDetails.getId());
+        User targetUser = userService.findById(id);
+        if(user == null || targetUser == null){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("User does not exist!"));
+        }
+
+        if(!userService.hasRole(user, RoleType.ROLE_ADMIN)) {
+            return ResponseEntity
+                .badRequest()
+                .body(new ErrorResponse("User does not have admin permissions!"));
+        }
+        if(userService.hasRole(targetUser, RoleType.ROLE_ADMIN)) {
+            return ResponseEntity
+                .badRequest()
+                .body(new ErrorResponse("User is already is admin!"));
+        }
+
+        Role adminRole = roleService.findByType(RoleType.ROLE_ADMIN);
+        User result = userService.promoteUser(targetUser, adminRole);
+
+        return ResponseEntity.ok().body(result);
+    }
+
+    @PutMapping("/demote/{id}")
+    public ResponseEntity<?> demote(@PathVariable UUID id){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        User user = userService.findById(userDetails.getId());
+        User targetUser = userService.findById(id);
+        if(user == null || targetUser == null){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("User does not exist!"));
+        }
+
+        if(!userService.hasRole(user, RoleType.ROLE_ADMIN)) {
+            return ResponseEntity
+                .badRequest()
+                .body(new ErrorResponse("User does not have admin permissions!"));
+        }
+        if(!userService.hasRole(targetUser, RoleType.ROLE_ADMIN)) {
+            return ResponseEntity
+                .badRequest()
+                .body(new ErrorResponse("User is already not admin!"));
+        }
+
+        Role adminRole = roleService.findByType(RoleType.ROLE_ADMIN);
+        User result = userService.demoteUser(targetUser, adminRole);
+
+        return ResponseEntity.ok().body(result);
     }
 }

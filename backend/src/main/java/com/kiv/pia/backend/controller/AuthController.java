@@ -13,6 +13,8 @@ import com.kiv.pia.backend.repository.RoleRepository;
 import com.kiv.pia.backend.repository.UserRepository;
 import com.kiv.pia.backend.security.jwt.JwtUtils;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
+import com.kiv.pia.backend.service.IRoleService;
+import com.kiv.pia.backend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,7 +23,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -38,10 +39,10 @@ public class AuthController {
     AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository userRepository;
+    IUserService userService;
 
     @Autowired
-    RoleRepository roleRepository;
+    IRoleService roleService;
 
     @Autowired
     PasswordEncoder encoder;
@@ -63,12 +64,12 @@ public class AuthController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId()));
+                userDetails.getId(), roles.contains("ROLE_ADMIN")));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody RegistrationBody signUpRequest) {
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (userService.findByEmail(signUpRequest.getEmail()) != null) {
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("Email is already in use!"));
@@ -81,16 +82,16 @@ public class AuthController {
                 signUpRequest.getGender().equals("MALE") ? GenderType.MALE : GenderType.FEMALE);
 
         Set<Role> roles = new HashSet<>();
-        Role role = roleRepository.findByName(RoleType.ROLE_USER);
+        Role role = roleService.findByType(RoleType.ROLE_USER);
 
         if(role == null){
-            throw new RuntimeException("Role was not found!");
+            return ResponseEntity.ok(new MessageResponse("Cannot create user! Try it later."));
         }
 
         roles.add(role);
         user.setRoles(roles);
 
-        userRepository.save(user);
+        userService.saveOrUpdate(user);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }

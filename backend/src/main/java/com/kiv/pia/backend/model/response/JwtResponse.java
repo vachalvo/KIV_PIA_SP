@@ -8,9 +8,11 @@ import java.util.UUID;
 public class JwtResponse {
     private String token;
     private UUID id;
+    private boolean isAdmin;
 
-    public JwtResponse(String token, UUID id) {
+    public JwtResponse(String token, UUID id, boolean isAdmin) {
         this.token = token;
         this.id = id;
+        this.isAdmin = isAdmin;
     }
 }

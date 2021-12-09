@@ -2,6 +2,7 @@ package com.kiv.pia.backend.service;
 
 import com.kiv.pia.backend.model.Role;
 import com.kiv.pia.backend.model.User;
+import com.kiv.pia.backend.model.enums.RoleType;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,4 +17,6 @@ public interface IRoleService {
     Role saveOrUpdate(Role role);
 
     void deleteById(UUID id);
+
+    Role findByType(RoleType roleAdmin);
 }

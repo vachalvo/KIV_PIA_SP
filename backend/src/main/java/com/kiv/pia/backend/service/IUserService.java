@@ -1,12 +1,10 @@
 package com.kiv.pia.backend.service;
 
-import com.kiv.pia.backend.model.Friendship;
 import com.kiv.pia.backend.model.Role;
 import com.kiv.pia.backend.model.User;
+import com.kiv.pia.backend.model.enums.RoleType;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface IUserService {
@@ -18,7 +16,13 @@ public interface IUserService {
 
     User findByEmail(String email);
 
-    User saveOrUpdate(User role);
+    User saveOrUpdate(User user);
 
     void deleteById(UUID id);
+
+    User promoteUser(User targetUser, Role role);
+
+    User demoteUser(User targetUser, Role role);
+
+    boolean hasRole(User user, RoleType roleType);
 }

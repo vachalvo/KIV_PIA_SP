@@ -1,6 +1,8 @@
 package com.kiv.pia.backend.service.impl;
 
+import com.kiv.pia.backend.model.Role;
 import com.kiv.pia.backend.model.User;
+import com.kiv.pia.backend.model.enums.RoleType;
 import com.kiv.pia.backend.repository.UserRepository;
 import com.kiv.pia.backend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +48,29 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void deleteById(UUID id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public User promoteUser(User targetUser, Role role) {
+        targetUser.getRoles().add(role);
+
+        return userRepository.save(targetUser);
+    }
+
+    @Override
+    public User demoteUser(User targetUser, Role role) {
+        targetUser.getRoles().remove(role);
+
+        return userRepository.save(targetUser);
+    }
+
+    @Override
+    public boolean hasRole(User user, RoleType roleType) {
+        for (Role role : user.getRoles()) {
+            if(role.getName().equals(roleType)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
