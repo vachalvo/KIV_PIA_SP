@@ -113,7 +113,7 @@ public class FormServiceImpl implements IFormService {
                     .body(new ErrorResponse(FormConst.FIRST_NAME_IS_BLANK));
         }
 
-        if(!hasCorrectLength(name, 5, 30)){
+        if(!hasCorrectLength(name, 3, 30)){
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse(FormConst.FIRST_NAME_SIZE));
@@ -136,7 +136,7 @@ public class FormServiceImpl implements IFormService {
                     .body(new ErrorResponse(FormConst.LAST_NAME_IS_BLANK));
         }
 
-        if(!hasCorrectLength(name, 5, 30)){
+        if(!hasCorrectLength(name, 3, 30)){
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse(FormConst.LAST_NAME_SIZE));
