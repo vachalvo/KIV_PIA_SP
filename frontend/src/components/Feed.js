@@ -12,7 +12,7 @@ function Feed() {
             const bottom = Math.ceil(window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight
 
             if (bottom) {
-                postsList.current.getData()
+                postsList.current.getData();
                 console.log('at the bottom');
             }
         }

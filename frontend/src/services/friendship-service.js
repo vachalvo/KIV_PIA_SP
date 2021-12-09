@@ -10,7 +10,8 @@ const TYPES = {
 };
 const STATES = {
     accept: "ACCEPTED",
-    reject: "REJECTED"
+    reject: "REJECTED",
+    blocked: "BLOCKED"
 };
 
 const newFriendship = (id) => {

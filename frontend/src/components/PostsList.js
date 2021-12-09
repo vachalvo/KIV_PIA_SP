@@ -200,7 +200,8 @@ const PostList = forwardRef((props, ref) => {
             post={post}
             currentUserId={userId}
             onEdit={onOpenEditDialog}
-            onDelete={onOpenDeleteDialog}/>;
+            onDelete={onOpenDeleteDialog}
+        />;
     })
 
     return (
