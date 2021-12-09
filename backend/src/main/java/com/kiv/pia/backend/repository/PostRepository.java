@@ -16,7 +16,8 @@ public interface PostRepository extends PagingAndSortingRepository<Post, UUID> {
     @Query("SELECT DISTINCT ps from Post ps" +
             "  LEFT JOIN Friendship fe on :id = fe.endUser.id AND fe.friendshipType = 'FRIENDS'" +
             "  LEFT JOIN Friendship fs on :id = fs.sourceUser.id AND fs.friendshipType = 'FRIENDS'" +
-            "    WHERE ps.user.id = :id OR" +
+            "    WHERE ps.announcement = true OR" +
+            "          ps.user.id = :id OR" +
             "          ps.user.id = fe.sourceUser.id OR" +
             "          ps.user.id = fs.endUser.id")
     Page<Post> findAllByFriends(@Param("id") UUID id, Pageable page);

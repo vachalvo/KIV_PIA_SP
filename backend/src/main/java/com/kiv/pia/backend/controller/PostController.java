@@ -3,6 +3,7 @@ package com.kiv.pia.backend.controller;
 import com.kiv.pia.backend.model.Friendship;
 import com.kiv.pia.backend.model.Post;
 import com.kiv.pia.backend.model.User;
+import com.kiv.pia.backend.model.enums.RoleType;
 import com.kiv.pia.backend.model.request.PostCreateBody;
 import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
@@ -59,18 +60,21 @@ public class PostController {
     @PostMapping("/create")
     public ResponseEntity<?> createPost(@Valid @RequestBody PostCreateBody p){
         User user = getCurrentUser();
+
         if(user == null){
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
-        Post post = postService.saveOrUpdate(new Post(p.getHeader(), p.getContent(), LocalDateTime.now(), user));
-        if(post != null){
-            return ResponseEntity.ok().body(post);
+        if(p.getAnnouncement() && !userService.hasRole(user, RoleType.ROLE_ADMIN)){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("User without admin permission cannot create annoucements!"));
         }
 
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        Post post = postService.saveOrUpdate(new Post(p.getHeader(), p.getContent(), LocalDateTime.now(), user, p.getAnnouncement()));
+        return ResponseEntity.ok().body(post);
     }
 
     @PutMapping("/{id}")

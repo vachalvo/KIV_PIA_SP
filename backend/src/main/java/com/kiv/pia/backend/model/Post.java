@@ -34,13 +34,17 @@ public class Post {
     @Column(name = "date_time_of_published")
     private LocalDateTime dateTimeOfPublished;
 
+    @Column(name = "announcement")
+    private Boolean announcement;
+
     @ManyToOne
     private User user;
 
-    public Post(String header, String content, LocalDateTime dateTimeOfPublished, User user) {
+    public Post(String header, String content, LocalDateTime dateTimeOfPublished, User user, Boolean announcement) {
         this.content = content;
         this.header = header;
         this.dateTimeOfPublished = dateTimeOfPublished;
         this.user = user;
+        this.announcement = announcement;
     }
 }
