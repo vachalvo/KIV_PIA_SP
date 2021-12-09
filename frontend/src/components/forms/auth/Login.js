@@ -13,16 +13,11 @@ import {
     CardContent,
     Container,
     InputAdornment,
-    InputLabel,
-    FormControl,
-    OutlinedInput,
     IconButton,
-    FormHelperText,
     Divider,
-    AlertTitle, Alert, Collapse
 } from "@mui/material";
 import {
-    AlternateEmailOutlined, Close,
+    AlternateEmailOutlined,
     LockOutlined,
     LoginOutlined,
     Visibility,
@@ -32,8 +27,14 @@ import {Col, Row} from "react-bootstrap";
 
 import '../../../styles/components/login.css';
 import LoadingButton from "@mui/lab/LoadingButton";
+import OutlinedTextField from "../common/OutlinedTextField";
+import AlertDialog from "../../common/AlertDialog";
+import Constants from "../../../global/constants";
+import {useHistory} from "react-router-dom";
 
 function Login(props) {
+    const {onLogin} = props;
+    const history = useHistory();
     const [values, setValues] = useState({
         email: '',
         password: '',
@@ -51,7 +52,7 @@ function Login(props) {
             emailFeedback: prop === 'email' ? '' : values.emailFeedback,
             passwordFeedback: prop === 'password' ? '' : values.passwordFeedback,
         });
-    }
+    };
     const handleClickShowPassword = () => {
         setValues({
             ...values,
@@ -102,8 +103,21 @@ function Login(props) {
         }
     };
 
+    const isCorrectFeedback = () => {
+        return values.emailFeedback === '' && values.passwordFeedback === '';
+    };
+
     const _login = (event) => {
         event.preventDefault();
+
+        if(!isCorrectFeedback()){
+            setValues({
+                ...values,
+                openAlert: true,
+                alertText: 'Some fields are not filled properly',
+            });
+            return;
+        }
 
         setValues({
             ...values,
@@ -115,23 +129,28 @@ function Login(props) {
             'password': values.password
         };
         AuthService.login(data).then(
-            () => {
-                props.history.push("/");
-                window.location.reload();
+            (response) => {
+                if (response.data.token) {
+                    sessionStorage.setItem(Constants.SESSION_STORAGE_TOKEN, JSON.stringify(response.data.token));
+                    sessionStorage.setItem(Constants.SESSION_STORAGE_USER_ID, JSON.stringify(response.data.id));
+                    sessionStorage.setItem(Constants.SESSION_STORAGE_ADMIN, JSON.stringify(response.data.admin));
+                }
+                history.push('/');
+                onLogin();
             }
         ).catch((err) => {
-            const data = err.response.data;
+            console.log(err);
+            const responsedata = err.response.data;
             const newFeedback = {
                 emailFeedback: values.emailFeedback,
                 passwordFeedback: values.passwordFeedback
             };
             let errorMsg = 'Unknown error';
 
-            if(data.fieldErrors){
+            if(responsedata.fieldErrors){
                 errorMsg = 'Some fields are not filled properly'
 
-
-                data.fieldErrors.forEach(fieldError => {
+                responsedata.fieldErrors.forEach(fieldError => {
                     newFeedback[fieldError.field + 'Feedback'] = fieldError.message;
                 });
             }
@@ -152,30 +171,20 @@ function Login(props) {
 
     const renderAlert = () => {
         return (
-            <Collapse in={values.openAlert}>
-                <Alert
-                    severity="error"
-                    action={
-                    <IconButton
-                        aria-label="close"
-                        color="inherit"
-                        size="small"
-                        onClick={() => {
-                            setValues({
-                                ...values,
-                                openAlert: false
-                            });
-                        }}
-                    >
-                        <Close fontSize="inherit" />
-                    </IconButton>
-                }
-                       sx={{ mb: 2 }}>
-                    <AlertTitle><strong>{values.alertText}</strong></AlertTitle>
-                </Alert>
-            </Collapse>
+            <AlertDialog
+                open={values.openAlert}
+                severity='error'
+                onClose={() => {
+                    setValues({
+                        ...values,
+                        openAlert: false
+                    });
+                }}
+                title={values.alertText}
+                content={values.alertText === 'Bad credentials' && 'Email or password is not correct.'}
+            />
         );
-    }
+    };
     const renderForm = () => {
         return (
             <Card style={{margin: "20px 0 0 0"}}>
@@ -189,57 +198,42 @@ function Login(props) {
                         </Typography>
                     </Grid>
                     <Stack spacing={2}>
-                        <FormControl
-                            variant="outlined"
-                            error={values.emailFeedback !== ''}
-                            fullWidth
-                        >
-                            <InputLabel htmlFor="outlined-adornment-email">Email</InputLabel>
-                            <OutlinedInput
-                                id="outlined-adornment-email"
-                                type='email'
-                                onKeyDown={handleKeyDown}
-                                value={values.email}
-                                placeholder='Enter email'
-                                onBlur={onBlurEmail}
-                                onChange={onChange('email')}
-                                startAdornment={<InputAdornment position="start"><AlternateEmailOutlined /></InputAdornment>}
-                                label="Email"
-                            />
-                            <FormHelperText id="email-error-text">{values.emailFeedback}</FormHelperText>
-                        </FormControl>
-                        <FormControl
-                            sx={{ m: 1 }}
-                            variant="outlined"
-                            error={values.passwordFeedback !== ''}
-                            fullWidth
-                        >
-                            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-                            <OutlinedInput
-                                id="outlined-adornment-password"
-                                type={values.showPassword ? 'text' : 'password'}
-                                value={values.password}
-                                placeholder='Enter password'
-                                onBlur={onBlurPassword}
-                                onKeyDown={handleKeyDown}
-                                onChange={onChange('password')}
-                                startAdornment={<InputAdornment position="start"><LockOutlined /></InputAdornment>}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                            edge="end"
-                                        >
-                                            {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                                label="Password"
-                            />
-                            <FormHelperText id="password-error-text">{values.passwordFeedback}</FormHelperText>
-                        </FormControl>
+                        <OutlinedTextField
+                            feedback={values.emailFeedback}
+                            id='email-login-textfield'
+                            type='email'
+                            placeholder='Enter email'
+                            label="Email"
+                            value={values.email}
+                            onBlur={onBlurEmail}
+                            onKeyDown={handleKeyDown}
+                            onChange={onChange('email')}
+                            startAdornment={<InputAdornment position="start"><AlternateEmailOutlined /></InputAdornment>}
+                        />
+                        <OutlinedTextField
+                            feedback={values.passwordFeedback}
+                            id='password-login-textfield'
+                            type={values.showPassword ? 'text' : 'password'}
+                            placeholder='Enter password'
+                            label="Password"
+                            value={values.password}
+                            onBlur={onBlurPassword}
+                            onKeyDown={handleKeyDown}
+                            onChange={onChange('password')}
+                            startAdornment={<InputAdornment position="start"><LockOutlined /></InputAdornment>}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                        edge="end"
+                                    >
+                                        {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                        />
                         <Divider />
                         <LoadingButton
                             variant="contained"
@@ -252,7 +246,7 @@ function Login(props) {
                             <span>LOGIN</span>
                         </LoadingButton>
                         <Typography > New to Squirrel?
-                            <Link onClick={() => props.history.push("/signup")} sx={{ml: 1}}>
+                            <Link onClick={() => history.push("/signup")} sx={{ml: 1}}>
                                 Create an account
                             </Link>
                             .
