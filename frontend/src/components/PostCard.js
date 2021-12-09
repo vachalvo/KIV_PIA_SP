@@ -28,7 +28,7 @@ const cardStyle = {
 
 function PostCard(props) {
     const { post, currentUserId, onEdit, onDelete } = props;
-    const { user } = post;
+    const { user, announcement } = post;
 
     const date = new Date(post.dateTimeOfPublished);
     const [openMenu, setOpenMenu] = useState(false);
@@ -59,7 +59,7 @@ function PostCard(props) {
         <div>
             <Row className={"justify-content-center"}>
                 <Col md={8}>
-                    <Card style={cardStyle} >
+                    <Card sx={{ my: '10px', bgcolor: post.announcement ? '#ffcdd2' : '#ffffff'}}>
                         <CardHeader
                             avatar={
                                 <Avatar sx={{ bgcolor: user.gender === 'MALE' ? blue[500] : pink[500] }} aria-label="avatar-post-card">

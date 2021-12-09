@@ -22,15 +22,11 @@ const DEFAULT_USER = {
 };
 
 function FriendItem(props) {
-    const {item, type, onDelete, onDecision} = props;
+    const {item, type, onDelete, onDecision, onPromote, onDemote, admin} = props;
     const { sourceUser, endUser } = item;
+
     const userId = AuthService.getCurrentUserId();
-
-    const [user, setUser] = useState(DEFAULT_USER)
-
-    useEffect(() => {
-        setUser(sourceUser.id === userId ? {...endUser} : {...sourceUser});
-    },[]);
+    const user = sourceUser.id === userId ? {...endUser} : {...sourceUser}
 
     const empty = () => {};
     const getButton = (color, Icon, _onClick = empty) => {
@@ -61,8 +57,14 @@ function FriendItem(props) {
                 controlButton = getReceivedRequestButtons();
                 break;
             case "Friends":
-                controlButton = getButton("primary", FileUploadOutlined);
-                // controlButton = getButton("primary", FileDownloadOutlined);
+                if(admin){
+                    if (user.roles.filter(e => e.name === 'ROLE_ADMIN').length > 0) {
+                        controlButton = getButton("primary", FileDownloadOutlined, () => onDemote(user.id));
+                    }
+                    else{
+                        controlButton = getButton("primary", FileUploadOutlined, () => onPromote(user.id));
+                    }
+                }
                 break;
             default:
                 controlButton = <div/>;

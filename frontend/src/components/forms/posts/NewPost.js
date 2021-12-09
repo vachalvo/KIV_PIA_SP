@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import {useState} from "react";
 import LoadingButton from '@mui/lab/LoadingButton';
+import UserService from "../../../services/user-service";
 import PostService from "../../../services/post-service";
 import {
     CardActions,
@@ -54,12 +55,13 @@ function NewPost() {
         await PostService.create({
             header: header,
             content: content,
+            announcement: announcement
         }).then((data) => {
             setHeader('');
             setContent('');
             console.log("New Post: ", data);
         }).catch((err) => {
-            console.log(err);
+            console.log(err.response.data);
         });
 
         setLoading(false);
@@ -108,16 +110,19 @@ function NewPost() {
                         >
                             <span className={classes.buttonText}>SEND POST</span>
                         </LoadingButton>
-                        <LoadingButton
-                            className={classes.button}
-                            variant="contained"
-                            onClick={() => alert("TODO")}
-                            loading={loading}
-                            loadingPosition="start"
-                            startIcon={<CampaignOutlined />}
-                        >
-                            <span className={classes.buttonText}>SEND ANNOUNCEMENT</span>
-                        </LoadingButton>
+                        {
+                            UserService.isUserAdmin() &&
+                            <LoadingButton
+                                className={classes.button}
+                                variant="contained"
+                                onClick={(e) => _onClick(e, true)}
+                                loading={loading}
+                                loadingPosition="start"
+                                startIcon={<CampaignOutlined />}
+                            >
+                                <span className={classes.buttonText}>SEND ANNOUNCEMENT</span>
+                            </LoadingButton>
+                        }
                     </CardActions>
                 </Card>
             </Col>

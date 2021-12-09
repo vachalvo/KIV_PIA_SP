@@ -7,7 +7,7 @@ import UserService from "../services/user-service";
 import AuthService from "../services/auth-service";
 
 const FriendsList = forwardRef((props, ref) => {
-    const {type, onFetch, onDelete, onDecision} = props;
+    const {type, onFetch, onDelete, onDecision, onPromote, onDemote, admin} = props;
     const [items, setItems] = useState([]);
 
     useImperativeHandle(
@@ -48,6 +48,9 @@ const FriendsList = forwardRef((props, ref) => {
                                 type={type}
                                 onDelete={onDelete}
                                 onDecision={onDecision}
+                                onPromote={onPromote}
+                                onDemote={onDemote}
+                                admin={admin}
                             />
                         })}
                     </List>

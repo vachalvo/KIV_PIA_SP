@@ -3,10 +3,16 @@ import FriendsList from "./FriendsList";
 import {Container, Row, Stack} from "react-bootstrap";
 import SearchBar from "./SearchBar";
 import FriendshipService from "../services/friendship-service";
-import {useRef} from "react";
-import {Card, CardContent, CardHeader, Typography} from "@mui/material";
+import {useRef, useState} from "react";
+import {Alert, Card, CardContent, Snackbar, Typography} from "@mui/material";
+import UserService from "../services/user-service";
 
 function FriendsManagement() {
+    const [alertValues, setAlertValues] = useState({
+        open: false,
+        text: ''
+    });
+
     const friendsRef = useRef();
     const receivedRequestsRef = useRef();
     const sendRequestsRef = useRef();
@@ -31,9 +37,31 @@ function FriendsManagement() {
     };
 
     const sendRequest = async (id) => {
-        await FriendshipService.newFriendship(id);
+        FriendshipService.newFriendship(id).then(() => {
+            setAlertValues({
+                open: true,
+                text: 'Request was successfully send.'
+            });
+        })
         await fetchSendRequests();
         sendRequestsRef.current.update();
+    };
+
+    const setAlert = (state) => {
+        let msg = '';
+        // eslint-disable-next-line default-case
+        switch (state) {
+            case FriendshipService.STATES.accept:
+                msg = 'Request was successfully accepted.';
+                break;
+            case FriendshipService.STATES.blocked:
+                msg = 'User was blocked.';
+                break;
+        }
+        setAlertValues({
+            open: true,
+            text: msg
+        });
     };
 
     const interact = async (id, state) => {
@@ -45,6 +73,8 @@ function FriendsManagement() {
         friendsRef.current.update();
         await fetchBlocks();
         blocksRef.current.update();
+
+        setAlert(state);
     }
 
     const cancel = async (id, type) => {
@@ -54,77 +84,133 @@ function FriendsManagement() {
             case 'Received requests':
                 await fetchReceivedRequests();
                 receivedRequestsRef.current.update();
+                setAlertValues({
+                    open: true,
+                    text: 'Request was successfully canceled.'
+                });
                 break;
             case 'Send requests':
                 await fetchSendRequests();
                 sendRequestsRef.current.update();
+                setAlertValues({
+                    open: true,
+                    text: 'Request was successfully canceled.'
+                });
                 break;
             case 'Friends':
                 await fetchFriends();
                 friendsRef.current.update();
+                setAlertValues({
+                    open: true,
+                    text: 'Friend was successfully removed.'
+                });
                 break;
             case 'Blocked users':
                 await fetchBlocks();
+                setAlertValues({
+                    open: true,
+                    text: 'User was successfully unblocked.'
+                });
                 blocksRef.current.update();
                 break;
         }
     };
 
     const promote = async (id) => {
-        // TODO - missing impl on BE
+        UserService.promote(id).then((response) => {
+            friendsRef.current.update();
+            setAlertValues({
+                open: true,
+                text: 'User was successfully promote.'
+            });
+        }).catch((err) => {
+            console.log("Promote error", err);
+        });
+    };
+
+    const demote = async (id) => {
+        UserService.demote(id).then((response) => {
+            friendsRef.current.update();
+            setAlertValues({
+                open: true,
+                text: 'User was successfully demote.'
+            });
+        }).catch((err) => {
+            console.log("Demote error", err);
+        });
+    };
+
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') { return; }
+
+        setAlertValues({
+            ...alertValues,
+            open: false
+        });
     };
 
     return (
-        <Container style={{padding: '20px 0 0 0'}}>
-            <Stack gap={4}>
-                <Card>
-                    <CardContent>
-                        <Typography sx={{ pb: 2 }} className="text-center" variant="h4" component="div">
-                            Search friend
-                        </Typography>
-                        <SearchBar onSend={sendRequest} onDecision={interact} onDelete={cancel} />
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardContent>
-                        <Typography sx={{ pb: 2 }} className="text-center" variant="h4" component="div">
-                            Friendship management
-                        </Typography>
-                        <Row xs={1} md={2} className='g-4'>
-                            <Stack gap={3}>
-                                <FriendsList
-                                    ref={receivedRequestsRef}
-                                    type='Received requests'
-                                    onFetch={fetchReceivedRequests}
-                                    onDelete={cancel}
-                                    onDecision={interact}
-                                />
-                                <FriendsList
-                                    ref={sendRequestsRef}
-                                    type='Send requests'
-                                    onFetch={fetchSendRequests}
-                                    onDelete={cancel}
-                                />
-                            </Stack>
-                            <Stack gap={3}>
-                                <FriendsList
-                                    ref={friendsRef}
-                                    type='Friends'
-                                    onFetch={fetchFriends}
-                                    onDelete={cancel}
-                                />
-                                <FriendsList
-                                    ref={blocksRef}
-                                    type='Blocked users'
-                                    onFetch={fetchBlocks}
-                                    onDelete={cancel}
-                                />
-                            </Stack>
-                        </Row>
-                    </CardContent>
-                </Card>
-            </Stack>
-        </Container>
+        <>
+            <Snackbar open={alertValues.open} autoHideDuration={6000} onClose={handleClose}>
+                <Alert variant="filled" onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+                    {alertValues.text}
+                </Alert>
+            </Snackbar>
+            <Container style={{padding: '20px 0 0 0'}}>
+                <Stack gap={4}>
+                    <Card>
+                        <CardContent>
+                            <Typography sx={{ pb: 2 }} className="text-center" variant="h4" component="div">
+                                Search friend
+                            </Typography>
+                            <SearchBar onSend={sendRequest} onDecision={interact} onDelete={cancel} />
+                        </CardContent>
+                    </Card>
+                    <Card>
+                        <CardContent>
+                            <Typography sx={{ pb: 2 }} className="text-center" variant="h4" component="div">
+                                Friendship management
+                            </Typography>
+                            <Row xs={1} md={2} className='g-4'>
+                                <Stack gap={3}>
+                                    <FriendsList
+                                        ref={receivedRequestsRef}
+                                        type='Received requests'
+                                        onFetch={fetchReceivedRequests}
+                                        onDelete={cancel}
+                                        onDecision={interact}
+                                    />
+                                    <FriendsList
+                                        ref={sendRequestsRef}
+                                        type='Send requests'
+                                        onFetch={fetchSendRequests}
+                                        onDelete={cancel}
+                                    />
+                                </Stack>
+                                <Stack gap={3}>
+                                    <FriendsList
+                                        ref={friendsRef}
+                                        type='Friends'
+                                        onFetch={fetchFriends}
+                                        onPromote={promote}
+                                        onDemote={demote}
+                                        admin={UserService.isUserAdmin()}
+                                        onDelete={cancel}
+                                    />
+                                    <FriendsList
+                                        ref={blocksRef}
+                                        type='Blocked users'
+                                        onFetch={fetchBlocks}
+                                        onDelete={cancel}
+                                    />
+                                </Stack>
+                            </Row>
+                        </CardContent>
+                    </Card>
+                </Stack>
+            </Container>
+        </>
     );
 }
 
