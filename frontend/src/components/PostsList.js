@@ -3,20 +3,23 @@ import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import PostCard from "./PostCard";
 import PostService from "../services/post-service";
 import {
+    Alert,
     Button,
     Dialog, DialogActions,
     DialogContent, DialogContentText,
     DialogTitle,
     Divider,
-    FormControl,
+    FormControl, InputAdornment,
     InputLabel,
-    OutlinedInput,
+    OutlinedInput, Snackbar,
     Stack
 } from "@mui/material";
-import {CloseOutlined, DeleteOutline, EditOutlined} from "@mui/icons-material";
+import {Abc, AlternateEmailOutlined, CloseOutlined, DeleteOutline, EditOutlined, Title} from "@mui/icons-material";
 import {useTheme} from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import AuthService from "../services/auth-service";
+import SnackBarAlert from "./errors/SnackBarAlert";
+import OutlinedTextField from "./forms/common/OutlinedTextField";
 
 const PostList = forwardRef((props, ref) => {
     const { findAll, disableRefresh } = props;
@@ -35,9 +38,19 @@ const PostList = forwardRef((props, ref) => {
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
     const [loading, setLoading] = useState(false);
-    const [id, setId] = useState('');
-    const [header, setHeader] = useState('');
-    const [content, setContent] = useState('');
+    const [alertValues, setAlertValues] = useState({
+        open: false,
+        text: '',
+        severity: 'success'
+    });
+    const [values, setValues] = useState({
+        id: '',
+        header: '',
+        content: '',
+        loading: false,
+        headerFeedback: '',
+        contentFeedback: ''
+    });
 
     const userId = AuthService.getCurrentUserId();
 
@@ -62,27 +75,68 @@ const PostList = forwardRef((props, ref) => {
     }
 
     const setPost = (post) => {
-        setId(post.id);
-        setHeader(post.header);
-        setContent(post.content);
+        setValues({
+            ...values,
+            id: post.id,
+            header: post.header,
+            content: post.content,
+            headerFeedback: '',
+            contentFeedback: ''
+        });
     }
     const clearStates = () => {
-        setId('');
-        setHeader('');
-        setContent('');
+        setValues({
+            ...values,
+            id: '',
+            header: '',
+            content: ''
+        });
     };
 
     const onOpenEditDialog = (post) => {
-        console.log("Editing post: ", post);
         setPost(post);
         setOpenEditDialog(true);
     };
     const editPost = () => {
         setLoading(true);
 
-        PostService.editPost(id, header, content).then(() => {
+        PostService.editPost(values.id, values.header, values.content).then(() => {
             onCloseEditDialog();
+
+            setAlertValues({
+                ...alertValues,
+                open: true,
+                severity: 'success',
+                text: 'Post was successfully edited.'
+            });
+
             getPosts();
+        }).catch((err) => {
+            const responsedata = err.response.data;
+            const newFeedback = {
+                headerFeedback: values.headerFeedback,
+                contentFeeback: values.contentFeeback
+            };
+            let errorMsg = 'Unknown error';
+
+            if(responsedata.fieldErrors){
+                errorMsg = 'Some fields are not filled properly'
+
+                responsedata.fieldErrors.forEach(fieldError => {
+                    newFeedback[fieldError.field + 'Feedback'] = fieldError.message;
+                });
+            }
+            setValues({
+                ...values,
+                ...newFeedback
+            });
+            setAlertValues({
+                ...alertValues,
+                severity: 'error',
+                text: err.response.data.error ? err.response.data.error : errorMsg,
+                open: true
+            });
+            setLoading(false);
         });
 
         setLoading(false);
@@ -93,23 +147,52 @@ const PostList = forwardRef((props, ref) => {
     };
 
     const onOpenDeleteDialog = (post) => {
-        console.log("Deleting post: ", post);
         setPost(post);
         setOpenDeleteDialog(true);
     };
     const deletePost = () => {
         setLoading(true);
 
-        PostService.deletePost(id).then(() => {
+        PostService.deletePost(values.id).then(() => {
             onCloseDeleteDialog();
+
+            setAlertValues({
+                ...alertValues,
+                open: true,
+                severity: 'success',
+                text: 'Post was successfully deleted.'
+            });
+
             getPosts();
+        }).catch((err) => {
+            setAlertValues({
+                ...alertValues,
+                open: true,
+                severity: 'error',
+                text: 'Post was not deleted. Please try it later.'
+            });
         });
 
         setLoading(false);
     };
+
     const onCloseDeleteDialog = () => {
         setOpenDeleteDialog(false);
         clearStates();
+    };
+
+    const _onChange = (prop) => (event) => {
+        setValues({
+            ...values,
+            [prop]: event.target.value,
+            [prop + 'Feedback']: ''
+        });
+    };
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            editPost(event);
+        }
     };
 
     const renderEditDialog = () => {
@@ -126,31 +209,33 @@ const PostList = forwardRef((props, ref) => {
                     {"Edit post"}
                 </DialogTitle>
                 <DialogContent>
-                    <Stack spacing={2} >
-                        <Divider />
-                        <FormControl fullWidth>
-                            <InputLabel htmlFor="outlined-adornment-amount">Header</InputLabel>
-                            <OutlinedInput
-                                id="outlined-adornment-amount"
-                                value={header}
-                                onChange={(e) => setHeader(e.target.value)}
-                                label="Header"
-                                disabled={loading}
-                            />
-                        </FormControl>
-                        <FormControl fullWidth>
-                            <InputLabel htmlFor="outlined-adornment-amount">Content</InputLabel>
-                            <OutlinedInput
-                                id="outlined-adornment-amount"
-                                value={content}
-                                disabled={loading}
-                                onChange={(e) => setContent(e.target.value)}
-                                label="Content"
-                                multiline
-                                rows={3}
-                            />
-                        </FormControl>
-                    </Stack>
+                    <Divider sx={{my: 1}}/>
+                    <OutlinedTextField
+                        formcontrolsx={{ my: 1 }}
+                        feedback={values.headerFeedback}
+                        id='header-textfield'
+                        type='text'
+                        placeholder='Enter title'
+                        label="Title"
+                        value={values.header}
+                        onChange={_onChange('header')}
+                        onKeyDown={handleKeyDown}
+                        startAdornment={<InputAdornment position="start"><Title /></InputAdornment>}
+                    />
+                    <OutlinedTextField
+                        formcontrolsx={{ my: 1 }}
+                        feedback={values.contentFeedback}
+                        id='content-textfield'
+                        type='text'
+                        placeholder='Enter content'
+                        label="Content"
+                        value={values.content}
+                        onChange={_onChange('content')}
+                        onKeyDown={handleKeyDown}
+                        startAdornment={<InputAdornment position="start"><Abc /></InputAdornment>}
+                        multiline
+                        rows={3}
+                    />
                 </DialogContent>
                 <DialogActions>
                     <Button autoFocus onClick={onCloseEditDialog} startIcon={<CloseOutlined />}>
@@ -202,10 +287,31 @@ const PostList = forwardRef((props, ref) => {
             onEdit={onOpenEditDialog}
             onDelete={onOpenDeleteDialog}
         />;
-    })
+    });
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') { return; }
+
+        setAlertValues({
+            ...alertValues,
+            open: false
+        });
+    };
+
+    const renderSnackBar = () => {
+        return (
+            <SnackBarAlert
+                open={alertValues.open}
+                onClose={handleClose}
+                severity={alertValues.severity}
+                text={alertValues.text}
+                />
+        );
+    };
 
     return (
         <div>
+            {renderSnackBar()}
             {renderEditDialog()}
             {renderDeleteDialog()}
             {posts && renderPosts}

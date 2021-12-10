@@ -5,11 +5,11 @@ import {
 } from "@mui/material";
 
 function OutlinedTextField(props) {
-    const { id, feedback, label, formControlSx} = props;
+    const { id, feedback, label, formcontrolsx} = props;
 
     return (
         <FormControl
-            sx={formControlSx}
+            sx={formcontrolsx}
             variant="outlined"
             error={feedback !== ''}
             fullWidth

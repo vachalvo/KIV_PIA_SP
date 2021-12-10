@@ -6,11 +6,13 @@ import FriendshipService from "../services/friendship-service";
 import {useRef, useState} from "react";
 import {Alert, Card, CardContent, Snackbar, Typography} from "@mui/material";
 import UserService from "../services/user-service";
+import SnackBarAlert from "./errors/SnackBarAlert";
 
 function FriendsManagement() {
     const [alertValues, setAlertValues] = useState({
         open: false,
-        text: ''
+        text: '',
+        severity: 'success'
     });
 
     const friendsRef = useRef();
@@ -152,11 +154,12 @@ function FriendsManagement() {
 
     return (
         <>
-            <Snackbar open={alertValues.open} autoHideDuration={6000} onClose={handleClose}>
-                <Alert variant="filled" onClose={handleClose} severity="success" sx={{ width: '100%' }}>
-                    {alertValues.text}
-                </Alert>
-            </Snackbar>
+            <SnackBarAlert
+                open={alertValues.open}
+                onClose={handleClose}
+                severity={alertValues.severity}
+                text={alertValues.text}
+            />
             <Container style={{padding: '20px 0 0 0'}}>
                 <Stack gap={4}>
                     <Card>

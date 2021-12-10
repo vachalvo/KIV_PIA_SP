@@ -8,14 +8,13 @@ import {
     Card,
     CardHeader,
     CardContent,
-    FormControl,
-    InputLabel,
-    OutlinedInput,
-    Stack
+    InputAdornment
 } from "@mui/material";
-import {CampaignOutlined, SendOutlined} from "@mui/icons-material";
+import {Abc, CampaignOutlined, SendOutlined, Title} from "@mui/icons-material";
 import { makeStyles } from "@material-ui/core/styles";
 import {Col, Row} from "react-bootstrap";
+import OutlinedTextField from "../common/OutlinedTextField";
+import AlertDialog from "../../common/AlertDialog";
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -37,96 +36,166 @@ const useStyles = makeStyles(theme => ({
 
 function NewPost() {
     const classes = useStyles();
-    const [header, setHeader] = useState('');
-    const [content, setContent] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [values, setValues] = useState({
+        header: '',
+        content: '',
+        headerFeedback: '',
+        contentFeedback: '',
+        alertOpen: false,
+        alertSeverity: 'success',
+        alertText: '',
+        alertSecondaryText: '',
+        loading: false
+    });
 
-    const _headerOnchange = (event) => {
-        setHeader(event.target.value);
-    };
-    const _contentOnChange = (event) => {
-        setContent(event.target.value);
+    const _onChange = (prop) => (event) => {
+        setValues({
+            ...values,
+            [prop]: event.target.value,
+            [prop + 'Feedback']: ''
+        });
     };
 
     const _onClick = async (event, announcement = false) => {
         event.preventDefault();
-        setLoading(true);
-
-        await PostService.create({
-            header: header,
-            content: content,
-            announcement: announcement
-        }).then((data) => {
-            setHeader('');
-            setContent('');
-            console.log("New Post: ", data);
-        }).catch((err) => {
-            console.log(err.response.data);
+        setValues({
+            ...values,
+            loading: true
         });
 
-        setLoading(false);
-    }
+        PostService.create({
+            header: values.header,
+            content: values.content,
+            announcement: announcement
+        }).then((data) => {
+            setValues({
+                ...values,
+                content: '',
+                header: '',
+                alertSeverity: 'success',
+                alertText: 'Congratulation',
+                alertSecondaryText: 'New post was successfulyy created.',
+                alertOpen: true
+            });
+
+            console.log("New Post: ", data);
+        }).catch((err) => {
+            const responsedata = err.response.data;
+            const newFeedback = {
+                headerFeedback: values.headerFeedback,
+                contentFeeback: values.contentFeeback
+            };
+            let errorMsg = 'Unknown error';
+
+            if(responsedata.fieldErrors){
+                errorMsg = 'Some fields are not filled properly'
+
+                responsedata.fieldErrors.forEach(fieldError => {
+                    newFeedback[fieldError.field + 'Feedback'] = fieldError.message;
+                });
+            }
+            setValues({
+                ...values,
+                loading: false,
+                alertOpen: true,
+                alertSeverity: 'error',
+                alertText: 'Ohh no...Something happened',
+                alertSecondaryText: err.response.data.error ? err.response.data.error : errorMsg,
+                ...newFeedback
+            });
+        });
+    };
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            _onClick(event);
+        }
+    };
+
+    const renderAlert = () => {
+        return (
+            <AlertDialog
+                open={values.alertOpen}
+                severity={values.alertSeverity}
+                onClose={() => {
+                    setValues({
+                        ...values,
+                        alertOpen: false,
+                        alertText: '',
+                        alertSecondaryText: '',
+                    });
+                }}
+                title={values.alertText}
+                content={values.alertSecondaryText}
+            />
+        );
+    };
 
     return (
-        <Row className={"justify-content-center"}>
-            <Col md={10}>
-                <Card style={{margin: '20px 0'}} sx={{ m: 1 }}>
-                    <CardHeader title="What is going on inside your head...?"/>
-                    <CardContent>
-                        <Stack spacing={2} >
-                            <FormControl fullWidth>
-                                <InputLabel htmlFor="outlined-adornment-amount">Header</InputLabel>
-                                <OutlinedInput
-                                    id="outlined-adornment-amount"
-                                    value={header}
-                                    disabled={loading}
-                                    onChange={_headerOnchange}
-                                    label="Header"
-                                />
-                            </FormControl>
-                            <FormControl fullWidth>
-                                <InputLabel htmlFor="outlined-adornment-amount">Content</InputLabel>
-                                <OutlinedInput
-                                    id="outlined-adornment-amount"
-                                    value={content}
-                                    disabled={loading}
-                                    onChange={_contentOnChange}
-                                    label="Content"
-                                    multiline
-                                    rows={3}
-                                />
-                            </FormControl>
-                        </Stack>
-                    </CardContent>
-                    <CardActions className={"justify-content-center"}>
-                        <LoadingButton
-                            className={classes.button}
-                            color="success"
-                            variant="contained"
-                            onClick={(e) => _onClick(e)}
-                            loading={loading}
-                            loadingPosition="start"
-                            startIcon={<SendOutlined />}
-                        >
-                            <span className={classes.buttonText}>SEND POST</span>
-                        </LoadingButton>
-                        {
-                            UserService.isUserAdmin() &&
+        <div style={{margin: '20px 0 20px 0'}}>
+            {renderAlert()}
+            <Row className={"justify-content-center"}>
+                <Col md={10}>
+                    <Card style={{margin: '20px 0'}} sx={{ m: 1 }}>
+                        <CardHeader title="What is going on inside your head...?"/>
+                        <CardContent>
+                            <OutlinedTextField
+                                formcontrolsx={{ my: 1 }}
+                                feedback={values.headerFeedback}
+                                id='header-textfield'
+                                type='text'
+                                placeholder='Enter title'
+                                label="Title"
+                                value={values.header}
+                                onChange={_onChange('header')}
+                                onKeyDown={handleKeyDown}
+                                startAdornment={<InputAdornment position="start"><Title /></InputAdornment>}
+                            />
+                            <OutlinedTextField
+                                formcontrolsx={{ my: 1 }}
+                                feedback={values.contentFeedback}
+                                id='content-textfield'
+                                type='text'
+                                placeholder='Enter content'
+                                label="Content"
+                                value={values.content}
+                                onChange={_onChange('content')}
+                                onKeyDown={handleKeyDown}
+                                startAdornment={<InputAdornment position="start"><Abc /></InputAdornment>}
+                                multiline
+                                rows={3}
+                            />
+                        </CardContent>
+                        <CardActions className={"justify-content-center"}>
                             <LoadingButton
                                 className={classes.button}
+                                color="success"
                                 variant="contained"
-                                onClick={(e) => _onClick(e, true)}
-                                loading={loading}
+                                onClick={(e) => _onClick(e)}
+                                loading={values.loading}
                                 loadingPosition="start"
-                                startIcon={<CampaignOutlined />}
+                                startIcon={<SendOutlined />}
                             >
-                                <span className={classes.buttonText}>SEND ANNOUNCEMENT</span>
+                                <span className={classes.buttonText}>SEND POST</span>
                             </LoadingButton>
-                        }
-                    </CardActions>
-                </Card>
-            </Col>
-        </Row>
+                            {
+                                UserService.isUserAdmin() &&
+                                <LoadingButton
+                                    className={classes.button}
+                                    variant="contained"
+                                    onClick={(e) => _onClick(e, true)}
+                                    loading={values.loading}
+                                    loadingPosition="start"
+                                    startIcon={<CampaignOutlined />}
+                                >
+                                    <span className={classes.buttonText}>SEND ANNOUNCEMENT</span>
+                                </LoadingButton>
+                            }
+                        </CardActions>
+                    </Card>
+                </Col>
+            </Row>
+        </div>
     );
 }
 

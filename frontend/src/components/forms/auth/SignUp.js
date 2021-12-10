@@ -277,7 +277,7 @@ function SignUp(props) {
                         <Row>
                             <Col md={12}>
                                 <OutlinedTextField
-                                    formControlSx={{ my: 1 }}
+                                    formcontrolsx={{ my: 1 }}
                                     feedback={values.emailFeedback}
                                     id='email-registraion-textfield'
                                     type='email'
@@ -294,7 +294,7 @@ function SignUp(props) {
                         <Row>
                             <Col md={6}>
                                 <OutlinedTextField
-                                    formControlSx={{ my: 1 }}
+                                    formcontrolsx={{ my: 1 }}
                                     feedback={values.firstNameFeedback}
                                     id='first-name-registraion-textfield'
                                     type='text'
@@ -309,7 +309,7 @@ function SignUp(props) {
                             </Col>
                             <Col md={6}>
                                 <OutlinedTextField
-                                    formControlSx={{ my: 1 }}
+                                    formcontrolsx={{ my: 1 }}
                                     feedback={values.lastNameFeedback}
                                     id='last-name-registraion-textfield'
                                     type='text'
@@ -326,7 +326,7 @@ function SignUp(props) {
                         <Row>
                             <Col md={6}>
                                 <OutlinedTextField
-                                    formControlSx={{ my: 1 }}
+                                    formcontrolsx={{ my: 1 }}
                                     feedback={values.passwordFeedback}
                                     id='password-registration-textfield'
                                     type={values.showPassword ? 'text' : 'password'}
@@ -353,7 +353,7 @@ function SignUp(props) {
                             </Col>
                             <Col md={6} >
                                 <OutlinedTextField
-                                    formControlSx={{ my: 1 }}
+                                    formcontrolsx={{ my: 1 }}
                                     feedback={values.reEnterPasswordFeedback}
                                     id='re-enter-password-registration-textfield'
                                     type={values.showReEnterPassword ? 'text' : 'password'}
