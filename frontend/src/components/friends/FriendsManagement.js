@@ -2,11 +2,11 @@ import 'bootstrap/dist/css/bootstrap.css';
 import FriendsList from "./FriendsList";
 import {Container, Row, Stack} from "react-bootstrap";
 import SearchBar from "./SearchBar";
-import FriendshipService from "../services/friendship-service";
+import FriendshipService from "../../services/friendship-service";
 import {useRef, useState} from "react";
 import {Alert, Card, CardContent, Snackbar, Typography} from "@mui/material";
-import UserService from "../services/user-service";
-import SnackBarAlert from "./errors/SnackBarAlert";
+import UserService from "../../services/user-service";
+import SnackBarAlert from "../errors/SnackBarAlert";
 
 function FriendsManagement() {
     const [alertValues, setAlertValues] = useState({

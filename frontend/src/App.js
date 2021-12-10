@@ -11,7 +11,7 @@ import Footer from "./components/common/Footer";
 import Login from "./components/forms/auth/Login";
 import SignUp from "./components/forms/auth/SignUp";
 import Feed from "./components/Feed";
-import FriendsManagement from "./components/FriendsManagement";
+import FriendsManagement from "./components/friends/FriendsManagement";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./components/Profile";
 import PrivateError from "./components/errors/PrivateError";

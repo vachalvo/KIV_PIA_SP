@@ -2,7 +2,7 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import {Autocomplete, CircularProgress} from "@mui/material";
 import {useRef, useState} from "react";
-import UserService from "../services/user-service";
+import UserService from "../../services/user-service";
 import UserListItem from "./UserListItem";
 
 export default function SearchBar(parentProps) {

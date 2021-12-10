@@ -3,8 +3,8 @@ import {Card, Col} from "react-bootstrap";
 import {List, Typography} from "@mui/material";
 import FriendItem from "./FriendItem";
 import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
-import UserService from "../services/user-service";
-import AuthService from "../services/auth-service";
+import UserService from "../../services/user-service";
+import AuthService from "../../services/auth-service";
 
 const FriendsList = forwardRef((props, ref) => {
     const {type, onFetch, onDelete, onDecision, onPromote, onDemote, admin} = props;

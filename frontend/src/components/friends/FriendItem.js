@@ -7,8 +7,8 @@ import {
     FileDownloadOutlined,
     BlockOutlined
 } from "@mui/icons-material";
-import GenderAvatar from "./avatars/GenderAvatar";
-import AuthService from "../services/auth-service";
+import GenderAvatar from "../avatars/GenderAvatar";
+import AuthService from "../../services/auth-service";
 import {useEffect, useState} from "react";
 
 const DEFAULT_USER = {

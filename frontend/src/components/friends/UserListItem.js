@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import {IconButton, ListItem, ListItemAvatar, ListItemText} from "@mui/material";
-import GenderAvatar from "./avatars/GenderAvatar";
+import GenderAvatar from "../avatars/GenderAvatar";
 import {BlockOutlined, CheckOutlined, DeleteOutline, SendOutlined} from "@mui/icons-material";
 
 function UserListItem(props) {

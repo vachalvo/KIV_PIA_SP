@@ -18,7 +18,7 @@ import {
     FemaleOutlined,
     MaleOutlined,
 } from "@mui/icons-material";
-import PostList from "./PostsList";
+import PostList from "./posts/PostsList";
 
 const Profile = () => {
     const [user, setUser] = useState(undefined);
