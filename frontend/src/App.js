@@ -15,11 +15,21 @@ import FriendsManagement from "./components/friends/FriendsManagement";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./components/Profile";
 import PrivateError from "./components/errors/PrivateError";
-
-
+import ChatRoom from "./components/ChatRoom";
+import DrawerFriends from "./components/common/DrawerFriends";
+import FloatingButton from "./components/common/FloatingButton";
 
 const App = () => {
     const [currentUser, setCurrentUser] = useState(AuthService.getToken());
+    const [openDrawer, setOpenDrawer] = useState(false);
+
+    const toggleDrawer = (open) => (event) => {
+        if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+            return;
+        }
+
+        setOpenDrawer(open);
+    };
 
     const onLogin = () => {
         setCurrentUser(AuthService.getToken());
@@ -30,9 +40,25 @@ const App = () => {
         setCurrentUser(undefined);
     };
 
+    const renderChatManagement = () => {
+        return (
+            <>
+                <DrawerFriends onClick={toggleDrawer(false)}
+                               onKeyDown={toggleDrawer(false)}
+                               setOpen={setOpenDrawer}
+                               open={openDrawer}
+                />
+                <FloatingButton
+                    onClick={toggleDrawer(true)}
+                />
+            </>
+        );
+    }
+
     return (
         <Router>
             <Header currentUser={currentUser} onLogout={onLogout}/>
+            {currentUser ? renderChatManagement() : <></>}
             <Container>
                 <Row>
                     <Col lg={12} className={"margin-top"}>
@@ -43,6 +69,7 @@ const App = () => {
                             // TODO - add private routes !!!
                             <PrivateRoute path="/profile" exact component={Profile} />
                             <PrivateRoute path="/friends" exact component={FriendsManagement} />
+                            <PrivateRoute path="/chat" exact component={ChatRoom} />
                             <Route path='*' exact={true} component={PrivateError} />
                         </Switch>
                     </Col>
