@@ -44,9 +44,11 @@ function FriendsManagement() {
                 open: true,
                 text: 'Request was successfully send.'
             });
+            fetchSendRequests().then(() => {
+                sendRequestsRef.current.update();
+            });
         })
-        await fetchSendRequests();
-        sendRequestsRef.current.update();
+
     };
 
     const setAlert = (state) => {
