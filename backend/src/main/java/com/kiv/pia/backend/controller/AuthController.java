@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@CrossOrigin()
+@CrossOrigin("http://localhost:3000")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {

@@ -26,7 +26,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/friendship")
-@CrossOrigin
+@CrossOrigin("http://localhost:3000")
 public class FriendshipController {
 
     private UserMapper userMapper = new UserMapper();

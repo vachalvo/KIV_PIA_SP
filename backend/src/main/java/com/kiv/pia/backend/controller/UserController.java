@@ -26,7 +26,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin
+@CrossOrigin("http://localhost:3000")
 public class UserController {
 
     private static Logger log = LoggerFactory.getLogger(UserController.class);
