@@ -11,6 +11,7 @@ import com.kiv.pia.backend.model.response.FriendshipListResponseEntity;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
 import com.kiv.pia.backend.service.IFriendshipService;
 import com.kiv.pia.backend.service.IUserService;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,24 @@ public class FriendshipController {
 
     @Autowired
     private IUserService userService;
+
+    @GetMapping("/findFriends")
+    public ResponseEntity<?> findFriends(){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        User user = userService.findById(userDetails.getId());
+        if(user == null){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("User does not exist!"));
+        }
+
+        List<Friendship> friends = new ArrayList<>(friendshipService.findAllFriends(user.getId()));
+        return ResponseEntity
+                .ok()
+                .body(friends);
+    }
 
     @GetMapping("/findAll/{type}")
     public ResponseEntity<?> findAll(@PathVariable("type") FriendshipType type, @RequestParam(defaultValue = "true") boolean bySource){

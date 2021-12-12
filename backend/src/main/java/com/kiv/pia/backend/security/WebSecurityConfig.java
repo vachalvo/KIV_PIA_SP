@@ -57,6 +57,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/forms/**").permitAll().and()
+                .authorizeRequests().antMatchers("/chat/**").permitAll().and()
+                .authorizeRequests().antMatchers("/topic/**").permitAll().and()
+                .authorizeRequests().antMatchers("/user/**").permitAll().and()
+                .authorizeRequests().antMatchers("/ws/**").permitAll().and()
                 .authorizeRequests().antMatchers("/auth/**").permitAll()
                 .anyRequest().authenticated();
 

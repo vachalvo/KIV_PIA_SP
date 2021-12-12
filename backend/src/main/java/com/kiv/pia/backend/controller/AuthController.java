@@ -63,8 +63,13 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(), roles.contains("ROLE_ADMIN")));
+        User user = userService.findById(userDetails.getId());
+        if(user == null){
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("User does not exists!"));
+        }
+        return ResponseEntity.ok(new JwtResponse(jwt, user, roles.contains("ROLE_ADMIN")));
     }
 
     @PostMapping("/signup")
