@@ -71,6 +71,10 @@ function Login(props) {
                 emailFeedback: ''
             });
         }).catch((err) => {
+            console.log(err);
+            if(err === undefined || err.response === undefined || err.response.data === undefined){
+                return;
+            }
             const data = err.response.data;
             if(data.errorMsg) {
                 setValues({
@@ -87,6 +91,10 @@ function Login(props) {
                 passwordFeedback: ''
             });
         }).catch((err) => {
+            console.log(err);
+            if(err === undefined || err.response === undefined || err.response.data === undefined){
+                return;
+            }
             const data = err.response.data;
             if(data.errorMsg) {
                 setValues({
@@ -130,16 +138,21 @@ function Login(props) {
         };
         AuthService.login(data).then(
             (response) => {
+                console.log(response.data);
                 if (response.data.token) {
                     sessionStorage.setItem(Constants.SESSION_STORAGE_TOKEN, JSON.stringify(response.data.token));
-                    sessionStorage.setItem(Constants.SESSION_STORAGE_USER_ID, JSON.stringify(response.data.id));
+                    sessionStorage.setItem(Constants.SESSION_STORAGE_USER_ID, JSON.stringify(response.data.user.id));
                     sessionStorage.setItem(Constants.SESSION_STORAGE_ADMIN, JSON.stringify(response.data.admin));
+                    sessionStorage.setItem(Constants.SESSION_STORAGE_USER, JSON.stringify(response.data.user));
                 }
                 history.push('/');
                 onLogin();
             }
         ).catch((err) => {
             console.log(err);
+            if(err === undefined || err.response === undefined || err.response.data === undefined){
+                return;
+            }
             const responsedata = err.response.data;
             const newFeedback = {
                 emailFeedback: values.emailFeedback,

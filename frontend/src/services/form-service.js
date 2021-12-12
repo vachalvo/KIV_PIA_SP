@@ -16,11 +16,18 @@ const validateRegistrationEmail = (email) => {
 
 const validateLoginEmail = (email) => {
     const url = API_URL + '/login/email';
-    return axios.get(url, {
+    const headers = {
         params: {
             email: email
         },
         headers: authHeader()
+    };
+    console.log(headers);
+    return axios.get(url, {
+        params: {
+            email: email
+        },
+        headers: headers
     });
 };
 

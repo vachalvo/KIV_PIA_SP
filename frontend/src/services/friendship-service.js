@@ -33,6 +33,10 @@ const findFriendsByType = (type, bySource = true) => {
     return axios.get(API_URL + '/findAll/' + type, { headers: authHeader(), params });
 }
 
+const findFriends = () => {
+    return axios.get(API_URL + '/findFriends', { headers: authHeader() });
+}
+
 const cancel = (id) => {
     return axios
         .delete(API_URL + '/' + id, { headers: authHeader() })
@@ -41,4 +45,4 @@ const cancel = (id) => {
         });
 };
 
-export default { STATES, TYPES, newFriendship, cancel, interact, findFriendsByType};
+export default { STATES, TYPES, newFriendship, cancel, interact, findFriendsByType, findFriends};

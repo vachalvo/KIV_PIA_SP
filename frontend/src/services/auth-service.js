@@ -14,7 +14,8 @@ const login = (data) => {
 const logout = () => {
     sessionStorage.removeItem(Constants.SESSION_STORAGE_TOKEN);
     sessionStorage.removeItem(Constants.SESSION_STORAGE_USER_ID);
-    sessionStorage.removeItem(Constants.SESSION_STORAGE_TOKEN);
+    sessionStorage.removeItem(Constants.SESSION_STORAGE_ADMIN);
+    sessionStorage.removeItem(Constants.SESSION_STORAGE_USER);
 };
 
 const getToken = () => {
@@ -25,6 +26,10 @@ const getCurrentUserId = () => {
     return JSON.parse(sessionStorage.getItem(Constants.SESSION_STORAGE_USER_ID));
 };
 
+const getCurrentUser = () => {
+    return JSON.parse(sessionStorage.getItem(Constants.SESSION_STORAGE_USER));
+};
+
 export default {
-    signup, login, logout, getToken, getCurrentUserId
+    signup, login, logout, getToken, getCurrentUserId, getCurrentUser
 };
