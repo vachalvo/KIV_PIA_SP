@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
@@ -20,16 +20,23 @@ import ChatRoom from "./components/ChatRoom";
 import DrawerFriends from "./components/common/DrawerFriends";
 import FloatingButton from "./components/common/FloatingButton";
 import authHeader from "./services/auth-header";
+import {Badge} from "@material-ui/core";
 
 let stompClient = null;
 
 const App = () => {
     const [values, setValues] = useState({
         openDrawer: false,
+        showBadge: false,
         friends: []
     });
+
     const [messages, setMessages] = useState([]);
     const [currentUser, setCurrentUser] = useState(AuthService.getToken);
+
+    useEffect(() => {
+        updateFriends();
+    }, []);
 
     const toggleDrawer = (open) => (event) => {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -167,7 +174,7 @@ const App = () => {
                 friends={values.friends}
             />
             <FloatingButton
-
+                showBadge={values.showBadge}
                 onClick={toggleDrawer(true)}
             />
         </>;

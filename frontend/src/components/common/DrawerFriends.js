@@ -10,6 +10,17 @@ export default function DrawerFriends(props) {
     const { onClick, onKeyDown, open, setOpen, friends } = props;
     const currentUserId = AuthService.getCurrentUserId();
 
+    const getUserChip = (friendship) => {
+        const user = friendship.sourceUser.id === currentUserId ? friendship.endUser : friendship.sourceUser;
+
+        return (
+            <ListItem key={friendship.id}>
+                <UserChip
+                    user={user}
+                />
+            </ListItem>
+        );
+    }
     return (
         <div>
             <Drawer
@@ -22,15 +33,11 @@ export default function DrawerFriends(props) {
                     onKeyDown={onKeyDown}
                     onClick={onClick}
                 >
-                    {friends.map((friendship) => (
-                        <List sx={{m: 1}} disablePadding={true}>
-                            <ListItem key={friendship.id}>
-                                <UserChip
-                                    user={friendship.sourceUser.id === currentUserId ? friendship.endUser : friendship.sourceUser}
-                                />
-                            </ListItem>
-                        </List>
-                    ))}
+                    <List sx={{m: 1}} disablePadding={true} >
+                        {friends.map((friendship) => (
+                            getUserChip(friendship)
+                        ))}
+                    </List>
                 </Box>
             </Drawer>
         </div>
