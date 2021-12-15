@@ -22,13 +22,9 @@ import {blue, pink} from "@mui/material/colors";
 import {useRef, useState, useEffect} from "react";
 import {Col, Row} from "react-bootstrap";
 
-const cardStyle = {
-    margin: "10px 0"
-};
-
 function PostCard(props) {
     const { post, currentUserId, onEdit, onDelete } = props;
-    const { user, announcement } = post;
+    const { user } = post;
 
     const date = new Date(post.dateTimeOfPublished);
     const [openMenu, setOpenMenu] = useState(false);

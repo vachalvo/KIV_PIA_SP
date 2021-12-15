@@ -22,21 +22,13 @@ import PostList from "./posts/PostsList";
 
 const Profile = () => {
     const [user, setUser] = useState(undefined);
-    const [posts, setPosts] = useState([]);
-    const [page, setPage] = useState(0);
 
     useEffect(() => {
         UserService.getUser(AuthService.getCurrentUserId()).then((res) => {
             setUser(res.data);
         });
-        fetchData();
-    }, []);
 
-    const fetchData = () => {
-        PostService.findAllByUser(page).then((res) => {
-            setPosts(res.data.posts);
-        });
-    }
+    }, []);
 
     const renderLoggedUserProfile = () => {
         return (

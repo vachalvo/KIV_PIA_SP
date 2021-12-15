@@ -9,17 +9,6 @@ import {
 } from "@mui/icons-material";
 import GenderAvatar from "../avatars/GenderAvatar";
 import AuthService from "../../services/auth-service";
-import {useEffect, useState} from "react";
-
-const DEFAULT_USER = {
-    id: '',
-    name: '',
-    email: '',
-    gender: 'MALE',
-    roles: [{
-        name: 'ROLE_USER'
-    }]
-};
 
 function FriendItem(props) {
     const {item, type, onDelete, onDecision, onPromote, onDemote, admin} = props;

@@ -3,18 +3,14 @@ import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import PostCard from "./PostCard";
 import PostService from "../../services/post-service";
 import {
-    Alert,
     Button,
     Dialog, DialogActions,
     DialogContent, DialogContentText,
     DialogTitle,
     Divider,
-    FormControl, InputAdornment,
-    InputLabel,
-    OutlinedInput, Snackbar,
-    Stack
+    InputAdornment,
 } from "@mui/material";
-import {Abc, AlternateEmailOutlined, CloseOutlined, DeleteOutline, EditOutlined, Title} from "@mui/icons-material";
+import {Abc, CloseOutlined, DeleteOutline, EditOutlined, Title} from "@mui/icons-material";
 import {useTheme} from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import AuthService from "../../services/auth-service";

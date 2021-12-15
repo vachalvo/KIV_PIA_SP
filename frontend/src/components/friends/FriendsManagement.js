@@ -4,7 +4,7 @@ import {Container, Row, Stack} from "react-bootstrap";
 import SearchBar from "./SearchBar";
 import FriendshipService from "../../services/friendship-service";
 import {useRef, useState} from "react";
-import {Alert, Card, CardContent, Snackbar, Typography} from "@mui/material";
+import {Card, CardContent, Typography} from "@mui/material";
 import UserService from "../../services/user-service";
 import SnackBarAlert from "../errors/SnackBarAlert";
 
@@ -121,7 +121,7 @@ function FriendsManagement() {
     };
 
     const promote = async (id) => {
-        UserService.promote(id).then((response) => {
+        UserService.promote(id).then(() => {
             friendsRef.current.update();
             setAlertValues({
                 open: true,
@@ -133,7 +133,7 @@ function FriendsManagement() {
     };
 
     const demote = async (id) => {
-        UserService.demote(id).then((response) => {
+        UserService.demote(id).then(() => {
             friendsRef.current.update();
             setAlertValues({
                 open: true,
