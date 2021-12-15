@@ -2,9 +2,12 @@ import 'bootstrap/dist/css/bootstrap.css';
 import {useState} from "react";
 import {useHistory} from "react-router-dom";
 
-import {Form, Button, Row, Col, InputGroup} from "react-bootstrap";
+import {Row, Col} from "react-bootstrap";
 
-import Validation from "../../../global/validations";
+import OutlinedTextField from "../common/OutlinedTextField";
+import AlertDialog from "../../common/AlertDialog";
+
+import WebSocketService from "../../../services/web-socket-service";
 import AuthService from "../../../services/auth-service";
 import FormService from "../../../services/form-service";
 import {
@@ -17,44 +20,34 @@ import {
     CardContent,
     Container,
     InputAdornment,
-    InputLabel,
     FormControl,
-    OutlinedInput,
     IconButton,
-    FormHelperText,
     Divider,
-    AlertTitle, Alert, Collapse, FormLabel, RadioGroup, FormControlLabel, Radio
+    FormLabel, RadioGroup, FormControlLabel, Radio, LinearProgress, linearProgressClasses
 } from "@mui/material";
 import {
     AlternateEmailOutlined,
-    Close,
     LockOutlined,
-    LoginOutlined, Person, PersonAdd,
+    Person, PersonAdd,
     Visibility,
     VisibilityOff
 } from "@mui/icons-material";
 import LoadingButton from "@mui/lab/LoadingButton";
-import OutlinedTextField from "../common/OutlinedTextField";
-import AlertDialog from "../../common/AlertDialog";
-import WebSocketService from "../../../services/web-socket-service";
+import { styled } from '@mui/material/styles';
+import PasswordEntropyBar from "../../common/PasswordEntropyBar";
+import calculatePasswordEntropy from "../../../global/entropy_calc";
 
-const initData = {
-    email: '',
-    firstName: '',
-    lastName: '',
-    password: '',
-    reEnterPassword: '',
-    gender: ''
-};
-
-const initFeedback = {
-    email: '',
-    firstName: '',
-    lastName: '',
-    password: '',
-    reEnterPassword: '',
-    gender: 'asdfasdf'
-};
+const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+    height: 10,
+    borderRadius: 5,
+    [`&.${linearProgressClasses.colorPrimary}`]: {
+        backgroundColor: theme.palette.grey[theme.palette.mode === 'light' ? 200 : 800],
+    },
+    [`& .${linearProgressClasses.bar}`]: {
+        borderRadius: 5,
+        backgroundColor: theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8',
+    },
+}));
 
 function SignUp(props) {
     const [values, setValues] = useState({
@@ -74,7 +67,8 @@ function SignUp(props) {
         showReEnterPassword: false,
         loading: false,
         openAlert: false,
-        alertText: ''
+        alertText: '',
+        passwordEntropyScore: 0
     });
 
     const history = useHistory();
@@ -352,6 +346,7 @@ function SignUp(props) {
                                         </InputAdornment>
                                     }
                                 />
+                                <PasswordEntropyBar score={calculatePasswordEntropy(values.password)}/>
                             </Col>
                             <Col md={6} >
                                 <OutlinedTextField
