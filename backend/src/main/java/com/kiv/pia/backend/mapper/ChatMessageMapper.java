@@ -1,8 +1,7 @@
 package com.kiv.pia.backend.mapper;
 
 import com.kiv.pia.backend.model.ChatMessage;
-import com.kiv.pia.backend.repository.ChatMessageRepository;
-import com.kiv.pia.backend.web_sockets.ChatMessageResponse;
+import com.kiv.pia.backend.web_sockets.model.ChatMessageResponse;
 
 import java.util.ArrayList;
 import java.util.List;

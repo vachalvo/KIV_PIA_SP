@@ -1,4 +1,4 @@
-package com.kiv.pia.backend.web_sockets;
+package com.kiv.pia.backend.web_sockets.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

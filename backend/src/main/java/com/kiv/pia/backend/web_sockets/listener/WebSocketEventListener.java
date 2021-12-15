@@ -1,9 +1,10 @@
-package com.kiv.pia.backend.web_sockets;
+package com.kiv.pia.backend.web_sockets.listener;
 
 import com.kiv.pia.backend.model.Friendship;
 import com.kiv.pia.backend.model.User;
-import com.kiv.pia.backend.security.services.UserDetailsImpl;
 import com.kiv.pia.backend.service.IFriendshipService;
+import com.kiv.pia.backend.web_sockets.ActiveUserManager;
+import com.kiv.pia.backend.web_sockets.model.ActiveUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.GenericMessage;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;

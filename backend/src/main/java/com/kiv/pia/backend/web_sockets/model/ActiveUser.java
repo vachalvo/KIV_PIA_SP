@@ -1,4 +1,4 @@
-package com.kiv.pia.backend.web_sockets;
+package com.kiv.pia.backend.web_sockets.model;
 
 import com.kiv.pia.backend.model.enums.GenderType;
 import lombok.AllArgsConstructor;

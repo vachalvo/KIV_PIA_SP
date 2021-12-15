@@ -1,5 +1,6 @@
-package com.kiv.pia.backend.web_sockets;
+package com.kiv.pia.backend.web_sockets.controller;
 
+import com.kiv.pia.backend.web_sockets.ActiveUserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -8,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 @RestController
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
 @RequestMapping("/wsconnection")
 public class WebSocketConnectionRestController {
 

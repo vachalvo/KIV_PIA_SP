@@ -1,4 +1,4 @@
-package com.kiv.pia.backend.web_sockets;
+package com.kiv.pia.backend.web_sockets.listener;
 
 /**
  * This interface used as an Observer for  ActiveUserManager class

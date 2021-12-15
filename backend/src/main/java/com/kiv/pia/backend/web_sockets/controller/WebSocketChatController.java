@@ -1,12 +1,14 @@
-package com.kiv.pia.backend.web_sockets;
+package com.kiv.pia.backend.web_sockets.controller;
 
 import com.kiv.pia.backend.model.ChatMessage;
 import com.kiv.pia.backend.model.User;
-import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.service.IChatMessageService;
 import com.kiv.pia.backend.service.IUserService;
+import com.kiv.pia.backend.web_sockets.listener.ActiveUserChangeListener;
+import com.kiv.pia.backend.web_sockets.ActiveUserManager;
+import com.kiv.pia.backend.web_sockets.model.ChatMessageResponse;
+import com.kiv.pia.backend.web_sockets.model.UserConnect;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -21,8 +23,8 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin("http://localhost:3000")
-public class WebSocketChatController implements ActiveUserChangeListener{
+@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
+public class WebSocketChatController implements ActiveUserChangeListener {
 
     // private final static Logger LOGGER = LoggerFactory.getLogger(WebSocketChatController.class);
 

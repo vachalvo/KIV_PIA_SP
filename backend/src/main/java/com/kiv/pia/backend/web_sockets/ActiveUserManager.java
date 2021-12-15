@@ -10,8 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.kiv.pia.backend.security.services.UserDetailsImpl;
-import org.springframework.security.core.context.SecurityContextHolder;
+import com.kiv.pia.backend.web_sockets.listener.ActiveUserChangeListener;
 import org.springframework.stereotype.Component;
 
 @Component
