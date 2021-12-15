@@ -13,7 +13,7 @@ function Footer() {
 
     return (
         <div style={{"padding": "60px"}} >
-            <Navbar fixed="bottom" style={{ background: '#1976D2' }}>
+            <Navbar fixed="bottom">
                 <Container>
                     <Col className="text-center text-muted">
                         <Typography color='#FFFFFF'>

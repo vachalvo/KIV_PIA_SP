@@ -55,7 +55,7 @@ function PostCard(props) {
         <div>
             <Row className={"justify-content-center"}>
                 <Col md={8}>
-                    <Card sx={{ my: '10px', bgcolor: post.announcement ? '#ffcdd2' : '#ffffff'}}>
+                    <Card sx={{ my: '10px'}}>
                         <CardHeader
                             avatar={
                                 <Avatar sx={{ bgcolor: user.gender === 'MALE' ? blue[500] : pink[500] }} aria-label="avatar-post-card">
@@ -126,6 +126,9 @@ function PostCard(props) {
                             subheader={date.toLocaleString()}
                         />
                         <CardContent>
+                            <h4>
+                                {post.announcement ?? 'Annoucement'}
+                            </h4>
                             <h5>
                                 {props.post.header}
                             </h5>

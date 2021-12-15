@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import {Component} from "react";
+import { CookiesProvider } from 'react-cookie'
 
 import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
@@ -18,9 +19,10 @@ import Profile from "./components/Profile";
 import PrivateError from "./components/errors/PrivateError";
 import ChatRoom from "./components/ChatRoom";
 import DrawerFriends from "./components/common/DrawerFriends";
-import FloatingButton from "./components/common/FloatingButton";
+import FloatingButton from "./components/common/buttons/FloatingButton";
 import authHeader from "./services/auth-header";
 import {Alert, Snackbar} from "@mui/material";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 
 class App extends Component {
@@ -34,10 +36,25 @@ class App extends Component {
             currentUser: AuthService.getToken(),
             notificationText: '',
             notificationOpen: false,
-            waitingMessages: []
+            waitingMessages: [],
+            mode: 'light'
         };
 
         this.stompClient = null;
+    }
+
+    changeTheme(){
+        if (this.state.mode === 'dark'){
+            this.setState({
+                ...this.state,
+                mode:'light'
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                mode:'dark'
+            });
+        }
     }
 
     componentDidMount() {
@@ -242,7 +259,14 @@ class App extends Component {
                 ]
             }));
         }).catch((err) => {
-            console.log('getMessages', err);
+            switch (err.response.status) {
+                case 403:
+                    alert('getMessages - TODO');
+                    break;
+                default:
+                    console.log('getMessages', err);
+                    break
+            }
         });
     };
 
@@ -260,60 +284,84 @@ class App extends Component {
         });
     };
 
+    toggleDarkMode() {
+        const newMode = this.state.mode === 'light' ? 'dark' : 'light';
+        console.log(this.state.mode);
+        this.setState({
+            ...this.state,
+            mode: newMode
+        });
+    }
+
     render() {
+        let theme = createTheme({
+            palette: {
+                mode: this.state.mode
+            }
+        });
+
         return (
-            <Router >
-                <Snackbar open={this.state.notificationOpen} autoHideDuration={5000} onClose={this.notificationOnClose.bind(this)}>
-                    <Alert variant="filled" onClose={this.notificationOnClose.bind(this)} severity={'info'} sx={{ width: '100%' }}>
-                        {this.state.notificationText}
-                    </Alert>
-                </Snackbar>
-                <Header currentUser={this.state.currentUser} onLogout={this.onLogout.bind(this)}/>
-                {AuthService.getCurrentUserId() &&
-                    <>
-                        <DrawerFriends
-                            onClick={(event) => this.toggleDrawer(event, false)}
-                            onKeyDown={(event) => this.toggleDrawer(event, false)}
-                            setOpen={(open) => this.setState({
-                                ...this.state,
-                                openDrawer: open
-                            })}
-                            open={this.state.openDrawer}
-                            friends={this.state.friends}
-                            waitingMessages={this.state.waitingMessages}
-                            onClear={this.getMessages.bind(this)}
+            <CookiesProvider>
+                <ThemeProvider theme={theme}>
+                    <Router>
+                        <Snackbar open={this.state.notificationOpen} autoHideDuration={5000} onClose={this.notificationOnClose.bind(this)}>
+                            <Alert variant="filled" onClose={this.notificationOnClose.bind(this)} severity={'info'} sx={{ width: '100%' }}>
+                                {this.state.notificationText}
+                            </Alert>
+                        </Snackbar>
+                        <Header
+                            currentUser={this.state.currentUser}
+                            onLogout={this.onLogout.bind(this)}
+                            onChangeMode={this.toggleDarkMode.bind(this)}
+                            mode={this.state.mode}
                         />
-                        <FloatingButton
-                            showBadge={this.state.waitingMessages.length > 0}
-                            badgeContent={this.state.waitingMessages.length}
-                            onClick={(event) => this.toggleDrawer(event, true)}
-                        />
-                    </>
-                }
-                <Container>
-                    <Row>
-                        <Col lg={12} className={"margin-top"}>
-                            <Switch>
-                                <PrivateRoute path="/" exact component={Feed} />
-                                <Route path="/signup" exact component={SignUp} />
-                                <Route path={["/login", "/logout"]} exact component={() => <Login onLogin={this.onLogin.bind(this)} />} />
-                                <PrivateRoute path="/profile" exact component={Profile} />
-                                <PrivateRoute path="/friends" exact component={FriendsManagement} />
-                                <PrivateRoute path="/chat" exact component={() =>
-                                    <ChatRoom
-                                        onSendMessage={this.sendMessage.bind(this)}
-                                        messages={this.state.messages}
-                                        text={this.state.text}
-                                        setText={this.setText.bind(this)}
-                                    />}
+                        {AuthService.getCurrentUserId() &&
+                            <>
+                                <DrawerFriends
+                                    onClick={(event) => this.toggleDrawer(event, false)}
+                                    onKeyDown={(event) => this.toggleDrawer(event, false)}
+                                    setOpen={(open) => this.setState({
+                                        ...this.state,
+                                        openDrawer: open
+                                    })}
+                                    open={this.state.openDrawer}
+                                    friends={this.state.friends}
+                                    waitingMessages={this.state.waitingMessages}
+                                    onClear={this.getMessages.bind(this)}
                                 />
-                                <Route path='*' exact={true} component={PrivateError} />
-                            </Switch>
-                        </Col>
-                    </Row>
-                </Container>
-                <Footer />
-            </Router>
+                                <FloatingButton
+                                    showBadge={this.state.waitingMessages.length > 0}
+                                    badgeContent={this.state.waitingMessages.length}
+                                    onClick={(event) => this.toggleDrawer(event, true)}
+                                />
+                            </>
+                        }
+                        <Container>
+                            <Row>
+                                <Col lg={12} className={"margin-top"}>
+                                    <Switch>
+                                        <PrivateRoute path="/" exact component={Feed} />
+                                        <Route path="/signup" exact component={SignUp} />
+                                        <Route path={["/login", "/logout"]} exact component={() => <Login onLogin={this.onLogin.bind(this)} />} />
+                                        <PrivateRoute path="/profile" exact component={Profile} />
+                                        <PrivateRoute path="/friends" exact component={FriendsManagement} />
+                                        <PrivateRoute path="/chat" exact component={() =>
+                                            <ChatRoom
+                                                onSendMessage={this.sendMessage.bind(this)}
+                                                messages={this.state.messages}
+                                                text={this.state.text}
+                                                setText={this.setText.bind(this)}
+                                            />}
+                                        />
+                                        <Route path='*' exact={true} component={PrivateError} />
+                                    </Switch>
+                                </Col>
+                            </Row>
+                        </Container>
+                        <Footer />
+                    </Router>
+                </ThemeProvider>
+            </CookiesProvider>
         );
     }
 }

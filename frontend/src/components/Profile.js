@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from "react";
 import AuthService from "../services/auth-service";
 import UserService from "../services/user-service";
-import {Card, Row, Col, Container} from "react-bootstrap";
+import {Row, Col, Container} from "react-bootstrap";
 import ManProfile from "../img/man.png";
 import WomanProfile from "../img/woman.png";
 import {
+    Card,
     CardContent,
     CardMedia,
     List, ListItem, ListItemIcon,

@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import {Card, Col} from "react-bootstrap";
-import {List, Typography} from "@mui/material";
+import {Col} from "react-bootstrap";
+import {Card, CardContent, Divider, List, Typography} from "@mui/material";
 import FriendItem from "./FriendItem";
 import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 
@@ -30,12 +30,12 @@ const FriendsList = forwardRef((props, ref) => {
     return (
         <Col>
             <Card>
-                <Card.Header className="text-center" >
-                    <Typography variant="h5" component="div">
-                        {type}
-                    </Typography>
-                </Card.Header>
-                <Card.Body>
+                <CardContent>
+                    <div className={'text-center'}>
+                        <Typography variant="h5" component="div">
+                            {type}
+                        </Typography>
+                    </div>
                     <List
                         style={{maxHeight: 400, overflow: 'auto'}}
                     >
@@ -52,7 +52,7 @@ const FriendsList = forwardRef((props, ref) => {
                             />
                         })}
                     </List>
-                </Card.Body>
+                </CardContent>
             </Card>
         </Col>
     );

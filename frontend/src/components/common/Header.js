@@ -14,9 +14,10 @@ import "../../styles/components/header.css";
 import {useState} from "react";
 import {useHistory} from "react-router-dom";
 import WebSocketService from "../../services/web-socket-service";
+import DarkModeButton from "./buttons/DarkModeButton";
 
 function Header(props) {
-    const { currentUser, onLogout } = props;
+    const { currentUser, onLogout, mode, onChangeMode } = props;
     const history = useHistory();
 
     const logout = () => {
@@ -48,98 +49,112 @@ function Header(props) {
         }
     };
 
+    const handleToggleTheme = () => {
+        onChangeMode();
+    };
+
     const renderLoggedMenu = () => {
-        return (<Box sx={{ flexGrow: 0 }}>
-            <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleOpenUserMenu}
-                color="inherit"
-            >
-                <AccountCircle />
-            </IconButton>
-            <Menu
-                sx={{ mt: '45px' }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-            >
-                <MenuItem
-                    key={"profile"}
-                    onClick={() => handleCloseUserMenu('/profile')}
-                >
-                    <Typography textAlign="center">Profile</Typography>
-                </MenuItem>
-                <MenuItem
-                    key={"logout"}
-                    onClick={() => {
-                        logout();
-                        handleCloseUserMenu('/logout')
-                    }}
-                >
-                    <Typography textAlign="center">Logout</Typography>
-                </MenuItem>
-            </Menu>
-        </Box>);
+        return (
+            <>
+                <DarkModeButton onChange={handleToggleTheme} mode={mode}/>
+                <Box sx={{ flexGrow: 0 }}>
+
+                    <IconButton
+                        size="large"
+                        aria-label="account of current user"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleOpenUserMenu}
+                        color="inherit"
+                    >
+                        <AccountCircle />
+                    </IconButton>
+
+                    <Menu
+                        sx={{ mt: '45px' }}
+                        id="menu-appbar"
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
+                    >
+                        <MenuItem
+                            key={"profile"}
+                            onClick={() => handleCloseUserMenu('/profile')}
+                        >
+                            <Typography textAlign="center">Profile</Typography>
+                        </MenuItem>
+                        <MenuItem
+                            key={"logout"}
+                            onClick={() => {
+                                logout();
+                                handleCloseUserMenu('/logout')
+                            }}
+                        >
+                            <Typography textAlign="center">Logout</Typography>
+                        </MenuItem>
+                    </Menu>
+                </Box>
+            </>
+            );
     };
 
     const renderNotLoggedMenu = () => {
         return (
-            <Box sx={{ flexGrow: 1, display: { xs: 'flex' },  'justifyContent': 'flex-end'}}>
-                <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleOpenUserMenu}
-                    color="inherit"
-                >
-                    <ExitToApp />
-                </IconButton>
-                <Menu
-                    sx={{ mt: '45px' }}
-                    id="menu-appbar"
-                    anchorEl={anchorElUser}
-                    anchorOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                        vertical: 'top',
-                        horizontal: 'right',
-                    }}
-                    open={Boolean(anchorElUser)}
-                    onClose={handleCloseUserMenu}
-                >
-                    <MenuItem
-                        key={"login"}
-                        onClick={() => handleCloseUserMenu('/login')}
+            <>
+                <DarkModeButton onChange={handleToggleTheme} mode={mode}/>
+                <Box sx={{ flexGrow: 1, display: { xs: 'flex' },  'justifyContent': 'flex-end'}}>
+                    <IconButton
+                        size="large"
+                        aria-label="account of current user"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleOpenUserMenu}
+                        color="inherit"
                     >
-                        <Login style={{marginRight: '5px'}}/>
-                        <Typography textAlign="center">Login</Typography>
-                    </MenuItem>
-                    <MenuItem
-                        key={"signup"}
-                        onClick={() => handleCloseUserMenu('/signup')}
+                        <ExitToApp />
+                    </IconButton>
+                    <Menu
+                        sx={{ mt: '45px' }}
+                        id="menu-appbar"
+                        anchorEl={anchorElUser}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        keepMounted
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'right',
+                        }}
+                        open={Boolean(anchorElUser)}
+                        onClose={handleCloseUserMenu}
                     >
-                        <PersonAdd style={{marginRight: '5px'}}/>
-                        <Typography textAlign="center">Sign-up</Typography>
-                    </MenuItem>
-                </Menu>
-            </Box>
+                        <MenuItem
+                            key={"login"}
+                            onClick={() => handleCloseUserMenu('/login')}
+                        >
+                            <Login style={{marginRight: '5px'}}/>
+                            <Typography textAlign="center">Login</Typography>
+                        </MenuItem>
+                        <MenuItem
+                            key={"signup"}
+                            onClick={() => handleCloseUserMenu('/signup')}
+                        >
+                            <PersonAdd style={{marginRight: '5px'}}/>
+                            <Typography textAlign="center">Sign-up</Typography>
+                        </MenuItem>
+                    </Menu>
+                </Box>
+            </>
         );
     };
     return (
