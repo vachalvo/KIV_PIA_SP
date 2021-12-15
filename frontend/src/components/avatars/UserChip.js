@@ -1,28 +1,33 @@
 import * as React from 'react';
 import Chip from '@mui/material/Chip';
-import GenderAvatar from "./GenderAvatar";
 import {useHistory} from "react-router-dom";
-import {Badge} from "@mui/material";
-
+import {Badge, Typography} from "@mui/material";
+import ChatAvatar from "./ChatAvatar";
+import WebSocketService from "../../services/web-socket-service";
 export default function UserChip(props) {
-    const {user, showBadge, isOnline} = props;
+    const {user, showBadge, onClear} = props;
 
     const history = useHistory();
 
     const _onClick = () => {
-        history.push('/chat', {
-            id: user.id,
-            name: user.name
-        });
+        WebSocketService.addChatUser(user.id);
+        WebSocketService.addChatUserName(user.name);
+        onClear(user.id);
+
+        history.push('/chat', );
     };
 
     const getUserChip = () => {
         return (
             <Chip
                 key={user.id}
-                color={isOnline ? 'success' : 'error'}
-                avatar={<GenderAvatar gender={user.gender} />}
-                label={user.name}
+                avatar={
+                    <ChatAvatar online={user.isOnline} gender={user.gender}/>
+                }
+                label={
+                    <Typography variant="body2">
+                        <b>{user.name}</b></Typography>
+                }
                 onClick={() => _onClick()}
             />
         );
@@ -32,7 +37,7 @@ export default function UserChip(props) {
         return (
             <Badge
                 color='secondary'
-                badgeContent=" "
+                badgeContent="+1"
                 anchorOrigin={{
                     vertical: 'top',
                     horizontal: 'right',

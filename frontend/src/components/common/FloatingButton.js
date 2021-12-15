@@ -9,12 +9,13 @@ const fabStyle = {
     right: 20,
     bottom: 20,
     left: 'auto',
+    'z-index': '200',
     position: 'fixed',
     mb: 5
 };
 
 function FloatingButton(props) {
-    const { showBadge } = props;
+    const { showBadge, badgeContent } = props;
 
     const renderFloatingButton = () => {
         return (
@@ -34,7 +35,7 @@ function FloatingButton(props) {
             <Badge
                 color="secondary"
                 overlap="circular"
-                badgeContent=" "
+                badgeContent={badgeContent ?? ' '}
                 anchorOrigin={{
                     vertical: 'top',
                     horizontal: 'right',

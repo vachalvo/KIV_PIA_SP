@@ -5,19 +5,39 @@ import Constants from "../global/constants";
 const API_URL = Constants.BASE_URL + '/wsconnection';
 
 const userConnect = (userName) => {
-    return axios.post(API_URL + '/userConnect', {
-        userName: userName
-    }, { headers: authHeader() });
+    const params = {
+        userName: userName,
+    };
+    return axios.post(API_URL + '/userConnect', null, { headers: authHeader(), params });
 };
 
 const userDisconnect = (userName) => {
-    return axios.post(API_URL + '/userDisconnect', {
-        userName: userName
-    }, { headers: authHeader() });
+    return axios.post(API_URL + '/userDisconnect', userName, { headers: authHeader() });
 };
 
 const getActive = (userName) => {
     return axios.get(API_URL + '/getActive/' + userName, { headers: authHeader() });
 }
 
-export default { userConnect, userDisconnect, getActive };
+const addChatUser = (id) => {
+    sessionStorage.setItem(Constants.SESSION_STORAGE_CHAT_USER_ID, JSON.stringify(id));
+};
+
+const addChatUserName = (name) => {
+    sessionStorage.setItem(Constants.SESSION_STORAGE_CHAT_USER_NAME, JSON.stringify(name));
+};
+
+const getChatUserId = () => {
+    return JSON.parse(sessionStorage.getItem(Constants.SESSION_STORAGE_CHAT_USER_ID));
+};
+
+const getChatUserName = () => {
+    return JSON.parse(sessionStorage.getItem(Constants.SESSION_STORAGE_CHAT_USER_NAME));
+};
+
+const removeChatUserId = () => {
+    console.log('removing');
+    sessionStorage.removeItem(Constants.SESSION_STORAGE_CHAT_USER_ID);
+};
+
+export default { userConnect, userDisconnect, getActive, addChatUser, addChatUserName, getChatUserName, getChatUserId, removeChatUserId };

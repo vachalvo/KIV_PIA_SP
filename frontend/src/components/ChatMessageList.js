@@ -3,18 +3,11 @@ import {
     List, ListItem, ListItemText
 } from "@mui/material";
 
-import {useEffect, useRef} from "react";
 import AuthService from "../services/auth-service";
 
 function ChatMessageList(props) {
     const {messages} = props;
-    const listRef = useRef();
 
-    const scrollToBottom = () => {
-        listRef.current.scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"})
-    }
-
-    useEffect(scrollToBottom, [messages]);
 
     const formatMessage = (msg) => {
         const key = msg.text + '-' + msg.time;
@@ -41,12 +34,17 @@ function ChatMessageList(props) {
     return (
         <div>
             <List
-                sx={{ width: '100%', height: 360,position: 'relative',overflow: 'auto', 'overflowWrap': 'break-word', textOverflow: 'auto', bgcolor: 'background.paper' }}
+                sx={{ width: '100%',
+                    height: 250,
+                    mb: 20,
+                    position: 'relative',
+                    overflow: 'auto',
+                    'overflowWrap': 'break-word',
+                    textOverflow: 'auto',
+                    bgcolor: 'background.paper'
+                }}
             >
                 {renderMessages()}
-                <ListItem key='empty-for-scroll'>
-                    <ListItemText ref={listRef} primary={''} secondary={''} />
-                </ListItem>
             </List>
         </div>
     );

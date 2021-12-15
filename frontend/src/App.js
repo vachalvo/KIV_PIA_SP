@@ -1,10 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import {useEffect, useState} from "react";
+import {Component} from "react";
 
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 
-import FriendshipService from "./services/friendship-service";
+import ChatMessageService from "./services/chat-message-service";
 import AuthService from "./services/auth-service";
 import WebSocketService from "./services/web-socket-service";
 import Header from "./components/common/Header";
@@ -20,62 +20,65 @@ import ChatRoom from "./components/ChatRoom";
 import DrawerFriends from "./components/common/DrawerFriends";
 import FloatingButton from "./components/common/FloatingButton";
 import authHeader from "./services/auth-header";
-import {Badge} from "@material-ui/core";
+import {Alert, Snackbar} from "@mui/material";
 
-let stompClient = null;
 
-const App = () => {
-    const [values, setValues] = useState({
-        openDrawer: false,
-        showBadge: false,
-        friends: []
-    });
+class App extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            openDrawer: false,
+            friends: [],
+            messages: [],
+            text: '',
+            currentUser: AuthService.getToken(),
+            notificationText: '',
+            notificationOpen: false,
+            waitingMessages: []
+        };
 
-    const [messages, setMessages] = useState([]);
-    const [currentUser, setCurrentUser] = useState(AuthService.getToken);
+        this.stompClient = null;
+    }
 
-    useEffect(() => {
-        updateFriends();
-    }, []);
+    componentDidMount() {
+        if(this.stompClient === null){
+            this.connect();
+        }
+        if(WebSocketService.getChatUserId() !== null){
+            this.getMessages(WebSocketService.getChatUserId());
+        }
+    };
 
-    const toggleDrawer = (open) => (event) => {
+    toggleDrawer (event, open) {
         if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
             return;
         }
 
-        setValues({
-            ...values,
+        this.setState({
+            ...this.state,
             openDrawer: open
         });
-    };
+    }
 
-    const updateFriends = () => {
-        FriendshipService.findFriends().then((response) => {
-            setValues({
-                ...values,
-                friends: response.data
-            });
-        }).catch((err) => {
-            console.log('App.updateFriends', err);
+    onLogin() {
+        this.setState({
+            ...this.state,
+            currentUser: AuthService.getToken()
         });
-    };
 
-    const onLogin = () => {
-        setCurrentUser(AuthService.getToken());
+        this.connect();
+    }
 
-        updateFriends();
-
-        connect();
-    };
-
-    const onLogout = () => {
+    onLogout() {
         AuthService.logout();
-        setCurrentUser(undefined);
-
-        disconnect();
+        this.setState({
+            ...this.state,
+            currentUser: undefined
+        });
+        this.disconnect();
     };
 
-    const connect = () => {
+    connect() {
         if(!AuthService.getCurrentUserId()){
             return;
         }
@@ -87,126 +90,233 @@ const App = () => {
 
         WebSocketService.userConnect(AuthService.getCurrentUserId()).then(() => {
             const Stomp = require("stompjs");
-            var SockJS = require("sockjs-client");
+            let SockJS = require("sockjs-client");
             SockJS = new SockJS("http://localhost:8080/chat", null, {
                 ...params
             });
 
-            stompClient = Stomp.over(SockJS);
-            stompClient.connect({
+            this.stompClient = Stomp.over(SockJS);
+            this.stompClient.connect({
                 ...params
-            }, onConnected, onError);
+            }, this.onConnected.bind(this), this.onError.bind(this));
         })
 
     };
 
-    const onConnected = () => {
-        stompClient.subscribe('/topic/active', function (output) {
-            console.log('active', JSON.parse(output.body));
-        }, authHeader());
+    onConnected() {
+        this.stompClient.subscribe('/user/queue/users', this.usersCallback.bind(this), authHeader());
+        this.stompClient.subscribe('/topic/active', this.activeCallback.bind(this), authHeader());
+        this.stompClient.subscribe('/user/queue/messages', this.messagesCallback.bind(this), authHeader());
 
-        stompClient.subscribe('/user/queue/messages', function (output) {
-            console.log('queue', JSON.parse(output.body));
-            const newMessages = [
-                JSON.parse(output.body)
+        this.sendConnection(' connected to server');
+    };
+
+    usersCallback(output) {
+        // To receive active users from server
+        console.log('queue/users', JSON.parse(output.body));
+
+        const activeFriends = JSON.parse(output.body);
+        this.setState({
+            ...this.state,
+            friends: [
+                ...activeFriends
+            ]
+        });
+    };
+
+    messagesCallback(output) {
+        // To receive direct messages
+        console.log('queue', JSON.parse(output.body));
+        const body = JSON.parse(output.body);
+
+        if(body.from !== AuthService.getCurrentUserId() && body.from !== WebSocketService.getChatUserId()){
+            let f = this.state.friends.filter(obj => {
+                return obj.id === body.from;
+            });
+            let friend = f.pop();
+            let notificationText = 'New message from user was received. Check friends section.';
+            if(friend != null){
+                notificationText = 'New message from ' + friend.name + ' was received. Check friends section.'
+            }
+            const newWaitingMessages = [
+                ...this.state.waitingMessages
             ];
 
-            setMessages(prevMessages => ([...prevMessages, ...newMessages]));
-        }, authHeader());
+            if(!newWaitingMessages.includes(body.from)){
+                newWaitingMessages.push(body.from);
+            }
 
-        sendConnection(' connected to server');
+            this.setState({
+                ...this.state,
+                notificationText: notificationText,
+                notificationOpen: true,
+                waitingMessages: [
+                    ...newWaitingMessages
+                ]
+            });
+            return;
+        }
+        const receivedMessages = [
+            JSON.parse(output.body)
+        ];
+
+        const newMessages = [
+            ...receivedMessages,
+            ...this.state.messages
+        ]
+
+        this.setState({
+            ...this.state,
+            messages: [
+                ...newMessages
+            ]
+        });
     };
 
-    const sendConnection = (message) => {
-        var text = AuthService.getCurrentUserId() + message;
-        sendBroadcast({'from': 'server', 'text': text});
+    activeCallback(output) {
+        // To receive all active users from server if somebody is connected
+        const connectedUserId = JSON.parse(output.body);
+        const friends = [
+            ...this.state.friends
+        ];
 
-        // for first time or last time, list active users:
-        console.log('sendConnection to server', text);
+        friends.forEach((user) => {
+            if(user.id === connectedUserId.id){
+                user.isOnline = connectedUserId.isOnline;
+            }
+        });
+
+        this.setState({
+            ...this.state,
+            friends: [
+                ...friends
+            ],
+        });
     };
 
-    const sendBroadcast = (json) => {
-        console.log('sendBroadcast');
-        stompClient.send("/app/broadcast", {}, JSON.stringify(json));
+    sendConnection(message) {
+        let text = AuthService.getCurrentUserId() + message;
+        this.sendBroadcast({'from': 'server', 'text': text});
     };
 
-    const disconnect = () => {
-        console.log('Disconnected!');
+    sendBroadcast(json) {
+        this.stompClient.send("/app/broadcast", { headers: authHeader() }, JSON.stringify(json));
+    };
 
-        if(stompClient !== null){
-            WebSocketService.userDisconnect(AuthService.getCurrentUserId()).then(() => {
-                sendConnection(' disconnected from server');
-
-                stompClient.disconnect(function() {
-                    console.log('disconnected...');
-                });
-            }).catch((err) => {
-                console.log('disconnect', err);
-            })
+    disconnect() {
+        if(this.stompClient !== null){
+            this.stompClient.disconnect(this.disconnectedCallback.bind(this), authHeader());
         }
     };
 
-    const sendMessage = (msg, recipient) => {
+    disconnectedCallback() {
+        this.stompClient = null;
+    };
+
+    sendMessage(msg, recipient) {
         if (msg.trim() !== "") {
-            stompClient.send("/app/chat", { headers: authHeader(), 'sender': AuthService.getCurrentUserId()},
+            this.stompClient.send("/app/chat", { headers: authHeader(), 'sender': AuthService.getCurrentUserId()},
                 JSON.stringify({'from': AuthService.getCurrentUserId(), 'text': msg, 'recipient': recipient}));
         }
     };
 
-    const onError = (err) => {
+    onError(err) {
         console.log(err);
     };
 
-    const renderDrawer = () => {
-        if(!currentUser){
-            return <></>;
-        }
+    getMessages(id) {
+        ChatMessageService.getMessages(AuthService.getCurrentUserId(), id).then((response) => {
+            const msg = response.data;
+            let waiting = [
+                ...this.state.waitingMessages
+            ];
+            waiting = waiting.filter(e => e !== id); // will return ['A', 'C']
 
-        return <>
-            <DrawerFriends
-                onClick={toggleDrawer(false)}
-                onKeyDown={toggleDrawer(false)}
-                setOpen={(open) => setValues({
-                    ...values,
-                    openDrawer: open
-                })}
-                open={values.openDrawer}
-                friends={values.friends}
-            />
-            <FloatingButton
-                showBadge={values.showBadge}
-                onClick={toggleDrawer(true)}
-            />
-        </>;
+            this.setState(state => ({
+                ...state,
+                messages: [
+                    ...msg
+                ],
+                waitingMessages: [
+                    ...waiting
+                ]
+            }));
+        }).catch((err) => {
+            console.log('getMessages', err);
+        });
     };
 
-    return (
-        <Router>
-            <Header currentUser={currentUser} onLogout={onLogout}/>
-            {renderDrawer()}
-            <Container>
-                <Row>
-                    <Col lg={12} className={"margin-top"}>
-                        <Switch>
-                            <PrivateRoute path="/" exact component={Feed} />
-                            <Route path="/signup" exact component={SignUp} />
-                            <Route path={["/login", "/logout"]} exact component={() => <Login onLogin={onLogin} />} />
-                            // TODO - add private routes !!!
-                            <PrivateRoute path="/profile" exact component={Profile} />
-                            <PrivateRoute path="/friends" exact component={FriendsManagement} />
-                            <PrivateRoute path="/chat" exact component={() => <ChatRoom
-                                onSendMessage={sendMessage}
-                                messages={messages}
-                            />}
-                            />
-                            <Route path='*' exact={true} component={PrivateError} />
-                        </Switch>
-                    </Col>
-                </Row>
-            </Container>
-            <Footer />
-        </Router>
-    );
+    setText(text) {
+        this.setState({
+            ...this.state,
+            text: text
+        });
+    };
+
+    notificationOnClose() {
+        this.setState({
+            ...this.state,
+            notificationOpen: false
+        });
+    };
+
+    render() {
+        return (
+            <Router >
+                <Snackbar open={this.state.notificationOpen} autoHideDuration={5000} onClose={this.notificationOnClose.bind(this)}>
+                    <Alert variant="filled" onClose={this.notificationOnClose.bind(this)} severity={'info'} sx={{ width: '100%' }}>
+                        {this.state.notificationText}
+                    </Alert>
+                </Snackbar>
+                <Header currentUser={this.state.currentUser} onLogout={this.onLogout.bind(this)}/>
+                {AuthService.getCurrentUserId() &&
+                    <>
+                        <DrawerFriends
+                            onClick={(event) => this.toggleDrawer(event, false)}
+                            onKeyDown={(event) => this.toggleDrawer(event, false)}
+                            setOpen={(open) => this.setState({
+                                ...this.state,
+                                openDrawer: open
+                            })}
+                            open={this.state.openDrawer}
+                            friends={this.state.friends}
+                            waitingMessages={this.state.waitingMessages}
+                            onClear={this.getMessages.bind(this)}
+                        />
+                        <FloatingButton
+                            showBadge={this.state.waitingMessages.length > 0}
+                            badgeContent={this.state.waitingMessages.length}
+                            onClick={(event) => this.toggleDrawer(event, true)}
+                        />
+                    </>
+                }
+                <Container>
+                    <Row>
+                        <Col lg={12} className={"margin-top"}>
+                            <Switch>
+                                <PrivateRoute path="/" exact component={Feed} />
+                                <Route path="/signup" exact component={SignUp} />
+                                <Route path={["/login", "/logout"]} exact component={() => <Login onLogin={this.onLogin.bind(this)} />} />
+                                <PrivateRoute path="/profile" exact component={Profile} />
+                                <PrivateRoute path="/friends" exact component={FriendsManagement} />
+                                <PrivateRoute path="/chat" exact component={() =>
+                                    <ChatRoom
+                                        onSendMessage={this.sendMessage.bind(this)}
+                                        messages={this.state.messages}
+                                        text={this.state.text}
+                                        setText={this.setText.bind(this)}
+                                    />}
+                                />
+                                <Route path='*' exact={true} component={PrivateError} />
+                            </Switch>
+                        </Col>
+                    </Row>
+                </Container>
+                <Footer />
+            </Router>
+        );
+    }
 }
+
 
 export default App;

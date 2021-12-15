@@ -12,12 +12,12 @@ function Footer() {
     }, [fullYear]);
 
     return (
-        <div style={{"padding": "40px"}} >
+        <div style={{"padding": "60px"}} >
             <Navbar fixed="bottom" style={{ background: '#1976D2' }}>
                 <Container>
                     <Col className="text-center text-muted">
                         <Typography color='#FFFFFF'>
-                            {fullYear}-{fullYear + 1}, All Rights Reserved by Vojtěch Váchal
+                            {fullYear}-{fullYear + 1}, Vojtěch Váchal
                         </Typography>
                     </Col>
                 </Container>

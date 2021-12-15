@@ -7,25 +7,30 @@ import {
 import {Col, Row} from "react-bootstrap";
 import {blue} from "@mui/material/colors";
 import {SendOutlined} from "@mui/icons-material";
-import {useState} from "react";
-import {useLocation} from "react-router-dom";
+import {useEffect} from "react";
 import ChatMessageList from "./ChatMessageList";
-
+import WebSocketService from "../services/web-socket-service";
 
 function ChatRoom(props) {
     const {
         onSendMessage,
-        messages
+        messages,
+        setText,
+        text
     } = props;
 
-    const [text, setText] = useState('');
-    const { state } = useLocation();
-    const { id, name } = state; // Read values passed on state
+    const id = WebSocketService.getChatUserId(); // Read values passed on state
+    const name = WebSocketService.getChatUserName();
 
     const send = () => {
         onSendMessage(text, id);
         setText('');
     };
+
+    useEffect(() => {
+        document.getElementById('standard-basic').focus();
+
+    }, []);
 
     return (
         <div>
@@ -51,7 +56,6 @@ function ChatRoom(props) {
                                 variant="outlined"
                                 fullWidth
                                 color='primary'
-                                focused
                                 value={text}
                                 onKeyDown={(event) => {
                                     if(event.key === 'Enter'){

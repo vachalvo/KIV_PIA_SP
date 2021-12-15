@@ -16,6 +16,8 @@ const logout = () => {
     sessionStorage.removeItem(Constants.SESSION_STORAGE_USER_ID);
     sessionStorage.removeItem(Constants.SESSION_STORAGE_ADMIN);
     sessionStorage.removeItem(Constants.SESSION_STORAGE_USER);
+    sessionStorage.removeItem(Constants.SESSION_STORAGE_CHAT_USER_ID);
+    sessionStorage.removeItem(Constants.SESSION_STORAGE_CHAT_USER_NAME);
 };
 
 const getToken = () => {

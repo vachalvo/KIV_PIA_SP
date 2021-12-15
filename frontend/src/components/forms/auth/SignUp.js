@@ -36,6 +36,7 @@ import {
 import LoadingButton from "@mui/lab/LoadingButton";
 import OutlinedTextField from "../common/OutlinedTextField";
 import AlertDialog from "../../common/AlertDialog";
+import WebSocketService from "../../../services/web-socket-service";
 
 const initData = {
     email: '',
@@ -208,6 +209,7 @@ function SignUp(props) {
 
         AuthService.signup(data).then(
             (response) => {
+                WebSocketService.removeChatUserId();
                 history.push("/login");
             }
         ).catch((err) => {
@@ -413,7 +415,10 @@ function SignUp(props) {
                         <span>SIGN UP</span>
                     </LoadingButton>
                     <Typography> Already have an account?
-                        <Link onClick={() => props.history.push("/login")} sx={{ml: 1}}>
+                        <Link onClick={() => {
+                            WebSocketService.removeChatUserId();
+                            props.history.push("/login")
+                        }} sx={{ml: 1}}>
                             Login
                         </Link>
                         .

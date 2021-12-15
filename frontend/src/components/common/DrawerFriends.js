@@ -4,19 +4,18 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import UserChip from "../avatars/UserChip";
-import AuthService from "../../services/auth-service";
 
 export default function DrawerFriends(props) {
-    const { onClick, onKeyDown, open, setOpen, friends } = props;
-    const currentUserId = AuthService.getCurrentUserId();
-
-    const getUserChip = (friendship) => {
-        const user = friendship.sourceUser.id === currentUserId ? friendship.endUser : friendship.sourceUser;
+    const { onClick, onKeyDown, open, setOpen, friends, onClear, waitingMessages } = props;
+    console.log(waitingMessages);
+    const getUserChip = (user) => {
 
         return (
-            <ListItem key={friendship.id}>
+            <ListItem key={user.id} >
                 <UserChip
+                    onClear={onClear}
                     user={user}
+                    showBadge={waitingMessages.includes(user.id)}
                 />
             </ListItem>
         );
@@ -34,8 +33,8 @@ export default function DrawerFriends(props) {
                     onClick={onClick}
                 >
                     <List sx={{m: 1}} disablePadding={true} >
-                        {friends.map((friendship) => (
-                            getUserChip(friendship)
+                        {friends.map((user) => (
+                            getUserChip(user)
                         ))}
                     </List>
                 </Box>

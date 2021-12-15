@@ -31,6 +31,7 @@ import OutlinedTextField from "../common/OutlinedTextField";
 import AlertDialog from "../../common/AlertDialog";
 import Constants from "../../../global/constants";
 import {useHistory} from "react-router-dom";
+import WebSocketService from "../../../services/web-socket-service";
 
 function Login(props) {
     const {onLogin} = props;
@@ -144,6 +145,7 @@ function Login(props) {
                     sessionStorage.setItem(Constants.SESSION_STORAGE_USER_ID, JSON.stringify(response.data.user.id));
                     sessionStorage.setItem(Constants.SESSION_STORAGE_ADMIN, JSON.stringify(response.data.admin));
                     sessionStorage.setItem(Constants.SESSION_STORAGE_USER, JSON.stringify(response.data.user));
+                    sessionStorage.setItem(Constants.SESSION_STORAGE_CHAT_USER_ID, null);
                 }
                 history.push('/');
                 onLogin();
@@ -259,7 +261,10 @@ function Login(props) {
                             <span>LOGIN</span>
                         </LoadingButton>
                         <Typography > New to Squirrel?
-                            <Link onClick={() => history.push("/signup")} sx={{ml: 1}}>
+                            <Link onClick={() => {
+                                WebSocketService.removeChatUserId();
+                                history.push("/signup")
+                            }} sx={{ml: 1}}>
                                 Create an account
                             </Link>
                             .

@@ -1,21 +1,19 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import {Navbar, Container, Nav} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 import Logo from "../../img/favicon.png";
-import AuthService from "../../services/auth-service";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUsers, faSignInAlt, faUserPlus, faSignOutAlt, faIdCard, faSearch } from '@fortawesome/free-solid-svg-icons';
-import {AppBar, Button, Box, IconButton, Menu, Link, Toolbar, MenuItem, Typography} from "@mui/material";
+import {AppBar, Button, Box, IconButton, Menu, Toolbar, MenuItem, Typography} from "@mui/material";
 import {
     AccountCircle, ExitToApp,
     Feed,
-    FeedOutlined, Login, LoginOutlined, MeetingRoom, MeetingRoomOutlined, MeetingRoomTwoTone,
+    FeedOutlined, Login,
     MenuOutlined, People,
-    PeopleOutline, PersonAdd, VpnKeyOutlined
+    PeopleOutline, PersonAdd
 } from "@mui/icons-material";
 import "../../styles/components/header.css";
 
 import {useState} from "react";
 import {useHistory} from "react-router-dom";
+import WebSocketService from "../../services/web-socket-service";
 
 function Header(props) {
     const { currentUser, onLogout } = props;
@@ -45,6 +43,7 @@ function Header(props) {
     };
     const redirect = (link) => {
         if(link) {
+            WebSocketService.removeChatUserId();
             history.push(link);
         }
     };
