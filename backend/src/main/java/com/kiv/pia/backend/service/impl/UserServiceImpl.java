@@ -35,6 +35,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public Collection<User> findAllAdmins() {
+        return userRepository.findAllAdmins();
+    }
+
+    @Override
     public User findByEmail(String email) {
         Optional<User> user = userRepository.findByEmail(email);
         return user.orElse(null);

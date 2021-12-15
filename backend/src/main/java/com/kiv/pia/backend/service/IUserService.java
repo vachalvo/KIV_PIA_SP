@@ -14,6 +14,8 @@ public interface IUserService {
 
     Collection<User> findByName(UUID sourceId, String name);
 
+    Collection<User> findAllAdmins();
+
     User findByEmail(String email);
 
     User saveOrUpdate(User user);
