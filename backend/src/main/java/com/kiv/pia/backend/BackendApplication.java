@@ -33,7 +33,6 @@ public class BackendApplication implements CommandLineRunner{
 
 	private static final Logger log = LoggerFactory.getLogger(BackendApplication.class);
 
-
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);
 	}

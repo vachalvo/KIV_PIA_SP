@@ -2,6 +2,8 @@ package com.kiv.pia.backend.controller;
 
 import com.kiv.pia.backend.model.response.EntityFieldError;
 import com.kiv.pia.backend.model.response.FieldErrorResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +19,14 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ErrorHandlerController extends ResponseEntityExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(ResponseEntityExceptionHandler.class);
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
                                                                   HttpStatus status, WebRequest request) {
         FieldErrorResponse fieldErrorResponse = new FieldErrorResponse();
+
+        log.info("Field error handle!");
 
         Map<String, EntityFieldError> blankErrors = new HashMap<>();
         Map<String, EntityFieldError> sizeErrors = new HashMap<>();

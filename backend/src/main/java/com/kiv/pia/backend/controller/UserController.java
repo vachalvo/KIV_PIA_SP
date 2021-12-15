@@ -5,8 +5,6 @@ import com.kiv.pia.backend.model.*;
 import com.kiv.pia.backend.model.enums.RoleType;
 import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.model.response.SearchResultResponse;
-import com.kiv.pia.backend.repository.RoleRepository;
-import com.kiv.pia.backend.repository.UserRepository;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
 import com.kiv.pia.backend.service.IFriendshipService;
 import com.kiv.pia.backend.service.IRoleService;
@@ -18,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,12 +23,12 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
 public class UserController {
 
     private static Logger log = LoggerFactory.getLogger(UserController.class);
 
-    private UserMapper userMapper = new UserMapper();
+    private final UserMapper userMapper = new UserMapper();
 
     @Autowired
     private IUserService userService;
@@ -44,11 +41,22 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getUser(@PathVariable("id") UUID id){
-        return userService.findById(id);
+        User user = userService.findById(id);
+
+        if(user == null){
+            log.info("User with id " + id + " not found");
+            // TODO
+            return null;
+            //return ResponseEntity
+              //      .badRequest()
+                //    .body(new ErrorResponse("User does not exist!"));
+        }
+        return user;
     }
 
     @GetMapping("/findAll")
     public List<User> findAll(){
+        log.info("All users get");
         return (List<User>) userService.findAll();
     }
 
@@ -56,12 +64,16 @@ public class UserController {
     public ResponseEntity<?> findAll(@PathVariable String name){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
+        log.info("User with id " + userDetails.getId() + " want all user with name like " + name);
+
         User user = userService.findById(userDetails.getId());
         if(user == null){
+            log.info("User with id " + userDetails.getId() + " not found");
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("User does not exist!"));
         }
+
 
         List<SearchResultResponse> searchResult = new ArrayList<>();
         List<User> users = new ArrayList<>(userService.findByName(user.getId(), name));
@@ -75,6 +87,7 @@ public class UserController {
             searchResult.add(userMapper.toSearchResultResponse(u, f, user));
         }
 
+        log.info("Find all users with name like " + name + " result: " + searchResult);
         return ResponseEntity.ok().body(searchResult);
     }
 
@@ -83,20 +96,25 @@ public class UserController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
+        log.info("User with id " + userDetails.getId() + " want to promote user with id " + id + ".");
+
         User user = userService.findById(userDetails.getId());
         User targetUser = userService.findById(id);
         if(user == null || targetUser == null){
+            log.info("User with id " + userDetails.getId() + " or " + id + " not found");
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
         if(!userService.hasRole(user, RoleType.ROLE_ADMIN)) {
+            log.info("User with id " + userDetails.getId() + " do not have admin role");
             return ResponseEntity
                 .badRequest()
                 .body(new ErrorResponse("User does not have admin permissions!"));
         }
         if(userService.hasRole(targetUser, RoleType.ROLE_ADMIN)) {
+            log.info("User with id " + id + " is already admin.");
             return ResponseEntity
                 .badRequest()
                 .body(new ErrorResponse("User is already is admin!"));
@@ -104,6 +122,8 @@ public class UserController {
 
         Role adminRole = roleService.findByType(RoleType.ROLE_ADMIN);
         User result = userService.promoteUser(targetUser, adminRole);
+
+        log.info("User with id " + userDetails.getId() + " promote user with id " + id );
 
         return ResponseEntity.ok().body(result);
     }
@@ -113,20 +133,25 @@ public class UserController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
+        log.info("User with id " + userDetails.getId() + " want to demote user with id " + id + ".");
+
         User user = userService.findById(userDetails.getId());
         User targetUser = userService.findById(id);
         if(user == null || targetUser == null){
+            log.info("User with id " + userDetails.getId() + " or " + id + " not found");
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
         if(!userService.hasRole(user, RoleType.ROLE_ADMIN)) {
+            log.info("User with id " + userDetails.getId() + " do not have admin role");
             return ResponseEntity
                 .badRequest()
                 .body(new ErrorResponse("User does not have admin permissions!"));
         }
         if(!userService.hasRole(targetUser, RoleType.ROLE_ADMIN)) {
+            log.info("User with id " + id + " is already not admin.");
             return ResponseEntity
                 .badRequest()
                 .body(new ErrorResponse("User is already not admin!"));
@@ -134,6 +159,8 @@ public class UserController {
 
         Role adminRole = roleService.findByType(RoleType.ROLE_ADMIN);
         User result = userService.demoteUser(targetUser, adminRole);
+
+        log.info("User with id " + userDetails.getId() + " demote user with id " + id );
 
         return ResponseEntity.ok().body(result);
     }

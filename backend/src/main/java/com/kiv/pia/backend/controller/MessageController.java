@@ -8,7 +8,9 @@ import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
 import com.kiv.pia.backend.service.IChatMessageService;
 import com.kiv.pia.backend.service.IUserService;
-import com.kiv.pia.backend.web_sockets.ChatMessageResponse;
+import com.kiv.pia.backend.web_sockets.model.ChatMessageResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +24,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/messages")
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
 public class MessageController {
 
 
@@ -32,6 +34,8 @@ public class MessageController {
     @Autowired
     private IChatMessageService messageService;
 
+    private static final Logger log = LoggerFactory.getLogger(MessageController.class);
+
     private final ChatMessageMapper messageMapper = new ChatMessageMapper();
 
     @GetMapping("/get")
@@ -40,7 +44,8 @@ public class MessageController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
 
-        if(!userDetails.getId().equals(firstId) && !userDetails.getId().equals(secondId)){
+        if(!userDetails.getId().equals(firstId) && !userDetails.getId().equals(secondId)) {
+            log.info("User with id " + userDetails.getId() + " cannot access messages between " + firstId + " - " + secondId );
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("Current user cannot perform this task!"));
@@ -49,6 +54,7 @@ public class MessageController {
         User user = userService.findById(firstId);
         User second = userService.findById(secondId);
         if(user == null || second == null){
+            log.info("User with id " + firstId + " or " + secondId + " not found. ");
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("User does not exist!"));
@@ -63,6 +69,7 @@ public class MessageController {
                 Sort.by(ChatMessageConst.MESSAGE_SORT_BY).descending()));
 
         List<ChatMessageResponse> responseList = messageMapper.toChatMessageResponseList(chatMessages.getContent());
+        log.info("User with id " + firstId + " get messages with user with id " + secondId);
         return ResponseEntity.ok().body(responseList);
     }
 }

@@ -1,5 +1,6 @@
 package com.kiv.pia.backend.controller;
 
+import com.kiv.pia.backend.BackendApplication;
 import com.kiv.pia.backend.model.Role;
 import com.kiv.pia.backend.model.enums.GenderType;
 import com.kiv.pia.backend.model.enums.RoleType;
@@ -15,7 +16,11 @@ import com.kiv.pia.backend.security.jwt.JwtUtils;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
 import com.kiv.pia.backend.service.IRoleService;
 import com.kiv.pia.backend.service.IUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -31,10 +36,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
+
     @Autowired
     AuthenticationManager authenticationManager;
 
@@ -52,6 +60,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody AuthenticateBody body) {
+        log.info("Login request received: " + body.toString());
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(body.getEmail(), body.getPassword()));
 
@@ -97,7 +107,7 @@ public class AuthController {
         user.setRoles(roles);
 
         userService.saveOrUpdate(user);
-
+        log.info("New user registered with email " + user.getEmail());
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 }

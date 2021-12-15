@@ -1,6 +1,5 @@
 package com.kiv.pia.backend.controller;
 
-import com.kiv.pia.backend.model.Friendship;
 import com.kiv.pia.backend.model.Post;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.model.enums.RoleType;
@@ -10,10 +9,11 @@ import com.kiv.pia.backend.security.services.UserDetailsImpl;
 import com.kiv.pia.backend.service.IFriendshipService;
 import com.kiv.pia.backend.service.IPostService;
 import com.kiv.pia.backend.service.IUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/posts")
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
 public class PostController {
 
     @Autowired
@@ -35,8 +35,7 @@ public class PostController {
     @Autowired
     private IUserService userService;
 
-    @Autowired
-    private IFriendshipService friendshipService;
+    private static final Logger log = LoggerFactory.getLogger(PostController.class);
 
     private User getCurrentUser() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
@@ -59,29 +58,53 @@ public class PostController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createPost(@Valid @RequestBody PostCreateBody p){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
         User user = getCurrentUser();
 
         if(user == null){
+            log.info("User with id " + userDetails.getId() + " not found.");
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
         if(p.getAnnouncement() && !userService.hasRole(user, RoleType.ROLE_ADMIN)){
+            log.info("User with id " + userDetails.getId() + " dont have admin role to create annoucements.");
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("User without admin permission cannot create annoucements!"));
         }
 
         Post post = postService.saveOrUpdate(new Post(p.getHeader(), p.getContent(), LocalDateTime.now(), user, p.getAnnouncement()));
+        log.info("New post with id " + userDetails.getId() + " created. (" + post.toString() + ")");
         return ResponseEntity.ok().body(post);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updatePost(@PathVariable UUID id, @Valid @RequestBody PostCreateBody p){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        User user = getCurrentUser();
+        if(user == null){
+            log.info("User with id " + userDetails.getId() + " not found");
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("User does not exist!"));
+        }
+
         Optional<Post> originalPost = postService.findById(id);
         if(originalPost.isEmpty()){
+            log.info("Post with id " + id + " not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if(originalPost.get().getUser().getId() != user.getId()){
+            log.info("User with id " + userDetails.getId() + " is not owner of post with id "+ originalPost.get().getId());
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("User do not own this post!"));
         }
 
         originalPost.get().setContent(p.getContent());
@@ -89,40 +112,62 @@ public class PostController {
         Post post = postService.saveOrUpdate(originalPost.get());
 
         if(post != null){
+            log.info("Post with id " + post.getId() + " updated. (" + post + ")");
+
             return ResponseEntity.ok().body(post);
         }
 
+        log.info("Post with id " + id + " not found");
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPost(@PathVariable UUID id){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
+        User user = getCurrentUser();
+        if(user == null){
+            log.info("User with id " + userDetails.getId() + " not found");
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse("User does not exist!"));
+        }
+
         Optional<Post> post = postService.findById(id);
 
         if(post.isPresent()){
             return ResponseEntity.ok().body(post);
         }
 
+        log.info("Post with id " + id + " not found");
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/findAll")
     public ResponseEntity<?> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size,
                                                        @RequestParam(defaultValue = "dateTimeOfPublished") String sortBy){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
         User user = getCurrentUser();
         if(user == null){
+            log.info("User with id " + userDetails.getId() + " not found");
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("User does not exist!"));
         }
         Page<Post> postsInPage = postService.findAllByFriends(user.getId(), PageRequest.of(page, size, Sort.by(sortBy).descending()));
-
+        log.info("Post page send to user with id " + userDetails.getId());
         return ResponseEntity.ok().body(createPagePostsResponseBody(postsInPage));
     }
 
     @GetMapping("/findAllByUser")
     public ResponseEntity<?> findAllByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size,
                                                        @RequestParam(defaultValue = "dateTimeOfPublished") String sortBy){
+        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+
         User user = getCurrentUser();
         if(user == null){
             return ResponseEntity
@@ -130,7 +175,7 @@ public class PostController {
                     .body(new ErrorResponse("User does not exist!"));
         }
         Page<Post> usersPosts = postService.findAllByUser(user.getId(), PageRequest.of(page, size, Sort.by(sortBy).descending()));
-
+        log.info("Post page with users posts send to user with id " + userDetails.getId());
         return ResponseEntity.ok().body(createPagePostsResponseBody(usersPosts));
     }
 
