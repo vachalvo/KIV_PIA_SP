@@ -17,7 +17,7 @@ public class WebSocketConnectionRestController {
 
     @PostMapping("/userConnect")
     public String userConnect(HttpServletRequest request,
-                              @RequestBody String userName) {
+                              @RequestParam(value = "userName", defaultValue = "") String userName) {
         String remoteAddr = "";
         if (request != null) {
             remoteAddr = request.getHeader("Remote_Addr");

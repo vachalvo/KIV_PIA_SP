@@ -29,4 +29,6 @@ public interface FriendshipRepository extends CrudRepository<Friendship, UUID> {
 
     @Query("SELECT r FROM Friendship r WHERE (r.endUser.id = :id OR r.sourceUser.id = :id) AND r.friendshipType = 'FRIENDS'")
     Iterable<Friendship> findAllFriends(@Param("id") UUID id);
+    @Query("SELECT r FROM Friendship r WHERE (r.endUser.email = :email OR r.sourceUser.email = :email) AND r.friendshipType = 'FRIENDS'")
+    Iterable<Friendship> findAllFriends(@Param("email") String email);
 }

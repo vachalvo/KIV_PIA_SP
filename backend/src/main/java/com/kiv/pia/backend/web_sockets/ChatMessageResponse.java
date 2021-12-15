@@ -9,17 +9,24 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMessage {
+public class ChatMessageResponse {
 
     private String from;
     private String text;
     private String recipient;
     private String time;
 
-    public ChatMessage(String from, String text, String recipient) {
+    public ChatMessageResponse(String from, String text, String recipient) {
         this.from = from;
         this.text = text;
         this.recipient = recipient;
         this.time = LocalDateTime.now().toString();
+    }
+
+    public ChatMessageResponse(String from, String text, String recipient, LocalDateTime time) {
+        this.from = from;
+        this.text = text;
+        this.recipient = recipient;
+        this.time = time.toString();
     }
 }

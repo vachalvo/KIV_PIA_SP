@@ -46,6 +46,10 @@ public class FriendshipServiceImpl implements IFriendshipService {
     public Collection<Friendship> findAllFriends(UUID id) {
         return (Collection<Friendship>) friendshipRepository.findAllFriends(id);
     }
+    @Override
+    public Collection<Friendship> findAllFriends(String email) {
+        return (Collection<Friendship>) friendshipRepository.findAllFriends(email);
+    }
 
     @Override
     public Friendship saveOrUpdate(Friendship t) {

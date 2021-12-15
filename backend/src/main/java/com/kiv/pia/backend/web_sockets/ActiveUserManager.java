@@ -9,6 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import com.kiv.pia.backend.security.services.UserDetailsImpl;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,7 +31,7 @@ public class ActiveUserManager {
 
     public void add(String userName, String remoteAddress) {
         map.put(userName, remoteAddress);
-        notifyListeners();
+        notifyListeners(true, userName);
     }
 
     /**
@@ -38,7 +41,7 @@ public class ActiveUserManager {
      */
     public void remove(String username) {
         map.remove(username);
-        notifyListeners();
+        notifyListeners(false, username);
     }
 
     /**
@@ -80,7 +83,7 @@ public class ActiveUserManager {
         listeners.remove(listener);
     }
 
-    private void notifyListeners() {
-        notifyPool.submit(() -> listeners.forEach(ActiveUserChangeListener::notifyActiveUserChange));
+    private void notifyListeners(boolean connect, String username) {
+        notifyPool.submit(() -> listeners.forEach((listener) -> listener.notifyActiveUserChange(username, connect)));
     }
 }

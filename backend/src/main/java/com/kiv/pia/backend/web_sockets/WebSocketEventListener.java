@@ -1,15 +1,19 @@
 package com.kiv.pia.backend.web_sockets;
 
+import com.kiv.pia.backend.model.Friendship;
+import com.kiv.pia.backend.model.User;
+import com.kiv.pia.backend.security.services.UserDetailsImpl;
+import com.kiv.pia.backend.service.IFriendshipService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.GenericMessage;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
@@ -17,10 +21,7 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 import java.security.Principal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class WebSocketEventListener {
@@ -29,6 +30,12 @@ public class WebSocketEventListener {
 
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
+
+    @Autowired
+    private ActiveUserManager activeUserManager;
+
+    @Autowired
+    private IFriendshipService friendshipService;
 
     @EventListener(SessionSubscribeEvent.class)
     public void onWebSocketSessionsConnected(SessionSubscribeEvent event) {
@@ -41,8 +48,42 @@ public class WebSocketEventListener {
     }
 
     @EventListener
-    public void handleWebSocketConnectListener(SessionConnectedEvent event) {
+    public void handleSubscribeEvent(SessionSubscribeEvent event) {
+        Set<String> activeUsers = activeUserManager.getAll();
+        UUID id = UUID.fromString(event.getUser().getName());
+        Collection<Friendship> friendships = friendshipService.findAllFriends(id);
+        List<ActiveUser> activeFriends = new ArrayList<>();
 
+        for(Friendship f : friendships){
+            User user = f.getSourceUser().getId().equals(id)
+                    ? f.getEndUser()
+                    : f.getSourceUser();
+            ActiveUser activeUser = new ActiveUser(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getName(),
+                    user.getGender(),
+                    true
+            );
+            boolean isOnline = false;
+            for(String s : activeUsers){
+                if(s.contains(user.getId().toString())){
+                    activeFriends.add(activeUser);
+                    isOnline = true;
+                    break;
+                }
+            }
+            if(!isOnline){
+                activeUser.setIsOnline(false);
+                activeFriends.add(activeUser);
+            }
+        }
+
+        messagingTemplate.convertAndSendToUser(event.getUser().getName(), "/queue/users", activeFriends);
+    }
+
+    @EventListener
+    public void handleWebSocketConnectListener(SessionConnectedEvent event) {
         StompHeaderAccessor stompAccessor = StompHeaderAccessor.wrap(event.getMessage());
         @SuppressWarnings("rawtypes")
         GenericMessage connectHeader = (GenericMessage) stompAccessor
@@ -74,31 +115,12 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        // TODO
-        /*StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        Principal p =  headerAccessor.getUser();
 
-        String username = (String) headerAccessor.getSessionAttributes().get("username");
-        String privateUsername = (String) headerAccessor.getSessionAttributes().get("private-username");
-        if(username != null) {
-            logger.info("User Disconnected : " + username);
-
-            ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setStatus(MessageType.LEAVE);
-            chatMessage.setSenderName(username);
-            chatMessage.setSenderId(username);
-
-
-            messagingTemplate.convertAndSend("/topic/pubic", chatMessage);
+        if(p != null && p.getName() != null) {
+            logger.info("User Disconnected : " + p.getName());
+            activeUserManager.remove(p.getName());
         }
-
-        if(privateUsername != null) {
-            logger.info("User Disconnected : " + privateUsername);
-
-            ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setType(MessageType.LEAVE);
-            chatMessage.setSender(privateUsername);
-
-            messagingTemplate.convertAndSend("/queue/reply", chatMessage);
-        }*/
     }
 }

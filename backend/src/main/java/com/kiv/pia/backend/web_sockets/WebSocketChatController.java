@@ -1,6 +1,12 @@
 package com.kiv.pia.backend.web_sockets;
 
+import com.kiv.pia.backend.model.ChatMessage;
+import com.kiv.pia.backend.model.User;
+import com.kiv.pia.backend.model.response.ErrorResponse;
+import com.kiv.pia.backend.service.IChatMessageService;
+import com.kiv.pia.backend.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -11,7 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.security.Principal;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin("http://localhost:3000")
@@ -25,6 +32,12 @@ public class WebSocketChatController implements ActiveUserChangeListener{
     @Autowired
     private ActiveUserManager activeUserManager;
 
+    @Autowired
+    private IChatMessageService messageService;
+
+    @Autowired
+    private IUserService userService;
+
     @PostConstruct
     private void init() {
         activeUserManager.registerListener(this);
@@ -36,10 +49,20 @@ public class WebSocketChatController implements ActiveUserChangeListener{
     }
 
     @MessageMapping("/chat")
-    public void send(SimpMessageHeaderAccessor sha, @Payload ChatMessage chatMessage) {
+    public void send(SimpMessageHeaderAccessor sha, @Payload ChatMessageResponse chatMessage) {
         Principal p = sha.getUser();
         String sender = sha.getUser().getName();
-        ChatMessage message = new ChatMessage(chatMessage.getFrom(), chatMessage.getText(), chatMessage.getRecipient());
+
+        User from = userService.findById(UUID.fromString(chatMessage.getFrom()));
+        User recipient = userService.findById(UUID.fromString(chatMessage.getRecipient()));
+
+        if(from != null && recipient != null ){
+            // save message to DB
+            ChatMessage newMessage = new ChatMessage(from, recipient, chatMessage.getText(), LocalDateTime.now());
+            messageService.save(newMessage);
+        }
+
+        ChatMessageResponse message = new ChatMessageResponse(chatMessage.getFrom(), chatMessage.getText(), chatMessage.getRecipient());
         if (!sender.equals(chatMessage.getRecipient())) {
             webSocket.convertAndSendToUser(sender, "/queue/messages", message);
         }
@@ -48,8 +71,8 @@ public class WebSocketChatController implements ActiveUserChangeListener{
     }
 
     @Override
-    public void notifyActiveUserChange() {
-        Set<String> activeUsers = activeUserManager.getAll();
-        webSocket.convertAndSend("/topic/active", activeUsers);
+    public void notifyActiveUserChange(String connectedUserId, boolean connect) {
+        UserConnect userConnect = new UserConnect(connectedUserId, connect);
+        webSocket.convertAndSend("/topic/active", userConnect);
     }
 }
