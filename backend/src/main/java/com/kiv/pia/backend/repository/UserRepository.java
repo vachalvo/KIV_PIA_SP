@@ -19,7 +19,7 @@ public interface UserRepository extends CrudRepository<User, UUID> {
     @Query("SELECT u from User u" +
             "    LEFT JOIN Friendship fe on :id = fe.endUser.id AND u.id = fe.sourceUser.id" +
             "    LEFT JOIN Friendship fs on :id = fs.sourceUser.id AND u.id = fs.endUser.id" +
-            "    WHERE NOT u.id = :id AND u.name LIKE %:name% AND " +
+            "    WHERE NOT u.id = :id AND lower(u.name) LIKE %:name% AND " +
             "             (fs.friendshipType = 'REQUEST_WAITING'" +
             "          OR (fe.friendshipType = 'REQUEST_WAITING') " +
             "          OR (fe.friendshipType = 'BLOCKED') " +

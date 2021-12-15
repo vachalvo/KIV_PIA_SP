@@ -31,7 +31,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public Collection<User> findByName(UUID sourceId, String name) {
-        return (Collection<User>) userRepository.findByPartName(name, sourceId);
+        return (Collection<User>) userRepository.findByPartName(name.toLowerCase(), sourceId);
     }
 
     @Override
