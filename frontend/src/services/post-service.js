@@ -3,16 +3,15 @@ import authHeader from "./auth-header";
 import Constants from "../global/constants";
 
 const API_URL = Constants.BASE_URL + '/posts';
-const PAGE_SIZE = 3;
 
 const create = (data) => {
     return axios.post(API_URL + '/create', data, { headers: authHeader() });
 };
 
-const findAll = (page = 0) => {
+const findAll = (count = 5) => {
     const params = {
-        size: PAGE_SIZE,
-        page: page
+        size: count,
+        page: 0
     };
     return axios.get(API_URL + '/findAll', {
         headers: authHeader(),
@@ -20,10 +19,10 @@ const findAll = (page = 0) => {
     });
 };
 
-const findAllByUser = (page = 0) => {
+const findAllByUser = (count = 5) => {
     const params = {
-        size: PAGE_SIZE,
-        page: page
+        size: count,
+        page: 0
     };
     return axios.get(API_URL + '/findAllByUser', {
         headers: authHeader(),

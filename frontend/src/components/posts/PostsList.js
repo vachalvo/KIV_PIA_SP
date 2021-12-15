@@ -3,7 +3,8 @@ import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 import PostCard from "./PostCard";
 import PostService from "../../services/post-service";
 import {
-    Button,
+    Box,
+    Button, CircularProgress,
     Dialog, DialogActions,
     DialogContent, DialogContentText,
     DialogTitle,
@@ -17,11 +18,18 @@ import AuthService from "../../services/auth-service";
 import SnackBarAlert from "../errors/SnackBarAlert";
 import OutlinedTextField from "../forms/common/OutlinedTextField";
 
+const COUNT_INCREMENT = 5;
+
 const PostList = forwardRef((props, ref) => {
     const { findAll, disableRefresh } = props;
     useImperativeHandle(ref, () => ({
         getData() {
-            alert("bottom", posts);
+            const newCount = values.count + COUNT_INCREMENT;
+            setValues({
+                ...values,
+                count: values.count + COUNT_INCREMENT
+            })
+            getPosts(newCount);
         }
     }));
 
@@ -29,10 +37,9 @@ const PostList = forwardRef((props, ref) => {
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     const [posts, setPosts] = useState([]);
-    const [page, setPage] = useState(0);
+
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-
     const [loading, setLoading] = useState(false);
     const [alertValues, setAlertValues] = useState({
         open: false,
@@ -45,7 +52,8 @@ const PostList = forwardRef((props, ref) => {
         content: '',
         loading: false,
         headerFeedback: '',
-        contentFeedback: ''
+        contentFeedback: '',
+        count: COUNT_INCREMENT
     });
 
     const userId = AuthService.getCurrentUserId();
@@ -58,16 +66,20 @@ const PostList = forwardRef((props, ref) => {
         if(disableRefresh){
             return;
         }
+
         const interval = setInterval(() => {
             getPosts();
         }, 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [values.count]);
 
-    const getPosts = () => {
-        findAll(page).then((response) => {
+    const getPosts = (newCount = values.count) => {
+        setLoading(true);
+        findAll(newCount).then((response) => {
             setPosts(response.data.posts);
+            setLoading(false);
         });
+
     }
 
     const setPost = (post) => {
@@ -307,10 +319,26 @@ const PostList = forwardRef((props, ref) => {
 
     return (
         <div>
-            {renderSnackBar()}
-            {renderEditDialog()}
-            {renderDeleteDialog()}
-            {posts && renderPosts}
+            <Box sx={{ display: 'block', alignItems: 'center' }}>
+                {renderSnackBar()}
+                {renderEditDialog()}
+                {renderDeleteDialog()}
+                {posts && renderPosts}
+                {loading &&
+                    <div style={{display: 'flex', justifyContent: 'center'}}>
+                        <CircularProgress
+                            variant="indeterminate"
+                            disableShrink
+                            sx={{
+                                color: (theme) => (theme.palette.mode === 'light' ? '#1a90ff' : '#308fe8'),
+                                animationDuration: '550ms',
+                            }}
+                            size={40}
+                            thickness={4}
+                        />
+                    </div>
+                }
+            </Box>
         </div>
     );
 });

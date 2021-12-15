@@ -13,7 +13,6 @@ function Feed() {
 
             if (bottom) {
                 postsList.current.getData();
-                console.log('at the bottom');
             }
         }
 
@@ -22,12 +21,12 @@ function Feed() {
         return () => {
             window.removeEventListener('scroll', handleScroll);
         };
-    }, []);
+    }, [postsList]);
 
     return (
         <>
             <NewPost />
-            <PostList ref={postsList} findAll={PostService.findAll} disableRefresh={false}/>
+            <PostList ref={postsList} findAll={PostService.findAll} disableRefresh={false} />
         </>
     );
 }
