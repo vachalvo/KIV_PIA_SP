@@ -10,7 +10,6 @@ import java.util.UUID;
 @Data
 public class FriendshipCollaborationBody {
 
-    // TODO - error messages
     @NotNull(message = FriendshipConst.FRIENDSHIP_TYPE_IS_BLANK)
     private UUID friendshipId;
 
