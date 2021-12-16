@@ -7,9 +7,8 @@ import UserChip from "../avatars/UserChip";
 
 export default function DrawerFriends(props) {
     const { onClick, onKeyDown, open, setOpen, friends, onClear, waitingMessages } = props;
-    console.log(waitingMessages);
-    const getUserChip = (user) => {
 
+    const getUserChip = (user) => {
         return (
             <ListItem key={user.id} >
                 <UserChip
@@ -19,7 +18,8 @@ export default function DrawerFriends(props) {
                 />
             </ListItem>
         );
-    }
+    };
+
     return (
         <div>
             <Drawer

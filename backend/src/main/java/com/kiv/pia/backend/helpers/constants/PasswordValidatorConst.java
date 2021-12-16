@@ -1,7 +1,8 @@
 package com.kiv.pia.backend.helpers.constants;
 
 public class PasswordValidatorConst {
-    PasswordValidatorConst() {}
+    PasswordValidatorConst() {
+    }
 
     public static final int NUMBER_LENGTH = 10;
     public static final int UPPER_CASE_LENGTH = 26;
@@ -13,11 +14,5 @@ public class PasswordValidatorConst {
     public static final String LOWER_CASE_REGEX = "[a-z]";
     public static final String SPECIAL_REGEX = "[^a-zA-Z0-9]";
 
-    public static final String TOO_SHORT = "Too short";
-    public static final String WEAK = "Weak";
-    public static final String FAIR = "Fair";
-    public static final String GOOD = "Good";
-    public static final String STRONG = "Strong";
-
-
+    public static final int WEAK_LIMIT = 25;
 }

@@ -9,7 +9,6 @@ import ChatMessageService from "./services/chat-message-service";
 import AuthService from "./services/auth-service";
 import WebSocketService from "./services/web-socket-service";
 import Header from "./components/common/Header";
-import Footer from "./components/common/Footer";
 import Login from "./components/forms/auth/Login";
 import SignUp from "./components/forms/auth/SignUp";
 import Feed from "./components/Feed";
@@ -130,8 +129,6 @@ class App extends Component {
 
     usersCallback(output) {
         // To receive active users from server
-        console.log('queue/users', JSON.parse(output.body));
-
         const activeFriends = JSON.parse(output.body);
         this.setState({
             ...this.state,
@@ -143,7 +140,6 @@ class App extends Component {
 
     messagesCallback(output) {
         // To receive direct messages
-        console.log('queue', JSON.parse(output.body));
         const body = JSON.parse(output.body);
 
         if(body.from !== AuthService.getCurrentUserId() && body.from !== WebSocketService.getChatUserId()){
@@ -286,7 +282,7 @@ class App extends Component {
 
     toggleDarkMode() {
         const newMode = this.state.mode === 'light' ? 'dark' : 'light';
-        console.log(this.state.mode);
+
         this.setState({
             ...this.state,
             mode: newMode
@@ -358,7 +354,6 @@ class App extends Component {
                                 </Col>
                             </Row>
                         </Container>
-                        <Footer />
                     </Router>
                 </ThemeProvider>
             </CookiesProvider>

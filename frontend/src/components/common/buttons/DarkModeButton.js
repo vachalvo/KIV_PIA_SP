@@ -7,7 +7,7 @@ import {
 
 function DarkModeButton(props) {
     const { onChange, mode} = props;
-console.log(mode);
+
     return (
         <IconButton sx={{ ml: 1 }} onClick={onChange} color="inherit">
             {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}

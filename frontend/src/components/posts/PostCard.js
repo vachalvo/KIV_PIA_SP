@@ -125,7 +125,9 @@ function PostCard(props) {
                             title={<b>{user.name}</b>}
                             subheader={date.toLocaleString()}
                         />
-                        <CardContent>
+                        <CardContent sx={{
+                            'wordBreak': 'break-all'
+                        }}>
                             <h4>
                                 {post.announcement ?? 'Annoucement'}
                             </h4>

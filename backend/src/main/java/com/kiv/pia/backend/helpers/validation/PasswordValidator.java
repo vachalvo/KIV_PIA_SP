@@ -1,29 +1,25 @@
 package com.kiv.pia.backend.helpers.validation;
 
 import com.kiv.pia.backend.helpers.constants.PasswordValidatorConst;
+import com.kiv.pia.backend.helpers.validation.annotations.PasswordConstraint;
 
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class PasswordValidator {
-    public PasswordValidator(){}
+public class PasswordValidator implements
+        ConstraintValidator<PasswordConstraint, String> {
 
-    public String getStrengthOfPassword(long score) {
-        if(score == 0){
-            return PasswordValidatorConst.TOO_SHORT;
-        }
-        else if(score < 25){
-            return PasswordValidatorConst.WEAK;
-        }
-        else if(score < 50){
-            return PasswordValidatorConst.FAIR;
-        }
-        else if(score < 75){
-            return PasswordValidatorConst.GOOD;
-        }
-        else {
-            return PasswordValidatorConst.STRONG;
-        }
+    @Override
+    public void initialize(PasswordConstraint password) {
+    }
+
+    @Override
+    public boolean isValid(String password,
+                           ConstraintValidatorContext cxt) {
+        return password != null &&
+                passwordEntropy(password) >= PasswordValidatorConst.WEAK_LIMIT;
     }
 
     /**
@@ -31,7 +27,7 @@ public class PasswordValidator {
      * @param password is the password string.
      * @return calculated entropy
      */
-    public long passwordEntropy(String password){
+    private long passwordEntropy(String password){
         if(password == null || password.length() == 0){
             return 0;
         }
@@ -56,11 +52,6 @@ public class PasswordValidator {
         return matcher.find();
     }
 
-    /**
-     * Calculate the total charset length of a string based on standart charset.
-     * @param s string
-     * @return total charset length of string
-     */
     private long calcCharsetLengthWith(String s){
         long charSetLength = 0;
 
@@ -80,3 +71,4 @@ public class PasswordValidator {
         return charSetLength;
     }
 }
+

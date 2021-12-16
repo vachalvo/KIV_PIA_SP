@@ -1,9 +1,11 @@
 package com.kiv.pia.backend.model;
 
+import com.kiv.pia.backend.helpers.constants.PostConst;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.event.spi.PostCollectionRecreateEvent;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -25,10 +27,10 @@ public class Post {
     )
     private UUID id;
 
-    @Column(name = "content")
+    @Column(name = "content", length = PostConst.CONTENT_MAX_SIZE)
     private String content;
 
-    @Column(name = "header")
+    @Column(name = "header", length = PostConst.HEADER_MAX_SIZE)
     private String header;
 
     @Column(name = "date_time_of_published")

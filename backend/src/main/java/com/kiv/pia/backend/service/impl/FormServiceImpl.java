@@ -1,6 +1,7 @@
 package com.kiv.pia.backend.service.impl;
 
 import com.kiv.pia.backend.helpers.constants.FormConst;
+import com.kiv.pia.backend.helpers.constants.UserConst;
 import com.kiv.pia.backend.model.enums.GenderType;
 import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.service.IFormService;
@@ -32,7 +33,7 @@ public class FormServiceImpl implements IFormService {
                     .badRequest()
                     .body(new ErrorResponse(FormConst.EMAIL_IS_BLANK));
         }
-        if(!hasCorrectLength(email, 5, 50)){
+        if(!hasCorrectLength(email, 5, UserConst.EMAIL_MAX_LENGTH)){
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse(FormConst.EMAIL_SIZE));
@@ -55,7 +56,7 @@ public class FormServiceImpl implements IFormService {
                     .body(new ErrorResponse(FormConst.PASSWORD_IS_BLANK));
         }
 
-        if(!hasCorrectLength(password, 5, 30)){
+        if(!hasCorrectLength(password, 5, UserConst.PASSWORD_MAX_LENGTH)){
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse(FormConst.PASSWORD_SIZE));
@@ -78,7 +79,7 @@ public class FormServiceImpl implements IFormService {
                     .body(new ErrorResponse(FormConst.RE_ENTER_PASSWORD_IS_BLANK));
         }
 
-        if(!hasCorrectLength(password, 5, 30)){
+        if(!hasCorrectLength(password, 5, UserConst.RE_ENTER_PASSWORD_MAX_LENGTH)){
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse(FormConst.RE_ENTER_PASSWORD_SIZE));
@@ -113,7 +114,7 @@ public class FormServiceImpl implements IFormService {
                     .body(new ErrorResponse(FormConst.FIRST_NAME_IS_BLANK));
         }
 
-        if(!hasCorrectLength(name, 3, 30)){
+        if(!hasCorrectLength(name, 3, UserConst.FIRST_NAME_MAX_LENGTH)){
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse(FormConst.FIRST_NAME_SIZE));
@@ -136,7 +137,7 @@ public class FormServiceImpl implements IFormService {
                     .body(new ErrorResponse(FormConst.LAST_NAME_IS_BLANK));
         }
 
-        if(!hasCorrectLength(name, 3, 30)){
+        if(!hasCorrectLength(name, 3, UserConst.LAST_NAME_MAX_LENGTH)){
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse(FormConst.LAST_NAME_SIZE));

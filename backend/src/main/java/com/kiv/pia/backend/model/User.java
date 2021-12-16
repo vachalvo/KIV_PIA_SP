@@ -1,6 +1,6 @@
 package com.kiv.pia.backend.model;
 
-import com.kiv.pia.backend.model.enums.FriendshipType;
+import com.kiv.pia.backend.helpers.constants.UserConst;
 import com.kiv.pia.backend.model.enums.GenderType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,10 +31,10 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "email", length = 70, nullable = false, unique = true)
+    @Column(name = "email", length = UserConst.EMAIL_MAX_LENGTH, nullable = false, unique = true)
     private String email;
 
-    @Column(name = "name", length = 100, nullable = false)
+    @Column(name = "name", length = UserConst.FIRST_NAME_MAX_LENGTH + UserConst.LAST_NAME_MAX_LENGTH, nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
