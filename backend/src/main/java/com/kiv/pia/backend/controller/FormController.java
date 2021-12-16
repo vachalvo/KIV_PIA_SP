@@ -49,7 +49,7 @@ public class FormController {
         User user = userService.findByEmail(email);
         if (user != null){
             return ResponseEntity
-                    .badRequest()
+                    .status(HttpStatus.CONFLICT)
                     .body(new ErrorResponse(FormConst.EMAIL_ALREADY_IN_USE));
         }
 

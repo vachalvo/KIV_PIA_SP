@@ -48,7 +48,7 @@ public class UserController {
             // TODO
             return null;
             //return ResponseEntity
-              //      .badRequest()
+              //      .unprocessableEntity()
                 //    .body(new ErrorResponse("User does not exist!"));
         }
         return user;
@@ -70,7 +70,7 @@ public class UserController {
         if(user == null){
             log.info("User with id " + userDetails.getId() + " not found");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
@@ -103,20 +103,20 @@ public class UserController {
         if(user == null || targetUser == null){
             log.info("User with id " + userDetails.getId() + " or " + id + " not found");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
         if(!userService.hasRole(user, RoleType.ROLE_ADMIN)) {
             log.info("User with id " + userDetails.getId() + " do not have admin role");
             return ResponseEntity
-                .badRequest()
+                .status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse("User does not have admin permissions!"));
         }
         if(userService.hasRole(targetUser, RoleType.ROLE_ADMIN)) {
             log.info("User with id " + id + " is already admin.");
             return ResponseEntity
-                .badRequest()
+                .status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse("User is already is admin!"));
         }
 
@@ -140,20 +140,20 @@ public class UserController {
         if(user == null || targetUser == null){
             log.info("User with id " + userDetails.getId() + " or " + id + " not found");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
         if(!userService.hasRole(user, RoleType.ROLE_ADMIN)) {
             log.info("User with id " + userDetails.getId() + " do not have admin role");
             return ResponseEntity
-                .badRequest()
+                .status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse("User does not have admin permissions!"));
         }
         if(!userService.hasRole(targetUser, RoleType.ROLE_ADMIN)) {
             log.info("User with id " + id + " is already not admin.");
             return ResponseEntity
-                .badRequest()
+                .status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse("User is already not admin!"));
         }
 

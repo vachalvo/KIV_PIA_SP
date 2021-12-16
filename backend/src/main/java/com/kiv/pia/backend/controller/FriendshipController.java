@@ -47,7 +47,7 @@ public class FriendshipController {
         if(user == null){
             log.info("User with id " + userDetails.getId() + " not found.");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
@@ -67,7 +67,7 @@ public class FriendshipController {
         if(user == null){
             log.info("User with id " + userDetails.getId() + " not found.");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
@@ -96,13 +96,13 @@ public class FriendshipController {
         if(user == null || endUser == null){
             log.info("User with id " + userDetails.getId() + " or " + id + " not found.");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exist!"));
         }
         Collection<Friendship> friendships = friendshipService.findAll(user.getId(), endUser.getId());
         if(!friendships.isEmpty()) {
             return ResponseEntity
-                    .badRequest()
+                    .status(HttpStatus.CONFLICT)
                     .body(new ErrorResponse("Request already send!"));
         }
 
@@ -111,7 +111,7 @@ public class FriendshipController {
             return ResponseEntity.ok().body(newFriendship);
         }
 
-        return ResponseEntity.badRequest().body(new ErrorResponse("Unknow error! Try it again."));
+        return ResponseEntity.unprocessableEntity().body(new ErrorResponse("Unknow error! Try it again."));
     }
 
     @PutMapping("/interact")
@@ -123,7 +123,7 @@ public class FriendshipController {
         if(user == null){
             log.info("User with id " + userDetails.getId() + " not found.");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
@@ -135,7 +135,7 @@ public class FriendshipController {
         }
 
         log.info("User with id " + userDetails.getId() + " give unknown frienship state");
-        return ResponseEntity.badRequest().body(new ErrorResponse("Unknown friendship state!"));
+        return ResponseEntity.unprocessableEntity().body(new ErrorResponse("Unknown friendship state!"));
     }
 
     @DeleteMapping("/{id}")
@@ -144,7 +144,7 @@ public class FriendshipController {
         if(friendship == null) {
             log.info("Friendship with id " + id + " not found.");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("Friendship not found!"));
         }
 
@@ -160,19 +160,19 @@ public class FriendshipController {
         if(friendship == null){
             log.info("Friendship with id " + body.getFriendshipId() + " not found.");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("Friendship not found!"));
         }
         if(body.getFriendshipState() != FriendshipState.ACCEPTED){
             log.info("Request body friendship with id " + body.getFriendshipId() + " has wrong state.");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("Wrong friendship type!"));
         }
         if(friendship.getFriendshipType() != FriendshipType.REQUEST_WAITING){
             log.info("Request body friendship with id " + body.getFriendshipId() + " has wrong state.");
             return ResponseEntity
-                    .badRequest()
+                    .status(HttpStatus.CONFLICT)
                     .body(new ErrorResponse("Cannot unblock user in actual state!"));
         }
 
@@ -181,7 +181,7 @@ public class FriendshipController {
 
         if(friendship == null) {
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("Unknown error!"));
         }
 
@@ -195,19 +195,19 @@ public class FriendshipController {
         if(friendship == null){
             log.info("Friendship with id " + body.getFriendshipId() + " not found.");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("Friendship not found!"));
         }
         if(body.getFriendshipState() != FriendshipState.BLOCKED){
             log.info("Request body friendship with id " + body.getFriendshipId() + " has wrong state.");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("Wrong friendship type!"));
         }
         if(friendship.getFriendshipType() != FriendshipType.REQUEST_WAITING){
             log.info("Request body friendship with id " + body.getFriendshipId() + " has wrong state.");
             return ResponseEntity
-                    .badRequest()
+                    .status(HttpStatus.CONFLICT)
                     .body(new ErrorResponse("Cannot block user in actual state!"));
         }
 
@@ -216,7 +216,7 @@ public class FriendshipController {
 
         if(friendship == null) {
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("Unknown error!"));
         }
 

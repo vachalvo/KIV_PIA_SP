@@ -47,7 +47,7 @@ public class MessageController {
         if(!userDetails.getId().equals(firstId) && !userDetails.getId().equals(secondId)) {
             log.info("User with id " + userDetails.getId() + " cannot access messages between " + firstId + " - " + secondId );
             return ResponseEntity
-                    .badRequest()
+                    .status(HttpStatus.CONFLICT)
                     .body(new ErrorResponse("Current user cannot perform this task!"));
         }
 
@@ -56,7 +56,7 @@ public class MessageController {
         if(user == null || second == null){
             log.info("User with id " + firstId + " or " + secondId + " not found. ");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exist!"));
         }
 

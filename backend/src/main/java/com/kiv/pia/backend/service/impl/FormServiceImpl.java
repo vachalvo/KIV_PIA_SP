@@ -30,18 +30,18 @@ public class FormServiceImpl implements IFormService {
     public ResponseEntity<?> validateEmail(String email) {
         if(isEmpty(email)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.EMAIL_IS_BLANK));
         }
         if(!hasCorrectLength(email, 5, UserConst.EMAIL_MAX_LENGTH)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.EMAIL_SIZE));
         }
 
         if(!hasCorrectFormat(email, FormConst.EMAIL_REGEX)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.EMAIL_PATTERN));
         }
 
@@ -52,19 +52,19 @@ public class FormServiceImpl implements IFormService {
     public ResponseEntity<?> validatePassword(String password) {
         if(isEmpty(password)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.PASSWORD_IS_BLANK));
         }
 
         if(!hasCorrectLength(password, 5, UserConst.PASSWORD_MAX_LENGTH)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.PASSWORD_SIZE));
         }
 
         if(!hasCorrectFormat(password, FormConst.PASSWORD_REGEX)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.PASSWORD_PATTERN));
         }
 
@@ -75,19 +75,19 @@ public class FormServiceImpl implements IFormService {
     public ResponseEntity<?> validateReEnterPassword(String password) {
         if(isEmpty(password)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.RE_ENTER_PASSWORD_IS_BLANK));
         }
 
         if(!hasCorrectLength(password, 5, UserConst.RE_ENTER_PASSWORD_MAX_LENGTH)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.RE_ENTER_PASSWORD_SIZE));
         }
 
         if(!hasCorrectFormat(password, FormConst.RE_ENTER_PASSWORD_REGEX)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.RE_ENTER_PASSWORD_PATTERN));
         }
 
@@ -101,7 +101,7 @@ public class FormServiceImpl implements IFormService {
         }
 
         return ResponseEntity
-                .badRequest()
+                .unprocessableEntity()
                 .body(new ErrorResponse(FormConst.RE_ENTER_PASSWORD_NOT_SAME));
 
     }
@@ -110,19 +110,19 @@ public class FormServiceImpl implements IFormService {
     public ResponseEntity<?> validateFirstName(String name) {
         if(isEmpty(name)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.FIRST_NAME_IS_BLANK));
         }
 
         if(!hasCorrectLength(name, 3, UserConst.FIRST_NAME_MAX_LENGTH)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.FIRST_NAME_SIZE));
         }
 
         if(!hasCorrectFormat(name, FormConst.FIRST_NAME_REGEX)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.FIRST_NAME_PATTERN));
         }
 
@@ -133,19 +133,19 @@ public class FormServiceImpl implements IFormService {
     public ResponseEntity<?> validateLastName(String name) {
         if(isEmpty(name)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.LAST_NAME_IS_BLANK));
         }
 
         if(!hasCorrectLength(name, 3, UserConst.LAST_NAME_MAX_LENGTH)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.LAST_NAME_SIZE));
         }
 
         if(!hasCorrectFormat(name, FormConst.LAST_NAME_REGEX)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.LAST_NAME_PATTERN));
         }
 
@@ -156,13 +156,13 @@ public class FormServiceImpl implements IFormService {
     public ResponseEntity<?> validateGender(String gender) {
         if(isEmpty(gender)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.GENDER_IS_BLANK));
         }
 
         if(!isGender(gender)){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse(FormConst.GENDER_WRONG_VALUE));
         }
 

@@ -76,7 +76,7 @@ public class AuthController {
         User user = userService.findById(userDetails.getId());
         if(user == null){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exists!"));
         }
         return ResponseEntity.ok(new JwtResponse(jwt, user, roles.contains("ROLE_ADMIN")));
@@ -86,7 +86,7 @@ public class AuthController {
     public ResponseEntity<?> signup(@Valid @RequestBody RegistrationBody signUpRequest) {
         if (userService.findByEmail(signUpRequest.getEmail()) != null) {
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("Email is already in use!"));
         }
 

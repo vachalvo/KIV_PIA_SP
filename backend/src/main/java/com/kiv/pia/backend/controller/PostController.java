@@ -65,14 +65,14 @@ public class PostController {
         if(user == null){
             log.info("User with id " + userDetails.getId() + " not found.");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
         if(p.getAnnouncement() && !userService.hasRole(user, RoleType.ROLE_ADMIN)){
             log.info("User with id " + userDetails.getId() + " dont have admin role to create annoucements.");
             return ResponseEntity
-                    .badRequest()
+                    .status(HttpStatus.CONFLICT)
                     .body(new ErrorResponse("User without admin permission cannot create annoucements!"));
         }
 
@@ -90,7 +90,7 @@ public class PostController {
         if(user == null){
             log.info("User with id " + userDetails.getId() + " not found");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
@@ -102,7 +102,7 @@ public class PostController {
         if(originalPost.get().getUser().getId() != user.getId()){
             log.info("User with id " + userDetails.getId() + " is not owner of post with id "+ originalPost.get().getId());
             return ResponseEntity
-                    .badRequest()
+                    .status(HttpStatus.CONFLICT)
                     .body(new ErrorResponse("User do not own this post!"));
         }
 
@@ -129,7 +129,7 @@ public class PostController {
         if(user == null){
             log.info("User with id " + userDetails.getId() + " not found");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exist!"));
         }
 
@@ -153,7 +153,7 @@ public class PostController {
         if(user == null){
             log.info("User with id " + userDetails.getId() + " not found");
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exist!"));
         }
         Page<Post> postsInPage = postService.findAllByFriends(user.getId(), PageRequest.of(page, size, Sort.by(sortBy).descending()));
@@ -170,7 +170,7 @@ public class PostController {
         User user = getCurrentUser();
         if(user == null){
             return ResponseEntity
-                    .badRequest()
+                    .unprocessableEntity()
                     .body(new ErrorResponse("User does not exist!"));
         }
         Page<Post> usersPosts = postService.findAllByUser(user.getId(), PageRequest.of(page, size, Sort.by(sortBy).descending()));
