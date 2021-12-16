@@ -17,15 +17,16 @@ const demote = (id) => {
 };
 
 const isAdmin = () => {
-    return axios.get(API_URL + '/isAdmin', { headers: authHeader() });
+    return axios.get(API_URL + '/is-admin', { headers: authHeader() });
 };
 
 const findUsersByName = (name) => {
-    return axios.get(API_URL + "/findAll/" + name, { headers: authHeader() });
+    return axios.get(API_URL + "/find-all/" + name, { headers: authHeader() });
 };
 
 const isUserAdmin = () => {
     return JSON.parse(sessionStorage.getItem(Constants.SESSION_STORAGE_ADMIN));
 };
 
-export default { getUser, findUsersByName, promote, demote, isUserAdmin, isAdmin };
+const UserService = { getUser, findUsersByName, promote, demote, isUserAdmin, isAdmin };
+export default UserService;

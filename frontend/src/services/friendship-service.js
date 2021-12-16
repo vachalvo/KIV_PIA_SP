@@ -2,7 +2,7 @@ import axios from "axios";
 import authHeader from "./auth-header";
 import Constants from "../global/constants";
 
-const API_URL = Constants.BASE_URL + '/friendship';
+const API_URL = Constants.BASE_URL + '/friendships';
 const TYPES = {
     request_waiting: "REQUEST_WAITING",
     friends: "FRIENDS",
@@ -15,7 +15,7 @@ const STATES = {
 };
 
 const newFriendship = (id) => {
-    return axios.post(API_URL + '/new/' + id, null, { headers: authHeader() });
+    return axios.post(API_URL + '/' + id, null, { headers: authHeader() });
 };
 
 const interact = (id, state) => {
@@ -23,18 +23,18 @@ const interact = (id, state) => {
         friendshipId: id,
         friendshipState: state
     }
-    return axios.post(API_URL + '/interact', body, { headers: authHeader() });
+    return axios.put(API_URL + '/interact', body, { headers: authHeader() });
 };
 
 const findFriendsByType = (type, bySource = true) => {
     const params = {
         bySource: bySource
     }
-    return axios.get(API_URL + '/findAll/' + type, { headers: authHeader(), params });
+    return axios.get(API_URL + '/find-all/' + type, { headers: authHeader(), params });
 }
 
 const findFriends = () => {
-    return axios.get(API_URL + '/findFriends', { headers: authHeader() });
+    return axios.get(API_URL + '/find-all/friends', { headers: authHeader() });
 }
 
 const cancel = (id) => {
@@ -45,4 +45,5 @@ const cancel = (id) => {
         });
 };
 
-export default { STATES, TYPES, newFriendship, cancel, interact, findFriendsByType, findFriends};
+const FriendshipService = { STATES, TYPES, newFriendship, cancel, interact, findFriendsByType, findFriends};
+export default FriendshipService;

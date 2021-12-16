@@ -60,7 +60,7 @@ const PostList = forwardRef((props, ref) => {
 
     useEffect(() => {
         getPosts();
-    },[]);
+    },[]);// eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if(disableRefresh){
@@ -71,7 +71,7 @@ const PostList = forwardRef((props, ref) => {
             getPosts();
         }, 5000);
         return () => clearInterval(interval);
-    }, [values.count]);
+    }, [values.count]);// eslint-disable-line react-hooks/exhaustive-deps
 
     const getPosts = (newCount = values.count) => {
         setLoading(true);
@@ -79,7 +79,6 @@ const PostList = forwardRef((props, ref) => {
             setPosts(response.data.posts);
             setLoading(false);
         });
-
     }
 
     const setPost = (post) => {

@@ -8,6 +8,8 @@ import com.kiv.pia.backend.web_sockets.listener.ActiveUserChangeListener;
 import com.kiv.pia.backend.web_sockets.ActiveUserManager;
 import com.kiv.pia.backend.web_sockets.model.ChatMessageResponse;
 import com.kiv.pia.backend.web_sockets.model.UserConnect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ import java.util.UUID;
 @CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
 public class WebSocketChatController implements ActiveUserChangeListener {
 
-    // private final static Logger LOGGER = LoggerFactory.getLogger(WebSocketChatController.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(WebSocketChatController.class);
 
     @Autowired
     private SimpMessagingTemplate webSocket;
@@ -52,7 +53,6 @@ public class WebSocketChatController implements ActiveUserChangeListener {
 
     @MessageMapping("/chat")
     public void send(SimpMessageHeaderAccessor sha, @Payload ChatMessageResponse chatMessage) {
-        Principal p = sha.getUser();
         String sender = sha.getUser().getName();
 
         User from = userService.findById(UUID.fromString(chatMessage.getFrom()));
@@ -60,11 +60,14 @@ public class WebSocketChatController implements ActiveUserChangeListener {
 
         if(from != null && recipient != null ){
             // save message to DB
+            LOGGER.info("Message between " + from.getId().toString() + " - " + recipient.getId() + " was transfered.");
+
             ChatMessage newMessage = new ChatMessage(from, recipient, chatMessage.getText(), LocalDateTime.now());
             messageService.save(newMessage);
         }
 
         ChatMessageResponse message = new ChatMessageResponse(chatMessage.getFrom(), chatMessage.getText(), chatMessage.getRecipient());
+
         if (!sender.equals(chatMessage.getRecipient())) {
             webSocket.convertAndSendToUser(sender, "/queue/messages", message);
         }

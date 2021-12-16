@@ -23,7 +23,7 @@ import {
     FormControl,
     IconButton,
     Divider,
-    FormLabel, RadioGroup, FormControlLabel, Radio, LinearProgress, linearProgressClasses
+    FormLabel, RadioGroup, FormControlLabel, Radio
 } from "@mui/material";
 import {
     AlternateEmailOutlined,
@@ -33,7 +33,6 @@ import {
     VisibilityOff
 } from "@mui/icons-material";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { styled } from '@mui/material/styles';
 import PasswordEntropyBar from "../../common/PasswordEntropyBar";
 import calculatePasswordEntropy from "../../../global/entropy_calc";
 

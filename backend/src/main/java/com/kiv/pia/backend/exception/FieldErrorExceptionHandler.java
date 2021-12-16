@@ -1,4 +1,4 @@
-package com.kiv.pia.backend.controller;
+package com.kiv.pia.backend.exception;
 
 import com.kiv.pia.backend.model.response.EntityFieldError;
 import com.kiv.pia.backend.model.response.FieldErrorResponse;
@@ -14,10 +14,9 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class ErrorHandlerController extends ResponseEntityExceptionHandler {
+public class FieldErrorExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(ResponseEntityExceptionHandler.class);
 
@@ -32,7 +31,7 @@ public class ErrorHandlerController extends ResponseEntityExceptionHandler {
         Map<String, EntityFieldError> sizeErrors = new HashMap<>();
         Map<String, EntityFieldError> patternErrors = new HashMap<>();
         Map<String, EntityFieldError> notSameErrors = new HashMap<>();
-        Map<String, EntityFieldError> uknownErrors = new HashMap<>();
+        Map<String, EntityFieldError> unknownErrors = new HashMap<>();
 
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             EntityFieldError fieldError = new EntityFieldError();
@@ -53,13 +52,13 @@ public class ErrorHandlerController extends ResponseEntityExceptionHandler {
                     notSameErrors.put(fieldError.getField(), fieldError);
                     break;
                 default:
-                    uknownErrors.put(fieldError.getField(), fieldError);
+                    unknownErrors.put(fieldError.getField(), fieldError);
                     break;
             }
         });
 
         Map<String, EntityFieldError> completeErrors = new HashMap<>();
-        addErrors(completeErrors, uknownErrors);
+        addErrors(completeErrors, unknownErrors);
         addErrors(completeErrors, notSameErrors);
         addErrors(completeErrors, patternErrors);
         addErrors(completeErrors, sizeErrors);

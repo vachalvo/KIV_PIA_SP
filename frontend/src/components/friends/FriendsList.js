@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import {Col} from "react-bootstrap";
-import {Card, CardContent, Divider, List, Typography} from "@mui/material";
+import {Card, CardContent, List, Typography} from "@mui/material";
 import FriendItem from "./FriendItem";
 import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
 
@@ -25,7 +25,7 @@ const FriendsList = forwardRef((props, ref) => {
 
     useEffect(() => {
         updateItems();
-    }, []);
+    }, []);// eslint-disable-line react-hooks/exhaustive-deps
 
     return (
         <Col>

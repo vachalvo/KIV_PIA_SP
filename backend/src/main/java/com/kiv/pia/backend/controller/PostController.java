@@ -6,7 +6,6 @@ import com.kiv.pia.backend.model.enums.RoleType;
 import com.kiv.pia.backend.model.request.PostCreateBody;
 import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
-import com.kiv.pia.backend.service.IFriendshipService;
 import com.kiv.pia.backend.service.IPostService;
 import com.kiv.pia.backend.service.IUserService;
 import org.slf4j.Logger;
@@ -56,7 +55,7 @@ public class PostController {
         return response;
     }
 
-    @PostMapping("/create")
+    @PostMapping("")
     public ResponseEntity<?> createPost(@Valid @RequestBody PostCreateBody p){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
@@ -144,7 +143,7 @@ public class PostController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/findAll")
+    @GetMapping("/find-all")
     public ResponseEntity<?> findAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size,
                                                        @RequestParam(defaultValue = "dateTimeOfPublished") String sortBy){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
@@ -162,7 +161,7 @@ public class PostController {
         return ResponseEntity.ok().body(createPagePostsResponseBody(postsInPage));
     }
 
-    @GetMapping("/findAllByUser")
+    @GetMapping("/find-all-by-user")
     public ResponseEntity<?> findAllByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "3") int size,
                                                        @RequestParam(defaultValue = "dateTimeOfPublished") String sortBy){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()

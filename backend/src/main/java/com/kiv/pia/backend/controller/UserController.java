@@ -54,13 +54,13 @@ public class UserController {
         return user;
     }
 
-    @GetMapping("/findAll")
+    @GetMapping("/find-all")
     public List<User> findAll(){
         log.info("All users get");
         return (List<User>) userService.findAll();
     }
 
-    @GetMapping("/findAll/{name}")
+    @GetMapping("/find-all/{name}")
     public ResponseEntity<?> findAll(@PathVariable String name){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();

@@ -16,7 +16,7 @@ public class WebSocketConnectionRestController {
     @Autowired
     private ActiveUserManager activeSessionManager;
 
-    @PostMapping("/userConnect")
+    @PostMapping("/connect")
     public String userConnect(HttpServletRequest request,
                               @RequestParam(value = "userName", defaultValue = "") String userName) {
         String remoteAddr = "";
@@ -34,13 +34,13 @@ public class WebSocketConnectionRestController {
         return remoteAddr;
     }
 
-    @PostMapping("/userDisconnect")
+    @PostMapping("/disconnect")
     public String userDisconnect(@RequestBody String userName) {
         activeSessionManager.remove(userName);
         return "disconnected";
     }
 
-    @GetMapping("/getActive/{userName}")
+    @GetMapping("/get-active/{userName}")
     public Set<String> getActiveUsersExceptCurrentUser(@PathVariable String userName) {
         return activeSessionManager.getActiveUsersExceptCurrentUser(userName);
     }

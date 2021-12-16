@@ -38,7 +38,7 @@ public class MessageController {
 
     private final ChatMessageMapper messageMapper = new ChatMessageMapper();
 
-    @GetMapping("/get")
+    @GetMapping("/find-all")
     public ResponseEntity<?> getMessages(@RequestParam(value = "firstId", defaultValue = "") UUID firstId,
                                          @RequestParam(value = "secondId", defaultValue = "") UUID secondId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()

@@ -16,18 +16,12 @@ const validateRegistrationEmail = (email) => {
 
 const validateLoginEmail = (email) => {
     const url = API_URL + '/login/email';
-    const headers = {
-        params: {
-            email: email
-        },
-        headers: authHeader()
-    };
-    console.log(headers);
+
     return axios.get(url, {
         params: {
             email: email
         },
-        headers: headers
+        headers: authHeader()
     });
 };
 
@@ -92,7 +86,7 @@ const validateRegistrationPasswords = (password, reEnterPassword) => {
     });
 };
 
-export default {
+const FormService = {
     validateLoginEmail,
     validateRegistrationEmail,
     validateGender,
@@ -102,3 +96,4 @@ export default {
     validateFirstName,
     validateRegistrationPasswords
 };
+export default FormService;

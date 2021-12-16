@@ -9,10 +9,11 @@ const getMessages = (firstId, secondId) => {
         firstId: firstId,
         secondId: secondId
     };
-    return axios.get(API_URL + '/get', {
+    return axios.get(API_URL + '/find-all', {
         headers: authHeader(),
         params
     });
 };
 
-export default {getMessages};
+const ChatMessageService = {getMessages};
+export default ChatMessageService;

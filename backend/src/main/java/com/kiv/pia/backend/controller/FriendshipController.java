@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/friendship")
+@RequestMapping("/friendships")
 @CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
 public class FriendshipController {
 
@@ -36,7 +36,7 @@ public class FriendshipController {
     @Autowired
     private IUserService userService;
 
-    @GetMapping("/findFriends")
+    @GetMapping("/find-all/friends")
     public ResponseEntity<?> findFriends(){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
@@ -57,7 +57,7 @@ public class FriendshipController {
                 .body(friends);
     }
 
-    @GetMapping("/findAll/{type}")
+    @GetMapping("/find-all/{type}")
     public ResponseEntity<?> findAll(@PathVariable("type") FriendshipType type, @RequestParam(defaultValue = "true") boolean bySource){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
@@ -85,7 +85,7 @@ public class FriendshipController {
                 .body(friendships);
     }
 
-    @PostMapping("/new/{id}")
+    @PostMapping("/{id}")
     public ResponseEntity<?> newFriendship(@PathVariable UUID id){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
@@ -114,7 +114,7 @@ public class FriendshipController {
         return ResponseEntity.badRequest().body(new ErrorResponse("Unknow error! Try it again."));
     }
 
-    @PostMapping("/interact")
+    @PutMapping("/interact")
     public ResponseEntity<?> interact(@Valid @RequestBody FriendshipCollaborationBody body){
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
