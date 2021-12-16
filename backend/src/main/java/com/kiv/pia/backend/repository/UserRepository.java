@@ -16,7 +16,7 @@ public interface UserRepository extends CrudRepository<User, UUID> {
     @Query("SELECT u FROM User u WHERE u.email=:email")
     Optional<User> findByEmail(@Param("email") String email);
 
-    @Query(value = "SELECT u FROM users u " +
+    @Query(value = "SELECT u.* FROM users u " +
             "INNER JOIN users_roles ur ON u.id = ur.user_id " +
             "INNER JOIN roles r ON r.id = ur.role_id " +
             "WHERE r.name = 'ROLE_ADMIN'",
