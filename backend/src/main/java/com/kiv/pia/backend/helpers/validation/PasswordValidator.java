@@ -1,21 +1,30 @@
 package com.kiv.pia.backend.helpers.validation;
 
+import com.kiv.pia.backend.helpers.constants.PasswordValidatorConst;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PasswordValidator {
-
-    private final int NUMBER_LENGTH = 10;
-    private final int UPPER_CASE_LENGTH = 26;
-    private final int LOWER_CASE_LENGTH = 26;
-    private final int SPECIAL_LENGTH = 33;
-
-    private final String NUMBER_REGEX = "[0-9]";
-    private final String UPPER_CASE_REGEX = "[A-Z]";
-    private final String LOWER_CASE_REGEX = "[a-z]";
-    private final String SPECIAL_REGEX = "[^a-zA-Z0-9]";
-
     public PasswordValidator(){}
+
+    public String getStrengthOfPassword(long score) {
+        if(score == 0){
+            return PasswordValidatorConst.TOO_SHORT;
+        }
+        else if(score < 25){
+            return PasswordValidatorConst.WEAK;
+        }
+        else if(score < 50){
+            return PasswordValidatorConst.FAIR;
+        }
+        else if(score < 75){
+            return PasswordValidatorConst.GOOD;
+        }
+        else {
+            return PasswordValidatorConst.STRONG;
+        }
+    }
 
     /**
      * Calculate the given password entropy.
@@ -35,9 +44,6 @@ public class PasswordValidator {
      *
      * Based on:
      * http://resources.infosecinstitute.com/password-security-complexity-vs-length/
-     * @param charset
-     * @param length
-     * @return
      */
     private long calcEntropy(long charset, int length){
         return Math.round(length * Math.log(charset) / Math.log(2));
@@ -58,17 +64,17 @@ public class PasswordValidator {
     private long calcCharsetLengthWith(String s){
         long charSetLength = 0;
 
-        if(containsRegex(s, NUMBER_REGEX)){
-            charSetLength += NUMBER_LENGTH;
+        if(containsRegex(s, PasswordValidatorConst.NUMBER_REGEX)){
+            charSetLength += PasswordValidatorConst.NUMBER_LENGTH;
         }
-        if(containsRegex(s, LOWER_CASE_REGEX)){
-            charSetLength += LOWER_CASE_LENGTH;
+        if(containsRegex(s, PasswordValidatorConst.LOWER_CASE_REGEX)){
+            charSetLength += PasswordValidatorConst.LOWER_CASE_LENGTH;
         }
-        if(containsRegex(s, UPPER_CASE_REGEX)){
-            charSetLength += UPPER_CASE_LENGTH;
+        if(containsRegex(s, PasswordValidatorConst.UPPER_CASE_REGEX)){
+            charSetLength += PasswordValidatorConst.UPPER_CASE_LENGTH;
         }
-        if(containsRegex(s, SPECIAL_REGEX)){
-            charSetLength += SPECIAL_LENGTH;
+        if(containsRegex(s, PasswordValidatorConst.SPECIAL_REGEX)){
+            charSetLength += PasswordValidatorConst.SPECIAL_LENGTH;
         }
 
         return charSetLength;
