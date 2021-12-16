@@ -75,11 +75,24 @@ public class AuthController {
 
         User user = userService.findById(userDetails.getId());
         if(user == null){
+            log.info("Login request rejected: User with id " + userDetails.getId() + " not exists");
             return ResponseEntity
                     .badRequest()
                     .body(new ErrorResponse("User does not exists!"));
         }
-        return ResponseEntity.ok(new JwtResponse(jwt, user, roles.contains("ROLE_ADMIN")));
+        ResponseCookie jwtCookie = ResponseCookie.from("JWT_TOKEN", jwt)
+                .httpOnly(true)
+                .secure(false)
+                .maxAge(-1)
+                .path("/")
+                .build();
+
+        return ResponseEntity
+                .ok()
+                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "Set-Cookie")
+                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Set-Cookie")
+                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
+                .body(new JwtResponse(jwt, user, roles.contains("ROLE_ADMIN")));
     }
 
     @PostMapping("/signup")
