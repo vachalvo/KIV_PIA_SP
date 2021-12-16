@@ -30,6 +30,8 @@ export default function SearchBar(parentProps) {
     }
 
     const fetchUser = async (id) => {
+        // TODO - asi delete
+
         setOpen(false);
 
         const res = await UserService.getUser(id);

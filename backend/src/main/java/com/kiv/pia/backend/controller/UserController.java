@@ -41,24 +41,27 @@ public class UserController {
     private IRoleService roleService;
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable("id") UUID id){
+    public ResponseEntity<?> getUser(@PathVariable("id") UUID id){
         User user = userService.findById(id);
 
         if(user == null){
             log.info("User with id " + id + " not found");
-            // TODO
-            return null;
-            //return ResponseEntity
-              //      .unprocessableEntity()
-                //    .body(new ErrorResponse("User does not exist!"));
+
+            return ResponseEntity
+                    .unprocessableEntity()
+                    .body(new ErrorResponse("User does not exist!"));
         }
-        return user;
+
+        return ResponseEntity.ok().body(user);
     }
 
     @GetMapping("/find-all")
-    public List<User> findAll(){
+    public ResponseEntity<?> findAll(){
         log.info("All users get");
-        return (List<User>) userService.findAll();
+
+        List<User> users = (List<User>) userService.findAll();
+
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/find-all/{name}")

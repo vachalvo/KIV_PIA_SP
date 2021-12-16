@@ -38,7 +38,6 @@ const getChatUserName = () => {
 };
 
 const removeChatUserId = () => {
-    console.log('removing');
     sessionStorage.removeItem(Constants.SESSION_STORAGE_CHAT_USER_ID);
 };
 
