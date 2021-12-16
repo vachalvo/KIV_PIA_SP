@@ -27,7 +27,7 @@ import java.util.UUID;
 @CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
 public class UserController {
 
-    private static Logger log = LoggerFactory.getLogger(UserController.class);
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
 
     private final UserMapper userMapper = new UserMapper();
 

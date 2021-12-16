@@ -8,15 +8,15 @@ const userConnect = (userName) => {
     const params = {
         userName: userName,
     };
-    return axios.post(API_URL + '/userConnect', null, { headers: authHeader(), params });
+    return axios.post(API_URL + '/connect', null, { headers: authHeader(), params });
 };
 
 const userDisconnect = (userName) => {
-    return axios.post(API_URL + '/userDisconnect', userName, { headers: authHeader() });
+    return axios.post(API_URL + '/disconnect', userName, { headers: authHeader() });
 };
 
 const getActive = (userName) => {
-    return axios.get(API_URL + '/getActive/' + userName, { headers: authHeader() });
+    return axios.get(API_URL + '/get-active/' + userName, { headers: authHeader() });
 }
 
 const addChatUser = (id) => {
@@ -39,4 +39,7 @@ const removeChatUserId = () => {
     sessionStorage.removeItem(Constants.SESSION_STORAGE_CHAT_USER_ID);
 };
 
-export default { userConnect, userDisconnect, getActive, addChatUser, addChatUserName, getChatUserName, getChatUserId, removeChatUserId };
+const WebSocketService = {
+    userConnect, userDisconnect, getActive, addChatUser, addChatUserName, getChatUserName, getChatUserId, removeChatUserId
+}
+export default WebSocketService;
