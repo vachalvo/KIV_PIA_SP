@@ -14,7 +14,7 @@ export default function SearchBar(parentProps) {
     const fetchUsers = async (name) => {
         setLoading(true);
         const res = await UserService.findUsersByName(name);
-        console.log(res.data);
+
         setLoading(false);
         editStructureOfItems(res.data);
     };
@@ -27,15 +27,6 @@ export default function SearchBar(parentProps) {
             };
         });
         setItems(data);
-    }
-
-    const fetchUser = async (id) => {
-        // TODO - asi delete
-
-        setOpen(false);
-
-        const res = await UserService.getUser(id);
-        console.log("Clicked user: ", res.data);
     }
 
     const _onChange = (event) => {
@@ -93,7 +84,7 @@ export default function SearchBar(parentProps) {
                 />}
                 renderOption={(props, option, { inputValue }) => {
                     return (
-                        <div key={option} { ...props } onClick={() => { fetchUser(option.user.id) }}>
+                        <div key={option} { ...props }>
                             <UserListItem key={option.user.id} option={option} {...parentProps} onClear={_onClear}/>
                         </div>
                     );

@@ -79,8 +79,6 @@ function NewPost() {
                 alertSecondaryText: 'New post was successfully created.',
                 alertOpen: true
             });
-
-            console.log("New Post: ", data);
         }).catch((err) => {
             if(err.response.status === 401){
                 history.push({

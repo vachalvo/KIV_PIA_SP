@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import {Component} from "react";
 
-import {Switch, Route} from "react-router-dom";
+import {Switch, Route, withRouter} from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 
 import ChatMessageService from "./services/chat-message-service";
@@ -40,6 +40,7 @@ class Home extends Component {
         this.stompClient = null;
         this.mode = mode;
         this.onChangeMode = onChangeMode;
+        this.history = this.props.history;
     }
 
     componentDidMount() {
@@ -102,8 +103,16 @@ class Home extends Component {
             this.stompClient.connect({
                 ...params
             }, this.onConnected.bind(this), this.onError.bind(this));
-        })
-        // TODO - catch
+        }).catch((err) => {
+            if(err.response.status === 401){
+                this.history.push({
+                    pathname: "/login",
+                    state: {
+                        detail: 401
+                    }
+                });
+            }
+        });
     };
 
     onConnected() {
@@ -116,8 +125,6 @@ class Home extends Component {
 
     usersCallback(output) {
         // To receive active users from server
-        console.log('queue/users', JSON.parse(output.body));
-
         const activeFriends = JSON.parse(output.body);
         this.setState({
             ...this.state,
@@ -129,7 +136,6 @@ class Home extends Component {
 
     messagesCallback(output) {
         // To receive direct messages
-        console.log('queue', JSON.parse(output.body));
         const body = JSON.parse(output.body);
 
         if(body.from !== AuthService.getCurrentUserId() && body.from !== WebSocketService.getChatUserId()){
@@ -246,7 +252,12 @@ class Home extends Component {
             }));
         }).catch((err) => {
             if(err.response.status === 401){
-                // todo
+                this.history.push({
+                    pathname: "/login",
+                    state: {
+                        detail: 401
+                    }
+                });
             }
         });
     };
@@ -327,4 +338,4 @@ class Home extends Component {
     }
 }
 
-export default Home;
+export default withRouter(Home);
