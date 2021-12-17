@@ -8,7 +8,7 @@ public class CredentialsGenerator {
     public CredentialsGenerator(){ }
 
     public static String getRandomString() {
-        return String.format("%s_%s", UUID.randomUUID().toString().substring(0, 5), System.currentTimeMillis() / 1000);
+        return String.format("%s_%s", UUID.randomUUID().toString().substring(0, 3), UUID.randomUUID().toString().substring(0, 3));
     }
 
     public String generateRandomEmail(){

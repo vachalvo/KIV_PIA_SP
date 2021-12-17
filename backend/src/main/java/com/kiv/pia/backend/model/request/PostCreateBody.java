@@ -1,6 +1,6 @@
 package com.kiv.pia.backend.model.request;
 
-import com.kiv.pia.backend.helpers.constants.PostConst;
+import com.kiv.pia.backend.constants.PostConst;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;

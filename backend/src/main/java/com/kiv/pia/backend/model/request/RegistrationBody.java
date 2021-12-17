@@ -1,9 +1,9 @@
 package com.kiv.pia.backend.model.request;
 
-import com.kiv.pia.backend.helpers.constants.FormConst;
-import com.kiv.pia.backend.helpers.constants.UserConst;
-import com.kiv.pia.backend.helpers.validation.annotations.NotSame;
-import com.kiv.pia.backend.helpers.validation.annotations.PasswordConstraint;
+import com.kiv.pia.backend.constants.FormConst;
+import com.kiv.pia.backend.constants.UserConst;
+import com.kiv.pia.backend.annotations.NotSame;
+import com.kiv.pia.backend.annotations.PasswordConstraint;
 import lombok.Data;
 
 import javax.validation.constraints.*;

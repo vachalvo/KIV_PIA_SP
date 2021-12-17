@@ -1,6 +1,6 @@
 package com.kiv.pia.backend.controller;
 
-import com.kiv.pia.backend.helpers.constants.ChatMessageConst;
+import com.kiv.pia.backend.constants.ChatMessageConst;
 import com.kiv.pia.backend.mapper.ChatMessageMapper;
 import com.kiv.pia.backend.model.ChatMessage;
 import com.kiv.pia.backend.model.User;
@@ -8,7 +8,7 @@ import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
 import com.kiv.pia.backend.service.IChatMessageService;
 import com.kiv.pia.backend.service.IUserService;
-import com.kiv.pia.backend.web_sockets.model.ChatMessageResponse;
+import com.kiv.pia.backend.ws.model.ChatMessageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

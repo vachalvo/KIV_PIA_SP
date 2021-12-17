@@ -1,6 +1,6 @@
-package com.kiv.pia.backend.web_sockets;
+package com.kiv.pia.backend.ws;
 
-import com.kiv.pia.backend.web_sockets.model.UserPrincipal;
+import com.kiv.pia.backend.ws.model.UserPrincipal;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;

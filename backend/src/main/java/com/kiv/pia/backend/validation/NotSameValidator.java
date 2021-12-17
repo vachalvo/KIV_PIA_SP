@@ -1,6 +1,6 @@
-package com.kiv.pia.backend.helpers.validation;
+package com.kiv.pia.backend.validation;
 
-import com.kiv.pia.backend.helpers.validation.annotations.NotSame;
+import com.kiv.pia.backend.annotations.NotSame;
 import org.springframework.beans.BeanWrapperImpl;
 
 import javax.validation.ConstraintValidator;

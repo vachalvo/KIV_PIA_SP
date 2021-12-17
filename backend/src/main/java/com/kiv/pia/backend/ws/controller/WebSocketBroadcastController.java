@@ -1,6 +1,6 @@
-package com.kiv.pia.backend.web_sockets.controller;
+package com.kiv.pia.backend.ws.controller;
 
-import com.kiv.pia.backend.web_sockets.model.ChatMessageResponse;
+import com.kiv.pia.backend.ws.model.ChatMessageResponse;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;

@@ -1,6 +1,6 @@
 package com.kiv.pia.backend.controller;
 
-import com.kiv.pia.backend.helpers.constants.FormConst;
+import com.kiv.pia.backend.constants.FormConst;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.service.IFormService;

@@ -1,14 +1,12 @@
 package com.kiv.pia.backend.model;
 
-import com.kiv.pia.backend.helpers.constants.PostConst;
+import com.kiv.pia.backend.constants.PostConst;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.event.spi.PostCollectionRecreateEvent;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

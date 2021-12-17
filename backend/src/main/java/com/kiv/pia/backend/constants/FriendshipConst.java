@@ -1,4 +1,4 @@
-package com.kiv.pia.backend.helpers.constants;
+package com.kiv.pia.backend.constants;
 
 public class FriendshipConst {
     private FriendshipConst() { }  // Prevents instantiation

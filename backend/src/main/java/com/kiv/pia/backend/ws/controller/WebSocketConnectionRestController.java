@@ -1,6 +1,6 @@
-package com.kiv.pia.backend.web_sockets.controller;
+package com.kiv.pia.backend.ws.controller;
 
-import com.kiv.pia.backend.web_sockets.ActiveUserManager;
+import com.kiv.pia.backend.ws.ActiveUserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;

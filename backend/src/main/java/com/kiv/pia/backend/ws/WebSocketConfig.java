@@ -1,4 +1,4 @@
-package com.kiv.pia.backend.web_sockets;
+package com.kiv.pia.backend.ws;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Configuration;

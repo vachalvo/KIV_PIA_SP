@@ -1,4 +1,4 @@
-package com.kiv.pia.backend.web_sockets;
+package com.kiv.pia.backend.ws;
 
 import java.util.HashSet;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import com.kiv.pia.backend.web_sockets.listener.ActiveUserChangeListener;
+import com.kiv.pia.backend.ws.listener.ActiveUserChangeListener;
 import org.springframework.stereotype.Component;
 
 @Component

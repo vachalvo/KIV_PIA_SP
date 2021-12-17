@@ -1,7 +1,7 @@
 package com.kiv.pia.backend;
 
 import com.kiv.pia.backend.helpers.CredentialsGenerator;
-import com.kiv.pia.backend.helpers.constants.GlobalConst;
+import com.kiv.pia.backend.constants.GlobalConst;
 import com.kiv.pia.backend.model.Role;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.model.enums.GenderType;

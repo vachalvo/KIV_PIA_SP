@@ -1,6 +1,6 @@
 package com.kiv.pia.backend.model.request;
 
-import com.kiv.pia.backend.helpers.constants.FriendshipConst;
+import com.kiv.pia.backend.constants.FriendshipConst;
 import com.kiv.pia.backend.model.enums.FriendshipState;
 import lombok.Data;
 

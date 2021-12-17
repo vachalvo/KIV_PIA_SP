@@ -77,7 +77,7 @@ public class AuthController {
         }
 
         return ResponseEntity
-                .ok()
+                .ok()   
                 .body(new JwtResponse(jwt, user, roles.contains("ROLE_ADMIN")));
     }
 

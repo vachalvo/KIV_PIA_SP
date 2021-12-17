@@ -1,10 +1,10 @@
-package com.kiv.pia.backend.web_sockets.listener;
+package com.kiv.pia.backend.ws.listener;
 
 import com.kiv.pia.backend.model.Friendship;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.service.IFriendshipService;
-import com.kiv.pia.backend.web_sockets.ActiveUserManager;
-import com.kiv.pia.backend.web_sockets.model.ActiveUser;
+import com.kiv.pia.backend.ws.ActiveUserManager;
+import com.kiv.pia.backend.ws.model.ActiveUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

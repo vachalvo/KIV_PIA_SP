@@ -1,4 +1,4 @@
-package com.kiv.pia.backend.helpers.constants;
+package com.kiv.pia.backend.constants;
 
 /**
  * Zde jsou vsechny pouzivane konstaty, ktere se tykaji formularu a hlavne validaci.

@@ -1,7 +1,7 @@
-package com.kiv.pia.backend.helpers.validation;
+package com.kiv.pia.backend.validation;
 
-import com.kiv.pia.backend.helpers.constants.PasswordValidatorConst;
-import com.kiv.pia.backend.helpers.validation.annotations.PasswordConstraint;
+import com.kiv.pia.backend.constants.PasswordValidatorConst;
+import com.kiv.pia.backend.annotations.PasswordConstraint;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

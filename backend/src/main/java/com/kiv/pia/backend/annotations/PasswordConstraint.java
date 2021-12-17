@@ -1,6 +1,6 @@
-package com.kiv.pia.backend.helpers.validation.annotations;
+package com.kiv.pia.backend.annotations;
 
-import com.kiv.pia.backend.helpers.validation.PasswordValidator;
+import com.kiv.pia.backend.validation.PasswordValidator;
 import org.springframework.messaging.handler.annotation.Payload;
 
 import javax.validation.Constraint;

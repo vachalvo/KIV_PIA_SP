@@ -1,6 +1,6 @@
 package com.kiv.pia.backend.model;
 
-import com.kiv.pia.backend.helpers.constants.UserConst;
+import com.kiv.pia.backend.constants.UserConst;
 import com.kiv.pia.backend.model.enums.GenderType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

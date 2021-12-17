@@ -1,6 +1,6 @@
-package com.kiv.pia.backend.helpers.validation.annotations;
+package com.kiv.pia.backend.annotations;
 
-import com.kiv.pia.backend.helpers.validation.NotSameValidator;
+import com.kiv.pia.backend.validation.NotSameValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

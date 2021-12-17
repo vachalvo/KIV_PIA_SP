@@ -1,13 +1,13 @@
-package com.kiv.pia.backend.web_sockets.controller;
+package com.kiv.pia.backend.ws.controller;
 
 import com.kiv.pia.backend.model.ChatMessage;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.service.IChatMessageService;
 import com.kiv.pia.backend.service.IUserService;
-import com.kiv.pia.backend.web_sockets.listener.ActiveUserChangeListener;
-import com.kiv.pia.backend.web_sockets.ActiveUserManager;
-import com.kiv.pia.backend.web_sockets.model.ChatMessageResponse;
-import com.kiv.pia.backend.web_sockets.model.UserConnect;
+import com.kiv.pia.backend.ws.listener.ActiveUserChangeListener;
+import com.kiv.pia.backend.ws.ActiveUserManager;
+import com.kiv.pia.backend.ws.model.ChatMessageResponse;
+import com.kiv.pia.backend.ws.model.UserConnect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

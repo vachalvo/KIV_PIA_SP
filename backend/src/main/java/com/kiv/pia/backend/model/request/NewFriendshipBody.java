@@ -1,9 +1,8 @@
 package com.kiv.pia.backend.model.request;
 
-import com.kiv.pia.backend.helpers.constants.FriendshipConst;
+import com.kiv.pia.backend.constants.FriendshipConst;
 import lombok.Data;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import java.util.UUID;
 

@@ -1,7 +1,7 @@
 package com.kiv.pia.backend.service.impl;
 
-import com.kiv.pia.backend.helpers.constants.FormConst;
-import com.kiv.pia.backend.helpers.constants.UserConst;
+import com.kiv.pia.backend.constants.FormConst;
+import com.kiv.pia.backend.constants.UserConst;
 import com.kiv.pia.backend.model.enums.GenderType;
 import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.service.IFormService;
