@@ -1,6 +1,5 @@
 package com.kiv.pia.backend.controller;
 
-import com.kiv.pia.backend.BackendApplication;
 import com.kiv.pia.backend.model.Role;
 import com.kiv.pia.backend.model.enums.GenderType;
 import com.kiv.pia.backend.model.enums.RoleType;
@@ -10,8 +9,6 @@ import com.kiv.pia.backend.model.request.RegistrationBody;
 import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.model.response.JwtResponse;
 import com.kiv.pia.backend.model.response.MessageResponse;
-import com.kiv.pia.backend.repository.RoleRepository;
-import com.kiv.pia.backend.repository.UserRepository;
 import com.kiv.pia.backend.security.jwt.JwtUtils;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
 import com.kiv.pia.backend.service.IRoleService;
@@ -19,8 +16,6 @@ import com.kiv.pia.backend.service.IUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -36,7 +31,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -80,18 +75,9 @@ public class AuthController {
                     .unprocessableEntity()
                     .body(new ErrorResponse("User does not exists!"));
         }
-        ResponseCookie jwtCookie = ResponseCookie.from("JWT_TOKEN", jwt)
-                .httpOnly(true)
-                .secure(false)
-                .maxAge(-1)
-                .path("/")
-                .build();
 
         return ResponseEntity
                 .ok()
-                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "Set-Cookie")
-                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Set-Cookie")
-                .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                 .body(new JwtResponse(jwt, user, roles.contains("ROLE_ADMIN")));
     }
 

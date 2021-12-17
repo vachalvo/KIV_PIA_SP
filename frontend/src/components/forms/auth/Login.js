@@ -139,7 +139,6 @@ function Login(props) {
         };
         AuthService.login(data).then(
             (response) => {
-                console.log(response.data);
                 if (response.data.token) {
                     sessionStorage.setItem(Constants.SESSION_STORAGE_TOKEN, JSON.stringify(response.data.token));
                     sessionStorage.setItem(Constants.SESSION_STORAGE_USER_ID, JSON.stringify(response.data.user.id));

@@ -1,4 +1,3 @@
-import { CookiesProvider } from 'react-cookie';
 import {Component} from "react";
 import {createTheme, ThemeProvider} from "@mui/material/styles";
 import Home from "./Home";
@@ -27,14 +26,12 @@ class App extends Component {
         });
 
         return (
-            <CookiesProvider>
-                <ThemeProvider theme={theme}>
-                    <Home
-                        mode={this.state.mode}
-                        onChangeMode={this.toggleDarkMode.bind(this)}
-                    />
-                </ThemeProvider>
-            </CookiesProvider>
+            <ThemeProvider theme={theme}>
+                <Home
+                    mode={this.state.mode}
+                    onChangeMode={this.toggleDarkMode.bind(this)}
+                />
+            </ThemeProvider>
         );
     }
 }

@@ -25,7 +25,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/posts")
-@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(value = "http://localhost:3000")
 public class PostController {
 
     @Autowired

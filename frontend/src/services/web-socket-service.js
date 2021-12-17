@@ -5,10 +5,15 @@ import Constants from "../global/constants";
 const API_URL = Constants.BASE_URL + '/wsconnection';
 
 const userConnect = (userName) => {
-    const params = {
-        userName: userName,
+    const conf = {
+        params: {
+            userName: userName,
+        },
+        headers: {
+            ...authHeader()
+        }
     };
-    return axios.post(API_URL + '/connect', null, { headers: authHeader(), params });
+    return axios.post(API_URL + '/connect', null, conf);
 };
 
 const userDisconnect = (userName) => {

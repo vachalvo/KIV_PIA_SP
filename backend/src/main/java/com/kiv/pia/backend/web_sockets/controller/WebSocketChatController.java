@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(value = "http://localhost:3000")
 public class WebSocketChatController implements ActiveUserChangeListener {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(WebSocketChatController.class);

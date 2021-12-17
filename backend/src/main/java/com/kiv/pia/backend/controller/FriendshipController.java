@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/friendships")
-@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(value = "http://localhost:3000")
 public class FriendshipController {
 
     private static final Logger log = LoggerFactory.getLogger(FriendshipController.class);

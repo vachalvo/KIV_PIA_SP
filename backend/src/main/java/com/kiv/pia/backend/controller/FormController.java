@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/forms")
-@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(value = "http://localhost:3000")
 public class FormController {
 
     private static final Logger log = LoggerFactory.getLogger(FormController.class);

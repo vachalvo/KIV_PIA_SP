@@ -21,18 +21,10 @@ import FloatingButton from "./components/common/buttons/FloatingButton";
 import authHeader from "./services/auth-header";
 import {Alert, Snackbar} from "@mui/material";
 
-import { instanceOf } from "prop-types";
-import { withCookies, Cookies } from "react-cookie";
-import Constants from "./global/constants";
-
 class Home extends Component {
-    static propTypes = {
-        cookies: instanceOf(Cookies).isRequired
-    };
-
     constructor(props) {
         super(props);
-        const { mode, onChangeMode, cookies } = props;
+        const { mode, onChangeMode } = props;
 
         this.state = {
             openDrawer: false,
@@ -43,10 +35,8 @@ class Home extends Component {
             notificationText: '',
             notificationOpen: false,
             waitingMessages: [],
-            csrfToken: cookies.get('XSRF-TOKEN'),
         };
 
-        this.cookies = cookies;
         this.stompClient = null;
         this.mode = mode;
         this.onChangeMode = onChangeMode;
@@ -99,9 +89,8 @@ class Home extends Component {
             headers: authHeader(),
             username: AuthService.getCurrentUserId()
         };
-        console.log(this.props.cookies.get(Constants.XSRF_TOKEN_COOKIE));
 
-        WebSocketService.userConnect(AuthService.getCurrentUserId(), this.props.cookies.get(Constants.XSRF_TOKEN_COOKIE)).then(() => {
+        WebSocketService.userConnect(AuthService.getCurrentUserId()).then(() => {
             const Stomp = require("stompjs");
             let SockJS = require("sockjs-client");
             SockJS = new SockJS("http://localhost:8080/chat", null, {
@@ -282,10 +271,6 @@ class Home extends Component {
     };
 
     render() {
-        console.log('render');
-        console.log(this.cookies);
-        console.log(document.cookie);
-
         return (
             <Router>
                 <Snackbar open={this.state.notificationOpen} autoHideDuration={5000} onClose={this.notificationOnClose.bind(this)}>
@@ -347,4 +332,4 @@ class Home extends Component {
     }
 }
 
-export default withCookies(Home);
+export default Home;

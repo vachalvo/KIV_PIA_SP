@@ -7,11 +7,9 @@ const Constants = {
     SESSION_STORAGE_CHAT_USER_ID: 'chat_user_id',
     SESSION_STORAGE_CHAT_USER_NAME: 'chat_user_name',
     AUTH_TYPE: 'Bearer',
-    XSRF_TOKEN_COOKIE: 'XSRF-TOKEN',
     HEADERS: {
         'Access-Control-Allow-Origin': '*',
         'Content-Type': 'application/json',
-        withCredentials: true,
     },
 }
 

@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
 
 @RestController
-@CrossOrigin(value = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(value = "http://localhost:3000")
 @RequestMapping("/wsconnection")
 public class WebSocketConnectionRestController {
 

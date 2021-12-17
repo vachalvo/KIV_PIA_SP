@@ -4,11 +4,11 @@ import Constants from "../global/constants";
 const API_URL = Constants.BASE_URL + '/auth';
 
 const signup = (data) => {
-    return axios.post(API_URL + "/signup", {...data}, Constants.HEADERS);
+    return axios.post(API_URL + "/signup", {...data}, { headers: Constants.HEADERS });
 };
 
 const login = (data) => {
-    return axios.post(API_URL + "/login", data, Constants.HEADERS);
+    return axios.post(API_URL + "/login", data, { headers: Constants.HEADERS });
 };
 
 const logout = () => {
