@@ -20,16 +20,26 @@ import {
     MaleOutlined,
 } from "@mui/icons-material";
 import PostList from "./posts/PostsList";
+import {useHistory} from "react-router-dom";
 
 const Profile = () => {
     const [user, setUser] = useState(undefined);
+    const history = useHistory();
 
     useEffect(() => {
         UserService.getUser(AuthService.getCurrentUserId()).then((res) => {
             setUser(res.data);
+        }).catch((err) => {
+            if(err.response.status === 401){
+                history.push({
+                    pathname: "/login",
+                    state: {
+                        detail: 401
+                    }
+                });
+            }
         });
-
-    }, []);
+    }, [history]);
 
     const renderLoggedUserProfile = () => {
         return (

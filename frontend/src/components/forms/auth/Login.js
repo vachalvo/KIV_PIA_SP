@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 import AuthService from "../../../services/auth-service";
 import FormService from "../../../services/form-service";
@@ -36,6 +36,7 @@ import WebSocketService from "../../../services/web-socket-service";
 function Login(props) {
     const {onLogin} = props;
     const history = useHistory();
+
     const [values, setValues] = useState({
         email: '',
         password: '',
@@ -44,8 +45,38 @@ function Login(props) {
         showPassword: false,
         loading: false,
         openAlert: false,
-        alertText: ''
+        alertText: '',
+        alertContent: '',
+        severity: 'error'
     });
+
+    useEffect(() => {
+        if(history.action === 'PUSH' &&
+            history.location.state){
+            if(history.location.state.detail === 401){
+                setValues({
+                    ...values,
+                    openAlert: true,
+                    alertText: 'Your session expired or request was not valid',
+                    alertContent: 'Please try to log in again.',
+                    severity: 'error'
+                });
+            }
+            else if(history.location.state.registration === true){
+                setValues({
+                    ...values,
+                    openAlert: true,
+                    alertText: 'New account was successfully created.',
+                    alertContent: 'Please log in to your account.',
+                    severity: 'success'
+                });
+            }
+
+
+
+            AuthService.logout();
+        }
+    }, [history.action, history.location.state]);
 
     const onChange = (prop) => (event) => {
         setValues({ ...values,
@@ -66,13 +97,12 @@ function Login(props) {
     };
 
     const onBlurEmail = () => {
-        FormService.validateLoginEmail(values.email).then((response) => {
+        FormService.validateLoginEmail(values.email).then(() => {
             setValues({
                 ...values,
                 emailFeedback: ''
             });
         }).catch((err) => {
-            console.log(err);
             if(err === undefined || err.response === undefined || err.response.data === undefined){
                 return;
             }
@@ -86,13 +116,12 @@ function Login(props) {
         });
     };
     const onBlurPassword = () => {
-        FormService.validatePassword(values.password).then((response) => {
+        FormService.validatePassword(values.password).then(() => {
             setValues({
                 ...values,
                 passwordFeedback: ''
             });
         }).catch((err) => {
-            console.log(err);
             if(err === undefined || err.response === undefined || err.response.data === undefined){
                 return;
             }
@@ -124,6 +153,8 @@ function Login(props) {
                 ...values,
                 openAlert: true,
                 alertText: 'Some fields are not filled properly',
+                severity: 'error',
+                alertContent: 'Check and fill them correctly.'
             });
             return;
         }
@@ -150,7 +181,6 @@ function Login(props) {
                 onLogin();
             }
         ).catch((err) => {
-            console.log(err);
             if(err === undefined || err.response === undefined || err.response.data === undefined){
                 return;
             }
@@ -160,8 +190,10 @@ function Login(props) {
                 passwordFeedback: values.passwordFeedback
             };
             let errorMsg = 'Unknown error';
+            let errorContent = '';
 
             if(responsedata.fieldErrors){
+                errorContent = 'Check and fill them correctly.';
                 errorMsg = 'Some fields are not filled properly'
 
                 responsedata.fieldErrors.forEach(fieldError => {
@@ -172,7 +204,9 @@ function Login(props) {
                 ...values,
                 loading: false,
                 openAlert: true,
+                severity: 'error',
                 alertText: err.response.data.error ? err.response.data.error : errorMsg,
+                alertContent: errorContent,
                 ...newFeedback
             });
         });
@@ -187,7 +221,7 @@ function Login(props) {
         return (
             <AlertDialog
                 open={values.openAlert}
-                severity='error'
+                severity={values.severity}
                 onClose={() => {
                     setValues({
                         ...values,
@@ -195,7 +229,7 @@ function Login(props) {
                     });
                 }}
                 title={values.alertText}
-                content={values.alertText === 'Bad credentials' && 'Email or password is not correct.'}
+                content={values.alertText === 'Bad credentials' ? 'Email or password is not correct.' : values.alertContent}
             />
         );
     };

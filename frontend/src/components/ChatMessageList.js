@@ -36,7 +36,6 @@ function ChatMessageList(props) {
             <List
                 sx={{ width: '100%',
                     height: 250,
-                    mb: 20,
                     position: 'relative',
                     overflow: 'auto',
                     'overflowWrap': 'break-word',

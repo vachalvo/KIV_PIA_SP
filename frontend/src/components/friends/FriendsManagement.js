@@ -7,8 +7,10 @@ import {useRef, useState} from "react";
 import {Card, CardContent, Typography} from "@mui/material";
 import UserService from "../../services/user-service";
 import SnackBarAlert from "../errors/SnackBarAlert";
+import {useHistory} from "react-router-dom";
 
 function FriendsManagement() {
+    const history = useHistory();
     const [alertValues, setAlertValues] = useState({
         open: false,
         text: '',
@@ -46,9 +48,26 @@ function FriendsManagement() {
             });
             fetchSendRequests().then(() => {
                 sendRequestsRef.current.update();
+            }).catch((err) => {
+                if(err.response.status === 401){
+                    history.push({
+                        pathname: "/login",
+                        state: {
+                            detail: 401
+                        }
+                    });
+                }
             });
-        })
-
+        }).catch((err) => {
+            if(err.response.status === 401){
+                history.push({
+                    pathname: "/login",
+                    state: {
+                        detail: 401
+                    }
+                });
+            }
+        });
     };
 
     const setAlert = (state) => {
@@ -128,7 +147,14 @@ function FriendsManagement() {
                 text: 'User was successfully promote.'
             });
         }).catch((err) => {
-            console.log("Promote error", err);
+            if(err.response.status === 401){
+                history.push({
+                    pathname: "/login",
+                    state: {
+                        detail: 401
+                    }
+                });
+            }
         });
     };
 
@@ -140,7 +166,14 @@ function FriendsManagement() {
                 text: 'User was successfully demote.'
             });
         }).catch((err) => {
-            console.log("Demote error", err);
+            if(err.response.status === 401){
+                history.push({
+                    pathname: "/login",
+                    state: {
+                        detail: 401
+                    }
+                });
+            }
         });
     };
 

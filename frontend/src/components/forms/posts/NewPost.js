@@ -15,6 +15,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import {Col, Row} from "react-bootstrap";
 import OutlinedTextField from "../common/OutlinedTextField";
 import AlertDialog from "../../common/AlertDialog";
+import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
     button: {
@@ -36,6 +37,7 @@ const useStyles = makeStyles(theme => ({
 
 function NewPost() {
     const classes = useStyles();
+    const history = useHistory();
     const [values, setValues] = useState({
         header: '',
         content: '',
@@ -74,12 +76,22 @@ function NewPost() {
                 header: '',
                 alertSeverity: 'success',
                 alertText: 'Congratulation',
-                alertSecondaryText: 'New post was successfulyy created.',
+                alertSecondaryText: 'New post was successfully created.',
                 alertOpen: true
             });
 
             console.log("New Post: ", data);
         }).catch((err) => {
+            if(err.response.status === 401){
+                history.push({
+                    pathname: "/login",
+                    state: {
+                        detail: 401
+                    }
+                });
+                return;
+            }
+
             const responsedata = err.response.data;
             const newFeedback = {
                 headerFeedback: values.headerFeedback,

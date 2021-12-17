@@ -191,7 +191,9 @@ function SignUp(props) {
         AuthService.signup(data).then(
             (response) => {
                 WebSocketService.removeChatUserId();
-                history.push("/login");
+                history.push("/login", {
+                    registration: true
+                });
             }
         ).catch((err) => {
             const data = err.response.data;

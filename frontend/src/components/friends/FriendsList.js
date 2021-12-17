@@ -3,10 +3,12 @@ import {Col} from "react-bootstrap";
 import {Card, CardContent, List, Typography} from "@mui/material";
 import FriendItem from "./FriendItem";
 import {forwardRef, useEffect, useImperativeHandle, useState} from "react";
+import {useHistory} from "react-router-dom";
 
 const FriendsList = forwardRef((props, ref) => {
     const {type, onFetch, onDelete, onDecision, onPromote, onDemote, admin} = props;
     const [items, setItems] = useState([]);
+    const history = useHistory();
 
     useImperativeHandle(
         ref,
@@ -20,6 +22,15 @@ const FriendsList = forwardRef((props, ref) => {
     const updateItems = () => {
         onFetch().then((res) => {
             setItems(res);
+        }).catch((err) => {
+            if(err.response.status === 401){
+                history.push({
+                    pathname: "/login",
+                    state: {
+                        detail: 401
+                    }
+                });
+            }
         });
     }
 

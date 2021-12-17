@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import {Component} from "react";
 
-import {BrowserRouter as Router, Switch, Route} from "react-router-dom";
+import {Switch, Route} from "react-router-dom";
 import { Container, Row, Col } from "react-bootstrap";
 
 import ChatMessageService from "./services/chat-message-service";
@@ -103,7 +103,7 @@ class Home extends Component {
                 ...params
             }, this.onConnected.bind(this), this.onError.bind(this));
         })
-
+        // TODO - catch
     };
 
     onConnected() {
@@ -233,7 +233,7 @@ class Home extends Component {
             let waiting = [
                 ...this.state.waitingMessages
             ];
-            waiting = waiting.filter(e => e !== id); // will return ['A', 'C']
+            waiting = waiting.filter(e => e !== id);
 
             this.setState(state => ({
                 ...state,
@@ -245,13 +245,8 @@ class Home extends Component {
                 ]
             }));
         }).catch((err) => {
-            switch (err.response.status) {
-                case 403:
-                    alert('getMessages - TODO');
-                    break;
-                default:
-                    console.log('getMessages', err);
-                    break
+            if(err.response.status === 401){
+                // todo
             }
         });
     };
@@ -272,7 +267,7 @@ class Home extends Component {
 
     render() {
         return (
-            <Router>
+            <>
                 <Snackbar open={this.state.notificationOpen} autoHideDuration={5000} onClose={this.notificationOnClose.bind(this)}>
                     <Alert variant="filled" onClose={this.notificationOnClose.bind(this)} severity={'info'} sx={{ width: '100%' }}>
                         {this.state.notificationText}
@@ -327,7 +322,7 @@ class Home extends Component {
                         </Col>
                     </Row>
                 </Container>
-            </Router>
+            </>
         );
     }
 }

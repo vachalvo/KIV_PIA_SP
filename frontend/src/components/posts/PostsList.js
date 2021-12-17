@@ -17,11 +17,14 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import AuthService from "../../services/auth-service";
 import SnackBarAlert from "../errors/SnackBarAlert";
 import OutlinedTextField from "../forms/common/OutlinedTextField";
+import {useHistory} from "react-router-dom";
 
 const COUNT_INCREMENT = 5;
 
 const PostList = forwardRef((props, ref) => {
     const { findAll, disableRefresh } = props;
+    const history = useHistory();
+
     useImperativeHandle(ref, () => ({
         getData() {
             const newCount = values.count + COUNT_INCREMENT;
@@ -78,6 +81,15 @@ const PostList = forwardRef((props, ref) => {
         findAll(newCount).then((response) => {
             setPosts(response.data.posts);
             setLoading(false);
+        }).catch((err) => {
+            if(err.response.status === 401){
+                history.push({
+                    pathname: "/login",
+                    state: {
+                        detail: 401
+                    }
+                });
+            }
         });
     }
 
@@ -119,6 +131,16 @@ const PostList = forwardRef((props, ref) => {
 
             getPosts();
         }).catch((err) => {
+            if(err.response.status === 401){
+                history.push({
+                    pathname: "/login",
+                    state: {
+                        detail: 401
+                    }
+                });
+                return;
+            }
+
             const responsedata = err.response.data;
             const newFeedback = {
                 headerFeedback: values.headerFeedback,
@@ -172,6 +194,16 @@ const PostList = forwardRef((props, ref) => {
 
             getPosts();
         }).catch((err) => {
+            if(err.response.status === 401){
+                history.push({
+                    pathname: "/login",
+                    state: {
+                        detail: 401
+                    }
+                });
+                return;
+            }
+
             setAlertValues({
                 ...alertValues,
                 open: true,
