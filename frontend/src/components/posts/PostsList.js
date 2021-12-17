@@ -16,7 +16,7 @@ import {useTheme} from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import AuthService from "../../services/auth-service";
 import SnackBarAlert from "../errors/SnackBarAlert";
-import OutlinedTextField from "../forms/common/OutlinedTextField";
+import OutlinedTextField from "../common/forms/OutlinedTextField";
 import {useHistory} from "react-router-dom";
 
 const COUNT_INCREMENT = 5;

@@ -1,8 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.css';
 import {useState} from "react";
 import LoadingButton from '@mui/lab/LoadingButton';
-import UserService from "../../../services/user-service";
-import PostService from "../../../services/post-service";
+import UserService from "../../services/user-service";
+import PostService from "../../services/post-service";
 import {
     CardActions,
     Card,
@@ -13,8 +13,8 @@ import {
 import {Abc, CampaignOutlined, SendOutlined, Title} from "@mui/icons-material";
 import { makeStyles } from "@material-ui/core/styles";
 import {Col, Row} from "react-bootstrap";
-import OutlinedTextField from "../common/OutlinedTextField";
-import AlertDialog from "../../common/AlertDialog";
+import OutlinedTextField from "../common/forms/OutlinedTextField";
+import AlertDialog from "../common/AlertDialog";
 import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({

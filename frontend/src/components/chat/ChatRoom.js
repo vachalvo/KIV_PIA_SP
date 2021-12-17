@@ -9,7 +9,7 @@ import {blue} from "@mui/material/colors";
 import {SendOutlined} from "@mui/icons-material";
 import {useEffect} from "react";
 import ChatMessageList from "./ChatMessageList";
-import WebSocketService from "../services/web-socket-service";
+import WebSocketService from "../../services/web-socket-service";
 
 function ChatRoom(props) {
     const {

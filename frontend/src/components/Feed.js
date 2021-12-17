@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.css';
-import NewPost from "./forms/posts/NewPost";
+import NewPost from "./forms/NewPost";
 import PostList from "./posts/PostsList";
 import {useEffect, useRef} from "react";
 import PostService from "../services/post-service";

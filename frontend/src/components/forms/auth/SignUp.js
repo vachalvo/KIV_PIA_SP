@@ -4,7 +4,7 @@ import {useHistory} from "react-router-dom";
 
 import {Row, Col} from "react-bootstrap";
 
-import OutlinedTextField from "../common/OutlinedTextField";
+import OutlinedTextField from "../../common/forms/OutlinedTextField";
 import AlertDialog from "../../common/AlertDialog";
 
 import WebSocketService from "../../../services/web-socket-service";

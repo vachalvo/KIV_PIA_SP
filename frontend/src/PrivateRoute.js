@@ -4,7 +4,7 @@
 // If they are: they proceed to the page
 // If not: they are redirected to the login page.
 import React from 'react'
-import AuthService from './../services/auth-service'
+import AuthService from './services/auth-service'
 import { Redirect, Route } from 'react-router-dom'
 
 const PrivateRoute = ({ component: Component, ...rest }) => {

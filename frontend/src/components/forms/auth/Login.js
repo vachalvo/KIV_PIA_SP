@@ -27,7 +27,7 @@ import {Col, Row} from "react-bootstrap";
 
 import '../../../styles/components/login.css';
 import LoadingButton from "@mui/lab/LoadingButton";
-import OutlinedTextField from "../common/OutlinedTextField";
+import OutlinedTextField from "../../common/forms/OutlinedTextField";
 import AlertDialog from "../../common/AlertDialog";
 import Constants from "../../../global/constants";
 import {useHistory} from "react-router-dom";

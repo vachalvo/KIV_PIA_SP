@@ -3,7 +3,7 @@ import {
     List, ListItem, ListItemText
 } from "@mui/material";
 
-import AuthService from "../services/auth-service";
+import AuthService from "../../services/auth-service";
 
 function ChatMessageList(props) {
     const {messages} = props;
