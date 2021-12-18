@@ -37,16 +37,6 @@ public class WebSocketEventListener {
     @Autowired
     private IFriendshipService friendshipService;
 
-    @EventListener(SessionSubscribeEvent.class)
-    public void onWebSocketSessionsConnected(SessionSubscribeEvent event) {
-        Message<byte[]> eventMessage = event.getMessage();
-        String token = getAuthorizationToken(eventMessage);
-        System.out.println(token);
-        // Bearer xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        // do whatever you need with user, throw exception if user should not be connected
-        // ... TODO
-    }
-
     @EventListener
     public void handleSubscribeEvent(SessionSubscribeEvent event) {
         Set<String> activeUsers = activeUserManager.getAll();
