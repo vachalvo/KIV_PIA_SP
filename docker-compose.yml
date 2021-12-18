@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    stdin_open: true
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    container_name: backend
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-sql:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=piadata
+      - SPRING_DATASOURCE_PASSWORD=superstrongpassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-sql
+
+  postgres-sql:
+    image: "postgres:9.6-alpine"
+    container_name: postgres
+    volumes:
+      - squirell-db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=piadata
+      - POSTGRES_USER=piadata
+      - POSTGRES_PASSWORD=superstrongpassword
+
+volumes:
+  squirell-db:
