@@ -76,6 +76,7 @@ function Login(props) {
 
             AuthService.logout();
         }
+        // eslint-disable-next-line
     }, [history.action, history.location.state]);
 
     const onChange = (prop) => (event) => {

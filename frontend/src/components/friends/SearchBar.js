@@ -84,7 +84,7 @@ export default function SearchBar(parentProps) {
                 />}
                 renderOption={(props, option, { inputValue }) => {
                     return (
-                        <div key={option} { ...props }>
+                        <div key={option} { ...props } onClick={() => {  }}>
                             <UserListItem key={option.user.id} option={option} {...parentProps} onClear={_onClear}/>
                         </div>
                     );
