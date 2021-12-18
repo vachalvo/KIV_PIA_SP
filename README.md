@@ -209,17 +209,21 @@ Pozov údaje obsažené v ukázke nejsou správné reálné a slouží pouze pro
 Při prvním spuštění aplikace se žádné jiné účty nevytvářejí, kromě administrátorského. Proto je potřeba dané účty vytvořit.
 
 # Popis semestrální práce
-Pro vývoj byl zvolen stack - Spring Boot (BE), React (FE) a PostreSQL (DB). Všechny zdrojové kódy pro BE jsou ve složce ./backend a pro FE ./frontend. Pro většinu komunikace mezi FE a BE byl použit REST:
+Pro vývoj byl zvolen stack - **Spring Boot (BE), React (FE) a PostreSQL (DB)**. Všechny zdrojové kódy pro BE jsou ve složce **./backend** a pro FE **./frontend**. Pro většinu komunikace mezi FE a BE byl použit **REST**:
 ## Bonusové části
 V průběhu vývoje jsem zapracoval i následující bonusové části:
+
  - entropy based password strength evaluation - 5 points
  - storing of chat messages in the DB - 5 points
  - possibility to show older posts - 7 points
  - instant check of the e-mail availability (not being used by an already registered user) on the registration screen (REST) - 2 points
+ 
 Dále bylo přidáno následující rozšíření, které nebylo obsahem zadání ani bonusových částí:
+
  - přepnutí do tmavého a světlého režimu
  
- ## Bonusové technologie
+## Bonusové technologie
+ 
  - Angular, React, any other frontend technology - 5 points
  - Use your Git repo properly and regularly - your activity there should give me a clear idea about your progress - 2 points
 
