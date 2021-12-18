@@ -192,3 +192,37 @@ or **preferably** a link to a GIT repository of your choice (GitHub, BitBucket, 
 All the bonus points listed are maximum values and can be reduced in case of incomplete
 work or other problems. You can receive maximum of **50 points** for the whole project.
 
+# Spuštění
+Pro spuštění byly vytvořeny přesně dva Dockerfile soubory ve složkách ./backend a ./frontend a jeden docker-compose.yml, který slouží pro vytvoření všech obrazů aplikací. 
+Pro nastartování aplikace stačí dát v kořenovém adresář (tj. kde jsou složky ./backent a ./frontend) příkaz:
+```
+docker-compose up
+```
+A aplikace by měli nastartovat. Pro přístup k aplikace se použije odkaz na hlavní stránku [Login Page](http:/localhost:3000/login).
+
+Při spouštění aplikace se do příkazové řádky vypíše i zároveň email a heslo k administrátorskému účtu, který je automaticky založen, pokud žádný v databázi neexistuje. Daný výpis má následující formát:
+```
+backend   | 2021-12-18 10:15:59.032  INFO 1 --- [           main] com.kiv.pia.backend.BackendApplication   : Admin account not found. New default admin account created. (Email: 297_fef@squirell.com; Password: yW!3odpXG2)
+```
+Pozov údaje obsažené v ukázke nejsou správné reálné a slouží pouze pro ukázku.
+
+Při prvním spuštění aplikace se žádné jiné účty nevytvářejí, kromě administrátorského. Proto je potřeba dané účty vytvořit.
+
+# Popis semestrální práce
+Pro vývoj byl zvolen stack - Spring Boot (BE), React (FE) a PostreSQL (DB). Všechny zdrojové kódy pro BE jsou ve složce ./backend a pro FE ./frontend. Pro většinu komunikace mezi FE a BE byl použit REST:
+## Bonusové části
+V průběhu vývoje jsem zapracoval i následující bonusové části:
+ - entropy based password strength evaluation - 5 points
+ - storing of chat messages in the DB - 5 points
+ - possibility to show older posts - 7 points
+ - instant check of the e-mail availability (not being used by an already registered user) on the registration screen (REST) - 2 points
+Dále bylo přidáno následující rozšíření, které nebylo obsahem zadání ani bonusových částí:
+ - přepnutí do tmavého a světlého režimu
+ 
+ ## Bonusové technologie
+ - Angular, React, any other frontend technology - 5 points
+ - Use your Git repo properly and regularly - your activity there should give me a clear idea about your progress - 2 points
+
+Pokud bychom tedy sečetli bonusové body z přidaných částí, vychází nám - 26 bonusových bodů, pokud by bylo všechny splněny.
+ 
+ 
