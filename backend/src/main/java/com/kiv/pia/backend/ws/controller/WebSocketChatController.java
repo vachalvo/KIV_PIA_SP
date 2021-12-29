@@ -1,8 +1,10 @@
 package com.kiv.pia.backend.ws.controller;
 
 import com.kiv.pia.backend.model.ChatMessage;
+import com.kiv.pia.backend.model.Friendship;
 import com.kiv.pia.backend.model.User;
 import com.kiv.pia.backend.service.IChatMessageService;
+import com.kiv.pia.backend.service.IFriendshipService;
 import com.kiv.pia.backend.service.IUserService;
 import com.kiv.pia.backend.ws.listener.ActiveUserChangeListener;
 import com.kiv.pia.backend.ws.ActiveUserManager;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.UUID;
 
 @RestController
@@ -41,6 +44,9 @@ public class WebSocketChatController implements ActiveUserChangeListener {
     @Autowired
     private IUserService userService;
 
+    @Autowired
+    private IFriendshipService friendshipService;
+
     @PostConstruct
     private void init() {
         activeUserManager.registerListener(this);
@@ -57,6 +63,11 @@ public class WebSocketChatController implements ActiveUserChangeListener {
 
         User from = userService.findById(UUID.fromString(chatMessage.getFrom()));
         User recipient = userService.findById(UUID.fromString(chatMessage.getRecipient()));
+
+        Collection<Friendship> friendships = friendshipService.findAllByBothWays(from.getId(), recipient.getId());
+        if(friendships.isEmpty()){
+            return;
+        }
 
         if(from != null && recipient != null ){
             // save message to DB

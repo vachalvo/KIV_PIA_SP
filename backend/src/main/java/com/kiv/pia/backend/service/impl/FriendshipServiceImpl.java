@@ -28,6 +28,11 @@ public class FriendshipServiceImpl implements IFriendshipService {
     }
 
     @Override
+    public Collection<Friendship> findAllByBothWays(UUID sourceId, UUID endId) {
+        return (Collection<Friendship>) friendshipRepository.findByBothInBothWays(sourceId, endId);
+    }
+
+    @Override
     public Friendship findById(UUID id) {
         Optional<Friendship> friendship = friendshipRepository.findById(id);
         return friendship.orElse(null);

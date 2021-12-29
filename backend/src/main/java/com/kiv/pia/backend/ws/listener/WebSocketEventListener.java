@@ -39,8 +39,13 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleSubscribeEvent(SessionSubscribeEvent event) {
-        Set<String> activeUsers = activeUserManager.getAll();
         UUID id = UUID.fromString(event.getUser().getName());
+        sendFriendsToUser(id);
+    }
+
+    public void sendFriendsToUser(UUID id) {
+        Set<String> activeUsers = activeUserManager.getAll();
+
         Collection<Friendship> friendships = friendshipService.findAllFriends(id);
         List<ActiveUser> activeFriends = new ArrayList<>();
 
@@ -69,7 +74,7 @@ public class WebSocketEventListener {
             }
         }
 
-        messagingTemplate.convertAndSendToUser(event.getUser().getName(), "/queue/users", activeFriends);
+        messagingTemplate.convertAndSendToUser(id.toString(), "/queue/users", activeFriends);
     }
 
     @EventListener

@@ -19,6 +19,8 @@ public interface IFriendshipService {
 
     Collection<Friendship> findAllFriends(String email);
 
+    Collection<Friendship> findAllByBothWays(UUID sourceId, UUID endId);
+
     Friendship saveOrUpdate(Friendship t);
 
     void deleteById(UUID id);

@@ -9,6 +9,7 @@ import com.kiv.pia.backend.model.response.ErrorResponse;
 import com.kiv.pia.backend.security.services.UserDetailsImpl;
 import com.kiv.pia.backend.service.IFriendshipService;
 import com.kiv.pia.backend.service.IUserService;
+import com.kiv.pia.backend.ws.listener.WebSocketEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class FriendshipController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private WebSocketEventListener webSocketEventListener;
 
     @GetMapping("/find-all/friends")
     public ResponseEntity<?> findFriends(){
@@ -149,6 +153,10 @@ public class FriendshipController {
         }
 
         friendshipService.deleteById(friendship.getId());
+
+        webSocketEventListener.sendFriendsToUser(friendship.getSourceUser().getId());
+        webSocketEventListener.sendFriendsToUser(friendship.getEndUser().getId());
+
         log.info("Friendship with id " + id.toString() + " was deleted.");
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -178,6 +186,9 @@ public class FriendshipController {
 
         friendship.setFriendshipType(FriendshipType.FRIENDS);
         friendship = friendshipService.saveOrUpdate(friendship);
+
+        webSocketEventListener.sendFriendsToUser(friendship.getSourceUser().getId());
+        webSocketEventListener.sendFriendsToUser(friendship.getEndUser().getId());
 
         if(friendship == null) {
             return ResponseEntity
