@@ -6,7 +6,7 @@ Tento projekt je semestrální prací k předmětu KIV/PIA.
 Pro spuštění byly vytvořeny přesně dva Dockerfile soubory ve složkách ./backend a ./frontend a jeden docker-compose.yml, který slouží pro vytvoření všech obrazů aplikací. 
 Pro nastartování aplikace stačí dát v kořenovém adresář (tj. kde jsou složky ./backent a ./frontend) příkaz:
 ```
-docker-compose up
+docker-compose up --build
 ```
 A aplikace by měli nastartovat. Pro přístup k aplikace se použije odkaz na hlavní stránku [Login Page](http:/localhost:3000/login).
 
